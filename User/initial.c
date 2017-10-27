@@ -177,8 +177,8 @@ void PwrOnInit(void)
     HT_GPIO_Init(HT_GPIOE, &GPIO_InitStructure);
         
         HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR0EN, ENABLE); 
-	HT_TMR0->TMRDIV = 0x0002;                            /*!< 设置定时器预分频器     2分频 */
-        HT_TMR0->TMRPRD = 0x157C;                             /*!< 设置定时器周期寄存器  500us */   
+	HT_TMR0->TMRDIV = 0x0004;                            /*!< 设置定时器预分频器     4分频 */
+        HT_TMR0->TMRPRD = 0x157C;                             /*!< 设置定时器周期寄存器  1000us */   
         HT_TMR0->TMRCON = 0x0307;                            /*!< 设置定时器工作模式          */    
         HT_TMR0->TMRIE = 0x0001;               			     /*!< 使能TIMER中断               */
         NVIC_EnableIRQ(TIMER_0_IRQn);

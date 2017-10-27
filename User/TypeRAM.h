@@ -943,6 +943,7 @@ typedef struct
 
 typedef struct
 {
+#if 0  
   unsigned long	Pt; 					//合相有功功率(4)
   unsigned long	Pa; 					//A相有功功率(4)	
   unsigned long	Pb; 					//B相有功功率(4)	
@@ -982,6 +983,43 @@ typedef struct
   unsigned long        Angle_Ua; 			//A相电流角度
   unsigned long        Angle_Ub; 			//B相电流角度
   unsigned long        Angle_Uc; 			//C相电流角度
+#else
+  unsigned long	AFreq;			//A相频率(4)
+  
+  unsigned long        Ia; 			//A相电流(4)		XXXX.XXXX A
+  unsigned long	Ib; 			//B相电流(4)		XXXX.XXXX A
+  unsigned long	Ic; 			//C相电流(4)		XXXX.XXXX A
+ 
+  unsigned long        Ua; 			//A相电压(4)
+  unsigned long	Ub; 			//B相电压(4)
+  unsigned long	Uc; 			//C相电压(4)
+  
+  unsigned long	Pa; 					//A相有功功率(4)	
+  unsigned long	Pb; 					//B相有功功率(4)	
+  unsigned long	Pc; 					//C相有功功率(4)	
+  unsigned long	Pt; 					//合相有功功率(4)
+  
+  
+  unsigned long	Qa; 					//A相无功功率(4)	
+  unsigned long	Qb; 					//B相无功功率(4)	
+  unsigned long	Qc; 					//C相无功功率(4)	
+  unsigned long	Qt; 					//合相无功功率(4)
+  
+  
+  unsigned long	Sa; 					//A相视在功率(4)	
+  unsigned long	Sb; 					//B相视在功率(4)	
+  unsigned long	Sc; 					//C相视在功率(4)	
+  unsigned long	St; 					//合相视在功率(4)
+  
+  
+  unsigned long	Pfa;			//A相功率因数(4)
+  unsigned long	Pfb;			//B相功率因数(4)
+  unsigned long	Pfc;			//C相功率因数(4)
+  unsigned long	Pft;			//合相功率因数(4)
+  
+  unsigned long	BFreq;			//B相频率(4)
+  unsigned long	CFreq;			//C相频率(4)
+#endif  
 }REAL;	
 
 typedef struct

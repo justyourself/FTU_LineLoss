@@ -58,6 +58,8 @@ struct IEC101_STRUCT
   u32 wRecvNum;
   u32 RErrorN;
   u32 initstatus;
+  u16 Sn;
+  u16 List_para[32];
   union IEC101_ADD wRecvCmmAdd;
   u32 FtuSccReset;
   u32 byFrameIntval;
@@ -106,8 +108,7 @@ struct IEC101_STRUCT
   struct APP_STRUCT PSeAppLayer;
   struct APP_STRUCT PSendFrame;
   struct APP_STRUCT PRecvFrame;
-  struct REAPP_STRUCT PReAppLayer;
-  
+  struct REAPP_STRUCT PReAppLayer; 
 };
 
 /***************************************************************************
@@ -180,6 +181,8 @@ struct IEC101_STRUCT
 #define C_RR_NA_1       201             //读定值区号
 #define C_RS_NA_1       202             //读定值和参数
 #define C_WS_NA_1       203             //写定值和参数
+#define M_IT_NB_1       206
+#define M_IT_TC_1       207 
 #define F_SR_NA_1       211             //软件升级启动和结束
 
 // 文件传输的类型标识

@@ -73,7 +73,6 @@
 
 void SysTick_Handler()			//1/64秒中断
 {
-
   if(( HT_GPIOE->PTDAT & GPIOE_LVDIN0 ) == 0)
   {
     if( SM.PowerUpTime != 0 )
@@ -554,6 +553,7 @@ void UART5_IRQHandler()
 *
 *********************************************************************************************************
 */
+extern void Iec101WatchTime(void);
 void TIMER_0_IRQHandler()
 {
     if(SET == HT_TMR_ITFlagStatusGet(HT_TMR0, TMR_TMRIF_PRDIF))                /*!< 周期中断           */
@@ -573,7 +573,7 @@ void TIMER_0_IRQHandler()
 
         HT_TMR_ClearITPendingBit(HT_TMR0, TMR_TMRIF_CMPIF);                    /*!< 清除中断标志       */         
     } 
-    
+    Iec101WatchTime();
 }
 
 /*
