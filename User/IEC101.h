@@ -59,6 +59,9 @@ struct IEC101_STRUCT
   u32 RErrorN;
   u32 initstatus;
   u16 Sn;
+  u8  Fop;  //文件操作标识
+  u8  Fname[32];
+  u32 FId;
   u16 List_para[32];
   union IEC101_ADD wRecvCmmAdd;
   u32 FtuSccReset;
@@ -186,6 +189,18 @@ struct IEC101_STRUCT
 #define F_SR_NA_1       211             //软件升级启动和结束
 
 // 文件传输的类型标识
+#define F_FR_NA_1       210             //文件传输
+#define F_FR_DA_1       1   //读目录激活
+#define F_FR_DA_2       2   //读目录确认
+#define F_FR_FA_1       3    //读文件激活
+#define F_FR_FA_2       4    //读文件确认
+#define F_FR_FA_3       5    //读文件内容
+#define F_FR_FA_4       6    //读文件内容确认
+#define F_FW_FA_1       7    //写文件激活
+#define F_FW_FA_2       8    //写文件确认
+#define F_FW_FA_3       9    //写文件内容
+#define F_FW_FA_4       10    //写文件内容确认
+#if 0
 #define F_FR_NA_1	120		// 文件已准备好
 #define F_SR_NA_1	121		// 节已准备好
 #define F_SC_NA_1	122		// 召唤目录、选择文件、召唤文件、召唤节
@@ -193,6 +208,7 @@ struct IEC101_STRUCT
 #define F_AF_NA_1	124		// 确认文件、确认节
 #define F_SG_NA_1	125		// 段
 #define F_DR_NA_1	126		// 目录
+#endif
 
 // 传送原因
 #define PER_CYC		1		// 周期、循环
