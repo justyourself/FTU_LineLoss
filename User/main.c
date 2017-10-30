@@ -110,6 +110,7 @@ void ProcSec(void)
     for(Buff[0]=0;Buff[0]<8;++Buff[0])
     {
      // Energy_Data[Buff[0]].Pn++;
+      Energy_Data[Buff[0]].Pp = Buff[0];
       Energy_Data[Buff[0]].Pn +=Buff[0];
       Energy_Data[Buff[0]].Qn++;
       Energy_Data[Buff[0]].Q1++;
