@@ -1639,6 +1639,7 @@ u8 SendFileInfo(u8 bySendReason)
 {
   u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
   u8 i,byMsgNum = 0,pos,bySum=0,j;
+  char *p_filename;
   u32 m_filelen;
   *(lpby + byMsgNum ++) = F_FR_NA_1;		// 210
   *(lpby + byMsgNum ++) = 0x01;
@@ -1659,10 +1660,26 @@ u8 SendFileInfo(u8 bySendReason)
   byMsgNum += 4;
   *(lpby + byMsgNum ++) = 0x1;
   pos = byMsgNum;
+#if 0  
   strcpy(lpby + byMsgNum,lpIEC101->Fname+14);
   byMsgNum += strlen(lpIEC101->Fname+14);
-  strcpy(lpby + byMsgNum,"v1.0\r\n");
-  byMsgNum += strlen("v1.0\r\n");
+#else
+  p_filename = lpIEC101->Fname;
+  if(p_filename)
+  {
+    p_filename = (char *)strstr((const char *)p_filename,"/");
+    if(p_filename)
+    {
+      p_filename += 1;
+      p_filename = (char *)strstr(p_filename,"/");
+    }
+    p_filename += 1;
+    strcpy(lpby + byMsgNum,p_filename);
+    byMsgNum += strlen(p_filename);
+  }
+#endif  
+  strcpy(lpby + byMsgNum,"  v1.0\r\n");
+  byMsgNum += strlen("  v1.0\r\n");
   strcpy(lpby + byMsgNum,"201710300001,96,2\r\n");
   byMsgNum += strlen("201710300001,96,2\r\n");
   for(j=pos;j<byMsgNum;j++)
@@ -1700,9 +1717,93 @@ u8 SendFileData(u8 bySendReason)
   else
     *(lpby + byMsgNum ++) = 0x0;
   pos = byMsgNum;
-  strcpy(lpby + byMsgNum,"12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
-  byMsgNum += strlen("12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
-  for(j=pos;j<byMsgNum;j++)
+  if(strstr(lpIEC101->Fname,".msg"))
+  {
+    strcpy(lpby + byMsgNum,"12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
+    byMsgNum += strlen("12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
+  }
+  else if(strstr(lpIEC101->Fname,".xml"))
+  {
+    switch(lpIEC101->byPSGenStep)
+    {
+    case 2:
+      strcpy(lpby + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
+      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
+      break;
+    case 3:
+      strcpy(lpby + byMsgNum,"\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25602\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25603\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25604\" type=\"float\" unit=\"kVARh\" />\r\n");
+      byMsgNum += strlen("\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25602\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25603\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25604\" type=\"float\" unit=\"kVARh\" />\r\n");
+      break;
+    case 4:
+      strcpy(lpby + byMsgNum,"\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25605\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25606\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25607\" type=\"float\" unit=\"kVARh\" />\r\n");
+      byMsgNum += strlen("\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25605\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25606\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25607\" type=\"float\" unit=\"kVARh\" />\r\n");
+      break;
+    case 5:
+      strcpy(lpby + byMsgNum,"\t\t<DI ioa=\"16392\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16393\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16394\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16395\" type=\"float\" unit=\"W\" />\r\n \
+  \t</DataAttr>\r\n");
+      byMsgNum += strlen("\t\t<DI ioa=\"16392\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16393\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16394\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16395\" type=\"float\" unit=\"W\" />\r\n \
+  \t</DataAttr>\r\n");
+             break;
+    default:
+      if(lpIEC101->byPSGenStep%2==0)
+      {
+      strcpy(lpby + byMsgNum,"\t<DataRec sect=\"1\" tm=\"20171025_113000\">\r\n \
+      \t\t<DI val=\"10.718\"/>\r\n \
+      \t\t<DI val=\"0.236\"/>\r\n \
+      \t\t<DI val=\"0.236\"/>\r\n \
+      \t\t<DI val=\"0.082\"/>\r\n \
+      \t\t<DI val=\"0.0\"/>\r\n \
+      \t\t<DI val=\"0.082\"/>\r\n");
+      byMsgNum += strlen("\t<DataRec sect=\"1\" tm=\"20171025_113000\">\r\n \
+      \t\t<DI val=\"10.718\"/>\r\n \
+      \t\t<DI val=\"0.236\"/>\r\n \
+      \t\t<DI val=\"0.236\"/>\r\n \
+      \t\t<DI val=\"0.082\"/>\r\n \
+      \t\t<DI val=\"0.0\"/>\r\n \
+      \t\t<DI val=\"0.082\"/>\r\n");
+      }
+      else
+      {
+        strcpy(lpby + byMsgNum,"\t\t<DI val=\"10.718\"/>\r\n \
+        \t<DI val=\"0.236\"/>\r\n \
+        \t<DI val=\"0.236\"/>\r\n \
+        \t<DI val=\"0.082\"/>\r\n \
+        \t<DI val=\"0.0\"/>\r\n \
+        \t<DI val=\"0.082\"/>\r\n\t</DataRec>\r\n");
+        byMsgNum += strlen("\t\t<DI val=\"10.718\"/>\r\n \
+        \t<DI val=\"0.236\"/>\r\n \
+        \t<DI val=\"0.236\"/>\r\n \
+        \t<DI val=\"0.082\"/>\r\n \
+        \t<DI val=\"0.0\"/>\r\n \
+        \t<DI val=\"0.082\"/>\r\n\t</DataRec>\r\n");
+        if(lpIEC101->byPSGenStep>=9)
+        {
+          strcpy(lpby + byMsgNum,"</DataFile>\r\n");
+          byMsgNum += strlen("</DataFile>\r\n");
+        }
+      } 
+      break;
+    }
+  }
+   for(j=pos;j<byMsgNum;j++)
     bySum = bySum + *(lpby + j);
   *(lpby + byMsgNum ++) = bySum;
   return byMsgNum;
@@ -1909,7 +2010,7 @@ void PAppSendProcess(void)
         else
         {
           //if (((lpIEC101->PWinTimer >= 200)&& (lpIEC101->PReFrameType==0x3)))
-          if((lpIEC101->OrgnizeFrame) && (lpIEC101->PWinTimer >= 200))
+          if((lpIEC101->OrgnizeFrame) && (lpIEC101->PWinTimer >= 100))
           { 
            // lpIEC101->PWinTimer =0 ;
             AppVFrame();
@@ -2096,13 +2197,16 @@ void Iec101WatchTime(void)
     lpIEC101->byFrameIntval++;
     lpIEC101->PWinTimer++;
   }
-  if(lpIEC101->OrgnizeFrame && (lpIEC101->PWinTimer>300))
+  if(3==lpIEC101->UnsolTimeInterval)
   {
-    if(lpIEC101->PReFrameType!=0xff && lpIEC101->PReFrameType!=0)
-    {  
-      lpIEC101->PWinTimer = 0;
-      lpIEC101->PReFrameType = 0x3;
-      lpIEC101->PSendFrame.byFull = 1;
+    if(lpIEC101->OrgnizeFrame && (lpIEC101->PWinTimer>100))
+    {
+      if(lpIEC101->PReFrameType!=0xff && lpIEC101->PReFrameType!=0)
+      {  
+        lpIEC101->PWinTimer = 0;
+        lpIEC101->PReFrameType = 0x3;
+        lpIEC101->PSendFrame.byFull = 1;
+      }
     }
   }
   if (lpIEC101->PWinTimer >= 60000) //大约60秒钟时间,必须保证低波特率时,总召唤信息能够发送完毕
@@ -2303,7 +2407,7 @@ void InitIEC101Prot(void)
     lpIEC101->YcFN = 8;
     for(i=0;i<20;++i)
     {
-      lpIEC101->YcNPF[i]=23;
+      lpIEC101->YcNPF[i]=23;//23;
     }
     lpIEC101->DdFN = 16;
     for(i=0;i<20;++i)
