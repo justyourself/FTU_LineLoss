@@ -344,7 +344,7 @@ struct IEC101_STRUCT
 #define IEC101_SOENPF_TIME24	 32		//每帧最大SOE数	 246/7=	35.1
 
 #define IEC101_YCCNPF 16		//每帧最大变化遥测数
-#define IEC101_YCNPF 31			//每帧最大遥测数(每组遥测分2帧传送)
+#define IEC101_YCNPF 23 //31			//每帧最大遥测数(每组遥测分2帧传送)
 #define IEC101_YXNPF 64			//每帧最大遥信数(每组遥信分2帧传送)
 #define IEC101_DDNPF 8			//每帧最大电度数   246/8=30.75
 #define IEC101_YCNPG 128		//每组最大遥测数(每组遥测分2帧传送)

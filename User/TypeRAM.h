@@ -1017,8 +1017,8 @@ typedef struct
   unsigned long	Pfc;			//C相功率因数(4)
   unsigned long	Pft;			//合相功率因数(4)
   
-  unsigned long	BFreq;			//B相频率(4)
-  unsigned long	CFreq;			//C相频率(4)
+  //unsigned long	BFreq;			//B相频率(4)
+ // unsigned long	CFreq;			//C相频率(4)
 #endif  
 }REAL;	
 

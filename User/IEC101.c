@@ -60,8 +60,8 @@ struct IEC101_STRUCT *lpIEC101=&m_IEC101;	//IEC101规约私用数据指针
 unsigned long GetYc(unsigned short ycno)
 {
   unsigned long *Ptr;
-  Ptr=(unsigned long*)&Real_Data[ycno/31];
-  return Ptr[ycno%31];
+  Ptr=(unsigned long*)&Real_Data[ycno/23];
+  return Ptr[ycno%23];
 }
 short GetDd(unsigned short kwhno,unsigned char *buf)
 {
@@ -1069,7 +1069,8 @@ u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
         float f_val;
 	u8 j,byYcNPF;	//每帧遥测数
 	static unsigned short wStartYcAd[8] = {0x701, 0x741, 0x781, 0x7C1, 0x801, 0x841, 0x881, 0x8C1};
-	static unsigned short wStartYcAd2002[8] = {0x4001, 0x4020, 0x403f, 0x404e, 0x406c, 0x407b, 0x4099, 0x40a8};
+	//static unsigned short wStartYcAd2002[8] = {0x4001, 0x4020, 0x403f, 0x404e, 0x406c, 0x407b, 0x4099, 0x40a8};
+        static unsigned short wStartYcAd2002[8] = {0x4001, 0x4018, 0x402f, 0x4046, 0x405d, 0x4074, 0x408b, 0x40a2};
 	byYcNPF=lpIEC101->YcNPF[byFrameNo];	//取得实际的每帧遥测数,最后一帧可能不是64
 	if (byFrameNo<lpIEC101->YcFN)	//帧数小于需要发送的遥测帧数
 	{
@@ -1094,7 +1095,7 @@ u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
 		{
 			//为每一路遥测赋值
 			f_val = GetYc(i);
-                        switch(i/31)
+                        switch(i%23)
                         {
                         case 0:
                         case 1:
@@ -1103,6 +1104,7 @@ u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
                         case 7:
                         case 8:
                         case 9:
+                        case 10:  
                           f_val = f_val/1000;
                           break;
                         case 4:

@@ -395,8 +395,8 @@ void VarInit(void)
   for(i=0;i<8;++i)
   {
     Real_Data[i].AFreq=50000+i;
-    Real_Data[i].BFreq=50000+i;
-    Real_Data[i].CFreq=50000+i;
+  //  Real_Data[i].BFreq=50000+i;
+  //  Real_Data[i].CFreq=50000+i;
   }
   
   for(i=0;i<8;++i)
