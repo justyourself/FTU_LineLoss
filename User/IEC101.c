@@ -236,25 +236,17 @@ void PLinkRecvProcessF(u8 byConField)
           lpIEC101->Pacd = 3;
           lpIEC101->Pdfc = 1;
           lpIEC101->PSendFrame.byFunCode = 3;
-	}
-       // else
-     //   {
-      //    lpIEC101->PReFrameType = 0x3;
-      //    lpIEC101->PSendFrame.byFunCode = 3;
-     //   }
-      
+	}      
       break;
     case LINK_GOOD:
       lpIEC101->PReFrameType = lpIEC101->PRecvFrame.byFunCode;
       lpIEC101->PSeAppLayer.LinkFunCode = 0x00;
       lpIEC101->Pacd = 2;
-    //  lpIEC101->PSendFrame.byFull=1;
       break;
     default:
       lpIEC101->PSendFrame.byFull=0;
       break;
     }
-    
     return;
   }
  
@@ -346,6 +338,7 @@ void PLinkRecvProcessV(u8 byConField)
         break;
   case C_CS_NA_1:  //校时
 	{
+                lpIEC101->PReFrameType = 0xff;
                 if(lpIEC101->byReason == ACT)
                   SettimeToCan(lpIEC101->PReAppLayer.lpByBuf+byFrameCount); //fulianqiang 2005.9.12,较时函数不能再使用常数来寻址
 	}
@@ -380,6 +373,7 @@ void PLinkRecvProcessV(u8 byConField)
   case C_RR_NA_1:
     break;
   case C_RS_NA_1:
+    lpIEC101->PReFrameType = 0xff;
           byFrameCount -= lpIEC101->TypeInfAdd;
           lpIEC101->Sn = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];
           lpIEC101->Sn = (lpIEC101->Sn) | (lpIEC101->PReAppLayer.lpByBuf[byFrameCount++]<<8);
@@ -396,6 +390,7 @@ void PLinkRecvProcessV(u8 byConField)
           }
     break;
   case F_FR_NA_1:
+    lpIEC101->PReFrameType = 0xff;
     if(lpIEC101->PReAppLayer.lpByBuf[byFrameCount++]==0x02) //附加数据包类型
     {
       lpIEC101->Fop = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];
@@ -541,12 +536,11 @@ void SleaveIec101Frame(void)
 //监视从动窗口
 void WatchPWindow(void)
 { 
-	if (lpIEC101->PReMsgType || lpIEC101->PReFrameType
-		|| lpIEC101->PSeAppLayer.byFull || lpIEC101->PSendFrame.byFull)
+	if (lpIEC101->PReMsgType || lpIEC101->PSeAppLayer.byFull || lpIEC101->PSendFrame.byFull)
 	{
 		lpIEC101->PWindow = 1;
 	}
-        if(((lpIEC101->PRecvFrame.byFunCode == RESET_LINK) && lpIEC101->FlagPingH && (lpIEC101->initstatus == justinit)) || lpIEC101->wTester.Byte.l)
+        if((lpIEC101->PRecvFrame.byFunCode == RESET_LINK) && lpIEC101->FlagPingH && (lpIEC101->initstatus == justinit))
         {
                 lpIEC101->PWindow = 1;
         }
@@ -1916,6 +1910,8 @@ void AppVFrame(void)
         lpIEC101->PReMsgType = 0;
       else if(lpIEC101->byReason == DEACT)
         lpIEC101->PReMsgType = 0;
+      if(lpIEC101->PReMsgType==0)
+      lpIEC101->byPSGenStep=0;
       break;
     case C_CS_NA_1:				//校时确认
       SendTimeAck();
@@ -2012,9 +2008,11 @@ void PAppSendProcess(void)
         else
         {
           //if (((lpIEC101->PWinTimer >= 200)&& (lpIEC101->PReFrameType==0x3)))
-          if((lpIEC101->OrgnizeFrame) && (lpIEC101->PWinTimer >= 100))
+          //if((lpIEC101->OrgnizeFrame) && (lpIEC101->PWinTimer >= 100))
+          if(lpIEC101->OrgnizeFrame)
           { 
            // lpIEC101->PWinTimer =0 ;
+            lpIEC101->PReFrameType=0x3;
             AppVFrame();
             lpIEC101->PReFrameType = 0xff;
           }
@@ -2023,42 +2021,18 @@ void PAppSendProcess(void)
     }
     else
     {
-      //if(lpIEC101->PReFrameType == CALL_DATA2)
-      //if((lpIEC101->PReFrameType == YES_ACK) || (lpIEC101->PReFrameType == CALL_DATA2))
-      if(lpIEC101->PReFrameType && lpIEC101->PReFrameType!=0xff)
+      if(lpIEC101->PReFrameType == CALL_DATA2 && (lpIEC101->byPSGenStep==0))
       {
-#if 0        
-        if(lpIEC101->Pacd==0x2)
-        {
-          lpIEC101->PSeAppLayer.byFull=1;
-         // AppVFrame();
-          lpIEC101->PReFrameType = 0xff;
-        }
+        SendData2();
+	lpIEC101->PSeAppLayer.byFull = 1;
+	lpIEC101->PReFrameType = 0xff;
+       }      
         else
-#endif          
         {
-          SendData2();
-          lpIEC101->PSeAppLayer.byFull = 1;
-          lpIEC101->PReFrameType = 0xff;
-          lpIEC101->Pacd=0x2;
-        }
-      }
-      else if(lpIEC101->Pacd==0x2)
-      {
-        AppVFrame();
-      }
- /*     
-      else
-      {
-        if (lpIEC101->PWinTimer >= 5000)
-        {
-          
-          AppVFrame();
-          if(lpIEC101->PSeAppLayer.byFull)
-            lpIEC101->PWinTimer=0;
-        }
-      }
-      */
+          if(lpIEC101->OrgnizeFrame)
+            AppVFrame();
+         // lpIEC101->PReFrameType = 0xff;
+        }     
     }
   }
 
@@ -2152,29 +2126,30 @@ void Iec101LinkSendPro(void)
 //链路层发送函数
 void Iec101LinkSend(void)
 {
-        if (lpIEC101->PSendFrame.byFull == 1)
-	{
- 
-          Serial_Write(2,lpIEC101->PSendFrame.byLinkBuf,lpIEC101->PSendFrame.wFrameLen);
-          //if (lpIEC101->wPSendNum >= lpIEC101->PSendFrame.wFrameLen)
-          {
-            lpIEC101->wPSendNum = 0;
-            lpIEC101->byFrameIntval = 0;
-            lpIEC101->PSendFrame.byFull = 0;
+  if(lpIEC101->byFrameIntval)
+    return;
+  if (lpIEC101->PSendFrame.byFull == 1)
+  {
+    Serial_Write(2,lpIEC101->PSendFrame.byLinkBuf,lpIEC101->PSendFrame.wFrameLen);
+  //if (lpIEC101->wPSendNum >= lpIEC101->PSendFrame.wFrameLen)
+    {
+      lpIEC101->byFrameIntval = (lpIEC101->PSendFrame.wFrameLen*10000)/9600;
+      lpIEC101->PSendFrame.byFull = 0;
+      lpIEC101->wPSendNum = 0;
 #if 0
-            if ( (lpIEC101->PReFrameType == 0) && (lpIEC101->PReMsgType == 0) )
-            {
-              lpIEC101->PWindow = 0;
-              lpIEC101->PWinTimer = 0;
-              lpIEC101->OrgnizeFrame = 0 ;
-            }
+      if ((lpIEC101->PReFrameType == 0) && (lpIEC101->PReMsgType == 0) )
+      {
+        lpIEC101->PWindow = 0;
+        lpIEC101->PWinTimer = 0;
+        lpIEC101->OrgnizeFrame = 0 ;
+      }
 #else
-            if((lpIEC101->PReFrameType == 0xff))
-            {
-              lpIEC101->OrgnizeFrame = 0 ;
-              lpIEC101->PWindow = 0;
-            }
-            lpIEC101->PWinTimer = 0;
+      if((lpIEC101->PReFrameType == 0xff))
+      {
+        lpIEC101->OrgnizeFrame = 0 ;
+        lpIEC101->PWindow = 0;
+      }
+      lpIEC101->PWinTimer = 0;
 #endif            
           }
 	}
@@ -2194,11 +2169,15 @@ void Iec101WatchTime(void)
 {
   if(lpIEC101==0)
     return;
+  if(lpIEC101->byFrameIntval)
+      lpIEC101->byFrameIntval--;
   if (lpIEC101->PWindow == 1)
   {
-    lpIEC101->byFrameIntval++;
+    //lpIEC101->byFrameIntval++;
+    
     lpIEC101->PWinTimer++;
   }
+/*  
   if(3==lpIEC101->UnsolTimeInterval)
   {
     if(lpIEC101->OrgnizeFrame && (lpIEC101->PWinTimer>100))
@@ -2210,7 +2189,7 @@ void Iec101WatchTime(void)
         lpIEC101->PSendFrame.byFull = 1;
       }
     }
-  }
+  }*/
   if (lpIEC101->PWinTimer >= 60000) //大约60秒钟时间,必须保证低波特率时,总召唤信息能够发送完毕
   {
     lpIEC101->PWindow = 0;
@@ -2398,9 +2377,9 @@ void InitIEC101Prot(void)
 #endif    
     lpIEC101->wLinkAdd.Word=1;
     lpIEC101->initstatus = notinit;
-     lpIEC101->haveset = FALSE;
-    lpIEC101->FlagPingH = 1;
-    lpIEC101->UnsolTimeInterval=3;
+    lpIEC101->haveset = FALSE;
+    lpIEC101->FlagPingH = 0;
+    lpIEC101->UnsolTimeInterval=0;
     lpIEC101->firstData = nofirstdata;
    
     

@@ -115,6 +115,7 @@ void ProcSec(void)
       Energy_Data[Buff[0]].Qn++;
       Energy_Data[Buff[0]].Q1++;
       Energy_Data[Buff[0]].Q2++;
+      Real_Data[Buff[0]].Qa++;
     }
 #if 0    
     if(SM.TestDisCnt==0)
