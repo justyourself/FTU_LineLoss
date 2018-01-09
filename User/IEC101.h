@@ -86,6 +86,7 @@ struct IEC101_STRUCT
   u8 Pacd;
   u8 Pdfc;
   u8 PfcbC;
+  u8 PfcvC;
   u8 haveset;
   u8 byQualify;
   u8 TypeSeReason;
