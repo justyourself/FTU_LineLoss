@@ -1,37 +1,19 @@
-;/******************** (C) COPYRIGHT 2016 Hitrendtech. **************************
-;* File Name          : startup_ht502x.s
-;* Author             : Hitrendtech_SocTeam
-;* Version            : V1.0.0
-;* Date               : 08/22/2016
-;* Description        : This module performs:
-;*                      - Set the initial SP
-;*                      - Set the initial PC == __iar_program_start,
-;*                      - Set the vector table entries with the exceptions ISR 
-;*                        address.
-;********************************************************************************
-;* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-;* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
-;* AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
-;* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
-;* CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
-;* INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-;*******************************************************************************/
-;
-;
-; The modules in this file are included in the libraries, and may be replaced
-; by any user-defined modules that define the PUBLIC symbol _program_start or
-; a user defined start symbol.
-; To override the cstartup defined in the library, simply add your modified
-; version to the workbench project.
-;
-; The vector table is normally located at address 0.
-; When debugging in RAM, it can be located in RAM, aligned to at least 2^6.
-; The name "__vector_table" has special meaning for C-SPY:
-; it is where the SP start value is found, and the NVIC vector
-; table register (VTOR) is initialized to this address if != 0.
-;
-; Cortex-M version
-;
+﻿;/*
+;*********************************************************************************************************
+;*                                             HT502X
+;*                                         Library Function
+;*
+;*                                  Copyright 2013, Hi-Trend Tech, Corp.
+;*                                       All Rights Reserved
+;*
+;*
+;* Project      : HT6xxx
+;* File         : startup_ht502x.s
+;* By           : SocTeam
+;* Version      : CurrentVersion1_4_20171108
+;* Description  :
+;*********************************************************************************************************
+;*/
 
         MODULE  ?cstartup
 
@@ -66,39 +48,39 @@ __vector_table
         DCD     PendSV_Handler            ; PendSV Handler
         DCD     SysTick_Handler           ; SysTick Handler
 
-                ; External Interrupts
-                DCD     PMU_IRQHandler            ; 16+ 0: PMU
-                DCD     AES_IRQHandler            ; 16+ 1: AES
-                DCD     EXTI0_IRQHandler          ; 16+ 2: EXTI0
-                DCD     EXTI1_IRQHandler          ; 16+ 3: EXTI1
-                DCD     EXTI2_IRQHandler          ; 16+ 4: EXTI2
-                DCD     EXTI3_IRQHandler          ; 16+ 5: EXTI3
-                DCD     EXTI4_IRQHandler          ; 16+ 6: EXTI4
-                DCD     EXTI5_IRQHandler          ; 16+ 7: EXTI5
-                DCD     EXTI6_IRQHandler          ; 16+ 8: EXTI6
-                DCD     UART0_IRQHandler          ; 16+ 9: UART0
-                DCD     UART1_IRQHandler          ; 16+10: UART1
-                DCD     UART2_IRQHandler          ; 16+11: UART2
-                DCD     UART3_IRQHandler          ; 16+12: UART3
-                DCD     UART4_IRQHandler          ; 16+13: UART4
-                DCD     UART5_IRQHandler          ; 16+14: UART5
-                DCD     TIMER_0_IRQHandler        ; 16+15: Timer0
-                DCD     TIMER_1_IRQHandler        ; 16+16: Timer1
-                DCD     TIMER_2_IRQHandler        ; 16+17: Timer2
-                DCD     TIMER_3_IRQHandler        ; 16+18: Timer3
-                DCD     TBS_IRQHandler            ; 16+19: TBS
-                DCD     RTC_IRQHandler            ; 16+20: RTC
-                DCD     I2C_IRQHandler            ; 16+21: I2C
-                DCD     SPI_IRQHandler            ; 16+22: SPI
-                DCD     Reserved_IRQHandler       ; 16+23: Reserved
-                DCD     SelfTestFreq_IRQHandler   ; 16+24: SelfTestFreq
-                DCD     EMU_IRQHandler            ; 16+25: EMU
-                DCD     DMA_IRQHandler            ; 16+26: DMA
-                DCD     KEY_IRQHandler            ; 16+27: KEY
-                DCD     EXTI7_IRQHandler          ; 16+28: EXTI7
-                DCD     EXTI8_IRQHandler          ; 16+29: EXTI8
-                DCD     EXTI9_IRQHandler          ; 16+30: EXTI9
-                DCD     Reserved_IRQHandler       ; 16+31: Reserved
+        ; External Interrupts
+        DCD     PMU_IRQHandler            ; 16+ 0: PMU
+        DCD     AES_IRQHandler            ; 16+ 1: AES
+        DCD     EXTI0_IRQHandler          ; 16+ 2: EXTI0
+        DCD     EXTI1_IRQHandler          ; 16+ 3: EXTI1
+        DCD     EXTI2_IRQHandler          ; 16+ 4: EXTI2
+        DCD     EXTI3_IRQHandler          ; 16+ 5: EXTI3
+        DCD     EXTI4_IRQHandler          ; 16+ 6: EXTI4
+        DCD     EXTI5_IRQHandler          ; 16+ 7: EXTI5
+        DCD     EXTI6_IRQHandler          ; 16+ 8: EXTI6
+        DCD     UART0_IRQHandler          ; 16+ 9: UART0
+        DCD     UART1_IRQHandler          ; 16+10: UART1
+        DCD     UART2_IRQHandler          ; 16+11: UART2
+        DCD     UART3_IRQHandler          ; 16+12: UART3
+        DCD     UART4_IRQHandler          ; 16+13: UART4
+        DCD     UART5_IRQHandler          ; 16+14: UART5
+        DCD     TIMER_0_IRQHandler        ; 16+15: Timer0
+        DCD     TIMER_1_IRQHandler        ; 16+16: Timer1
+        DCD     TIMER_2_IRQHandler        ; 16+17: Timer2
+        DCD     TIMER_3_IRQHandler        ; 16+18: Timer3
+        DCD     TBS_IRQHandler            ; 16+19: TBS
+        DCD     RTC_IRQHandler            ; 16+20: RTC
+        DCD     I2C_IRQHandler            ; 16+21: I2C
+        DCD     SPI_IRQHandler            ; 16+22: SPI
+        DCD     Reserved_IRQHandler       ; 16+23: Reserved
+        DCD     SelfTestFreq_IRQHandler   ; 16+24: SelfTestFreq
+        DCD     EMU_IRQHandler            ; 16+25: EMU
+        DCD     DMA_IRQHandler            ; 16+26: DMA
+        DCD     KEY_IRQHandler            ; 16+27: KEY
+        DCD     EXTI7_IRQHandler          ; 16+28: EXTI7
+        DCD     EXTI8_IRQHandler          ; 16+29: EXTI8
+        DCD     EXTI9_IRQHandler          ; 16+30: EXTI9
+        DCD     Reserved_IRQHandler       ; 16+31: Reserved
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -279,8 +261,8 @@ DMA_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
 KEY_IRQHandler
         B KEY_IRQHandler
-		
-		PUBWEAK EXTI7_IRQHandler
+
+    PUBWEAK EXTI7_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
 EXTI7_IRQHandler
         B EXTI7_IRQHandler

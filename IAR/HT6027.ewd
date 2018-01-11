@@ -41,11 +41,11 @@
         </option>
         <option>
           <name>MemOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>MemFile</name>
-          <state>$TOOLKIT_DIR$\config\debugger\Hitrendtech\HT6X2X.svd</state>
+          <state>$TOOLKIT_DIR$\CONFIG\debugger\Hitrendtech\HT6X2X.SVD</state>
         </option>
         <option>
           <name>RunToEnable</name>
@@ -145,7 +145,7 @@
         </option>
         <option>
           <name>OverrideDefFlashBoard</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCImagesOffset1</name>

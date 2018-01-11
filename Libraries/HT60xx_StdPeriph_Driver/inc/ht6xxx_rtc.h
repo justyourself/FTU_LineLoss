@@ -1,17 +1,17 @@
 /*
-**********************************************************************************************************
+*********************************************************************************************************
 *                                              HT6XXX
 *                                          Library Function
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_rtc.h
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : 
+* Version      : V1.0.4
+* Description  :
 **********************************************************************************************************
 */
 
@@ -20,109 +20,112 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
-    
+#endif
+
 #include "ht6xxx.h"
-    
+
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Í/Ω·ππÃÂ
+*                                           ÂÖ®Â±ÄÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
 
-/* 
-* @brief  RTC Timer∂®“Â
+/*
+* @brief  RTC TimerÂÆö‰πâ
 */
 typedef enum
-{ 
-    RTCTMR1 = 0x20,                /*!< RTC∂® ±∆˜1                        */
-    RTCTMR2 = 0x40,                /*!< RTC∂® ±∆˜2                        */
-}RTCTMR_SelectTypeDef;             /*!< end of group RTCTMR_SelectTypeDef */   
+{
+    RTCTMR1 = RTC_RTCCON_RTC1EN,   /*!< RTCÂÆöÊó∂Âô®1                        */
+    RTCTMR2 = RTC_RTCCON_RTC2EN,   /*!< RTCÂÆöÊó∂Âô®2                        */
+}RTCTMR_SelectTypeDef;             /*!< end of group RTCTMR_SelectTypeDef */
 
-/* 
-* @brief  RTC Timer≥ı ºªØ∂®“Â
+/*
+* @brief  RTC TimerÂàùÂßãÂåñÂÆö‰πâ
 */
 typedef struct
 {
-    FunctionalState NewState;      /*!< ∂® ±∆˜◊¥Ã¨…Ë÷√£∫ πƒ‹orπÿ±’        */
-    uint16_t  Count;               /*!< ∂® ±∆˜∂® ±÷‹∆⁄…Ë÷√                */ 
+    FunctionalState NewState;      /*!< ÂÆöÊó∂Âô®Áä∂ÊÄÅËÆæÁΩÆÔºö‰ΩøËÉΩorÂÖ≥Èó≠        */
+    uint16_t  Count;               /*!< ÂÆöÊó∂Âô®ÂÆöÊó∂Âë®ÊúüËÆæÁΩÆ                */
 }RTCTMR_InitTypeDef;               /*!< end of group RTCTMR_InitTypeDef   */
 
-/* 
-* @brief  Tout ‰≥ˆ∂®“Â
+/*
+* @brief  ToutËæìÂá∫ÂÆö‰πâ
 */
 typedef enum
-{ 
-    ToutLOW    = RTC_RTCCON_TOUT_LOW, 
-    ToutHigh   = RTC_RTCCON_TOUT_HIGH,  
-    ToutLF     = RTC_RTCCON_TOUT_LF,    
-    Tout1Hz    = RTC_RTCCON_TOUT_1HZ,   
+{
+    ToutLOW    = RTC_RTCCON_TOUT_LOW,
+    ToutHigh   = RTC_RTCCON_TOUT_HIGH,
+    ToutLF     = RTC_RTCCON_TOUT_LF,
+    Tout1Hz    = RTC_RTCCON_TOUT_1HZ,
     Tout2Hz    = RTC_RTCCON_TOUT_2HZ,
     Tout4Hz    = RTC_RTCCON_TOUT_4HZ,
     Tout8Hz    = RTC_RTCCON_TOUT_8HZ,
-#if !defined  HT502x
+#if defined  HT6x1x ||  defined  HT6x2x  ||  defined  HT6x3x
     Tout16Hz   = RTC_RTCCON_TOUT_16HZ,
     Tout32Hz   = RTC_RTCCON_TOUT_32HZ,
     Tout64Hz   = RTC_RTCCON_TOUT_64HZ,
     Tout128Hz  = RTC_RTCCON_TOUT_128HZ,
 #endif
-}RTCTout_TypeDef;                  /*!< end of group RTCTout_TypeDef  */  
+}RTCTout_TypeDef;                  /*!< end of group RTCTout_TypeDef  */
 
-/* 
-* @brief  ƒ÷÷”…Ë÷√∂®“Â
+/*
+* @brief  ÈóπÈíüËÆæÁΩÆÂÆö‰πâ
 */
 typedef union
-{ 
+{
     struct
     {
-        uint8_t minute;            /*!< ƒ÷÷”ºƒ¥Ê∆˜÷–∑÷÷”…Ë÷√          */
-        uint8_t hour;              /*!< ƒ÷÷”ºƒ¥Ê∆˜÷––° ±…Ë÷√          */
-    }Muster;                                                              
-    uint16_t HourAndMinute;                                               
-}RTCAlarm_TypeDef;                 /*!< end of group RTCAlarm_TypeDef */  
+        uint8_t minute;            /*!< ÈóπÈíüÂØÑÂ≠òÂô®‰∏≠ÂàÜÈíüËÆæÁΩÆ          */
+        uint8_t hour;              /*!< ÈóπÈíüÂØÑÂ≠òÂô®‰∏≠Â∞èÊó∂ËÆæÁΩÆ          */
+    }Muster;
+    uint16_t HourAndMinute;
+}RTCAlarm_TypeDef;                 /*!< end of group RTCAlarm_TypeDef */
 
-/* 
-* @brief  RTCƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+/*
+* @brief  RTCÊ®°ÂùóÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-    RTCTMR_InitTypeDef RTC_TMR1;   /*!< RTC∂® ±∆˜1…Ë÷√                */                                                                          
-    RTCTMR_InitTypeDef RTC_TMR2;   /*!< RTC∂® ±∆˜2…Ë÷√                */                                                                         
-    RTCAlarm_TypeDef RTC_Alarm;    /*!< RTCƒ÷÷”…Ë÷√                   */                                                                             
-    RTCTout_TypeDef RTC_TOUT;      /*!< RTC Tout ‰≥ˆ…Ë÷√              */                                                                        
+    RTCTMR_InitTypeDef RTC_TMR1;   /*!< RTCÂÆöÊó∂Âô®1ËÆæÁΩÆ                */
+    RTCTMR_InitTypeDef RTC_TMR2;   /*!< RTCÂÆöÊó∂Âô®2ËÆæÁΩÆ                */
+    RTCAlarm_TypeDef RTC_Alarm;    /*!< RTCÈóπÈíüËÆæÁΩÆ                   */
+    RTCTout_TypeDef RTC_TOUT;      /*!< RTC ToutËæìÂá∫ËÆæÁΩÆ              */
 }RTC_InitTypeDef;                  /*!< end of group RTC_InitTypeDef  */
 
 
 /*
 *********************************************************************************************************
-*                                             »´æ÷±‰¡ø
+*                                             ÂÖ®Â±ÄÂèòÈáè
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Ø ˝…Í√˜
+*                                           ÂÖ®Â±ÄÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
+
 void HT_RTC_Init(RTC_InitTypeDef* RTC_InitStruct);
 void HT_RTC_Read(void* pRTCTime);
 void HT_RTC_Write(void* pRTCTime);
 void HT_RTC_TMRConfig(RTCTMR_SelectTypeDef RTCTMRx, RTCTMR_InitTypeDef* RTCTMR_InitStruct);
 void HT_RTC_ToutSet(RTCTout_TypeDef RTCToutSet);
 void HT_RTC_AlarmSet(RTCAlarm_TypeDef RTCAlarmSet);
-void HT_RTC_ITConfig(uint8_t ITEn, FunctionalState NewState);
-ITStatus HT_RTC_ITFlagStatusGet(uint8_t ITFlag);
-void HT_RTC_ClearITPendingBit(uint8_t ITFlag);
+void HT_RTC_ITConfig(uint16_t ITEn, FunctionalState NewState);
+ITStatus HT_RTC_ITFlagStatusGet(uint16_t ITFlag);
+void HT_RTC_ClearITPendingBit(uint16_t ITFlag);
 Bool HT_RTC_LoadInfoData(void);
 
-
-
-
+#if defined  HT501x  ||  defined  HT502x  ||  defined  HT6x2x  ||  defined  HT6x3x
+void HT_RTC_LRC_Amend(uint32_t TimeCalVal);
+void HT_RTC_LRC_Read(void* pRTCTime);
+void HT_RTC_LRC_Write(void* pRTCTime);
+#endif
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __HT6XXX_RTC_H__ */ 
+#endif /* __HT6XXX_RTC_H__ */

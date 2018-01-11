@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_dma.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : Only support HT6x2x, HT501x and HT502x
+* Version      : V1.0.2
+* Description  : Only support HT6x2x, HT6x3x, HT501x and HT502x
 *********************************************************************************************************
 */
 
@@ -19,11 +19,11 @@
 
 #include "ht6xxx_dma.h"
 
-#if defined HT6x2x  ||  defined  HT501x  ||  defined  HT502x           /* This File Only support HT6x2x, HT501x and HT502x */
+#if defined HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x  ||  defined  HT502x             /* This File Only support HT6x2x, HT6x3x, HT501x and HT502x */
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æž„ä½“
 *********************************************************************************************************
 */
 
@@ -31,68 +31,67 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊýÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜Ž
 *********************************************************************************************************
 */
 
-    
+
 /*
 *********************************************************************************************************
 *                                         INITIAL DMA MODULE
 *
-* º¯ÊýËµÃ÷: ³õÊ¼»¯DMAÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: åˆå§‹åŒ–DMAæ¨¡å—
 *
-* Èë¿Ú²ÎÊý: DMAy_Channelx      Ö»ÄÜÊÇHT_DMA_Channel0/HT_DMA_Channel1/HT_DMA_Channel2ÖÐÒ»¸ö
+* å…¥å£å‚æ•°: DMAy_Channelx      åªèƒ½æ˜¯HT_DMA_Channel0/HT_DMA_Channel1/HT_DMA_Channel2ä¸­ä¸€ä¸ª
 *
-*           DMA_InitStruct     DMA³õÊ¼»¯½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬9¸ö²ÎÊý: 
+*           DMA_InitStruct     DMAåˆå§‹åŒ–ç»“æž„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«9ä¸ªå‚æ•°:
 *                              1) DMA_Request
-*                              2) DMA_SourceAddr    
-*                              3) DMA_DestinationAddr 
-*                              4) DMA_BulkSize 
-*                              5) DMA_SourceAddrInc  :   
-*                              6) DMA_DestinationAddrInc : 
-*                              7) DMA_MemoryDataSize  : 
-*                              8) DMA_TransferMode : 
-*                              9) DMA_CycleMode  : 
+*                              2) DMA_SourceAddr
+*                              3) DMA_DestinationAddr
+*                              4) DMA_BulkSize
+*                              5) DMA_SourceAddrInc  :
+*                              6) DMA_DestinationAddrInc :
+*                              7) DMA_MemoryDataSize  :
+*                              8) DMA_TransferMode :
+*                              9) DMA_CycleMode  :
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž:
 *********************************************************************************************************
 */
 
 void HT_DMA_Init(HT_DMA_Channel_TypeDef* DMAy_Channelx, DMA_InitTypeDef* DMA_InitStruct)
 {
     /*  assert_param  */
-    
     uint32_t tempreg = 0;
-    
+
     tempreg |= DMA_InitStruct->DMA_SourceAddrInc | DMA_InitStruct->DMA_DestinationAddrInc |
-               DMA_InitStruct->DMA_MemoryDataSize | DMA_InitStruct->DMA_TransferMode | 
+               DMA_InitStruct->DMA_MemoryDataSize | DMA_InitStruct->DMA_TransferMode |
                DMA_InitStruct->DMA_CycleMode | DMA_InitStruct->DMA_Request;
-    
+
     DMAy_Channelx->CHNCTL = tempreg;
     DMAy_Channelx->CHNSRC = DMA_InitStruct->DMA_SourceAddr;
     DMAy_Channelx->CHNTAR = DMA_InitStruct->DMA_DestinationAddr;
     DMAy_Channelx->CHNCNT = DMA_InitStruct->DMA_TransferNum;
     DMAy_Channelx->CHNBULKNUM = DMA_InitStruct->DMA_BulkSize;
-    
-}     
+
+}
 
 /*
 *********************************************************************************************************
-*                                 ENABLE OR DISABLE DMA INTERRUPT    
+*                                 ENABLE OR DISABLE DMA INTERRUPT
 *
-* º¯ÊýËµÃ÷: Ê¹ÄÜ»òÕß¹Ø±ÕDMAÖÐ¶Ï
+* å‡½æ•°è¯´æ˜Ž: ä½¿èƒ½æˆ–è€…å…³é—­DMAä¸­æ–­
 *
-* Èë¿Ú²ÎÊý: ITEn       DMAÖÐ¶ÏÉèÖÃÎ»£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ
+* å…¥å£å‚æ•°: ITEn       DMAä¸­æ–­è®¾ç½®ä½ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ
 *                        @arg DMA_DMAIE_TCIE0
 *                        @arg DMA_DMAIE_TCIE1
 *                        @arg DMA_DMAIE_TCIE2
@@ -103,25 +102,24 @@ void HT_DMA_Init(HT_DMA_Channel_TypeDef* DMAy_Channelx, DMA_InitTypeDef* DMA_Ini
 *                        @arg DMA_DMAIE_TEIE1
 *                        @arg DMA_DMAIE_TEIE2
 *
-*           NewState   = ENABLE£º Ê¹ÄÜÖÐ¶Ï
-*                      = DISABLE£º¹Ø±ÕÖÐ¶Ï
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+*           NewState   = ENABLEï¼š ä½¿èƒ½ä¸­æ–­
+*                      = DISABLEï¼šå…³é—­ä¸­æ–­
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_DMA_ITConfig(uint8_t ITEn, FunctionalState NewState)
 {
     /*  assert_param  */
-    
     if (NewState != DISABLE)
-    {       
-        HT_DMA->DMAIE |= (uint32_t)ITEn;            /*!< Ê¹ÄÜDMAÖÐ¶Ï           */
+    {
+        HT_DMA->DMAIE |= (uint32_t)ITEn;            /*!< ä½¿èƒ½DMAä¸­æ–­           */
     }
     else
     {
-        HT_DMA->DMAIE &= ~(uint32_t)ITEn;           /*!< ¹Ø±ÕDMAÖÐ¶Ï           */
-    } 
+        HT_DMA->DMAIE &= ~(uint32_t)ITEn;           /*!< å…³é—­DMAä¸­æ–­           */
+    }
 }
 
 
@@ -129,9 +127,9 @@ void HT_DMA_ITConfig(uint8_t ITEn, FunctionalState NewState)
 *********************************************************************************************************
 *                            GET SPECIFIED DMA INTERRUPT FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦DMAÖÐ¶Ï±êÖ¾×´Ì¬
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”DMAä¸­æ–­æ ‡å¿—çŠ¶æ€
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒª¼ì²éµÄÄ³¸öDMAÖÐ¶Ï£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªDMAä¸­æ–­ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg DMA_DMAIF_TCIF0
 *                        @arg DMA_DMAIF_TCIF1
 *                        @arg DMA_DMAIF_TCIF2
@@ -142,33 +140,32 @@ void HT_DMA_ITConfig(uint8_t ITEn, FunctionalState NewState)
 *                        @arg DMA_DMAIF_TEIF1
 *                        @arg DMA_DMAIF_TEIF2
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  ÏàÓ¦ÖÐ¶Ï±êÖ¾²úÉú
-*                       = RESET£ºÏàÓ¦ÖÐ¶Ï±êÖ¾Î´²úÉú
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  ç›¸åº”ä¸­æ–­æ ‡å¿—äº§ç”Ÿ
+*                       = RESETï¼šç›¸åº”ä¸­æ–­æ ‡å¿—æœªäº§ç”Ÿ
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_DMA_ITFlagStatusGet(uint8_t ITFlag)
 {
     /*  assert_param  */
-    
     if (HT_DMA->DMAIF & ITFlag)
-    {       
+    {
         return SET;                        /*!< DMA Interrupt Flag is set   */
     }
     else
     {
         return RESET;                      /*!< DMA Interrupt Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                                   CLEAR DMA INTERRUPT FLAG
 *
-* º¯ÊýËµÃ÷: Çå³ýDMAÖÐ¶Ï±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: æ¸…é™¤DMAä¸­æ–­æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒªÇå³ýµÄÄ³¸öDMAÖÐ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ¸…é™¤çš„æŸä¸ªDMAä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
 *                        @arg DMA_DMAIF_TCIF0
 *                        @arg DMA_DMAIF_TCIF1
 *                        @arg DMA_DMAIF_TCIF2
@@ -179,34 +176,31 @@ ITStatus HT_DMA_ITFlagStatusGet(uint8_t ITFlag)
 *                        @arg DMA_DMAIF_TEIF1
 *                        @arg DMA_DMAIF_TEIF2
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_DMA_ClearITPendingBit(uint8_t ITFlag)
 {
     /*  assert_param  */
-    
     HT_DMA->DMAIF  &= ~((uint32_t)ITFlag);                  /*!< Clear DMA Interrupt Flag       */
-    
+
 }
-
-
 
 /*
 *********************************************************************************************************
 *                                         Enable DMA MODULE
 *
-* º¯ÊýËµÃ÷: DMA³õÊ¼»¯´«Êä
+* å‡½æ•°è¯´æ˜Ž: DMAåˆå§‹åŒ–ä¼ è¾“
 *
-* Èë¿Ú²ÎÊý: DMAy_Channelx      Ö»ÄÜÊÇHT_DMA_Channel0/HT_DMA_Channel1/HT_DMA_Channel2ÖÐÒ»¸ö
+* å…¥å£å‚æ•°: DMAy_Channelx      åªèƒ½æ˜¯HT_DMA_Channel0/HT_DMA_Channel1/HT_DMA_Channel2ä¸­ä¸€ä¸ª
 *
 *           NewState           ENABLE or DISABLE
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž:
 *********************************************************************************************************
 */
 void DMA_Cmd(HT_DMA_Channel_TypeDef* DMAy_Channelx, FunctionalState NewState)
@@ -223,11 +217,5 @@ void DMA_Cmd(HT_DMA_Channel_TypeDef* DMAy_Channelx, FunctionalState NewState)
   }
 }
 
-
-
-
-
-
-
-#endif                                        /* This File Only support HT6x2x and HT501x */
+#endif                                      /* This File Only support HT6x2x, HT6x3x, HT501x and HT502x */
 

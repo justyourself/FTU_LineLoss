@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_aes&rand.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : Only support HT6x2x, HT501x and HT502x 
+* Version      : V1.0.2
+* Description  : Only support HT6x2x, HT6x3x, HT501x and HT502x
 *********************************************************************************************************
 */
 
@@ -19,11 +19,11 @@
 
 #include "ht6xxx_aes&rand.h"
 
-#if defined HT6x2x  ||  defined  HT501x  ||  defined  HT502x             /* This File Only support HT6x2x, HT501x and HT502x */
+#if defined HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x ||  defined  HT502x      /* This File Only support HT6x2x, HT6x3x, HT501x and HT502x */
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æž„ä½“
 *********************************************************************************************************
 */
 
@@ -31,14 +31,14 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊýÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜Ž
 *********************************************************************************************************
 */
 
@@ -47,333 +47,331 @@
 *********************************************************************************************************
 *                                      AES Encrypt MODULE
 *
-* º¯ÊýËµÃ÷: AES¼ÓÃÜÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: AESåŠ å¯†æ¨¡å—
 *
-* Èë¿Ú²ÎÊý: AESKeyMode			Ã¶¾Ù±äÁ¿£¬Ñ¡Ôñ¼ÓÃÜÄ£Ê½
-*														KEY_Mode_128bits
-*														KEY_Mode_192bits
-*														KEY_Mode_256bits
-*						pKeyAddr  			uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢AES key : pKeyAddr[0]Îª¸ßÎ»
-*                       
-*						pIntDataAddr  	uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢´ý¼ÓÃÜÊý¾Ý£¨Ã÷ÎÄ£©: pIntDataAddr[0]ÎªµÍÎ»
-*   
+* å…¥å£å‚æ•°: AESKeyMode      æžšä¸¾å˜é‡ï¼Œé€‰æ‹©åŠ å¯†æ¨¡å¼
+*                           KEY_Mode_128bits
+*                           KEY_Mode_192bits
+*                           KEY_Mode_256bits
+*           pKeyAddr        uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨AES key : pKeyAddr[0]ä¸ºé«˜ä½
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+*           pIntDataAddr    uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å¾…åŠ å¯†æ•°æ®ï¼ˆæ˜Žæ–‡ï¼‰: pIntDataAddr[0]ä¸ºä½Žä½
+*
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž:
 *********************************************************************************************************
 */
 void HT_AES_Encrypt(AESKeyMode_TypeDef AESKeyMode, uint32_t *pKeyAddr, uint32_t *pIntDataAddr)
 {
-			if(AESKeyMode == KEY_Mode_128bits)
-			{
-					HT_AES->AESCON = 0x00; 										/*!< key-128bits,¼ÓÃÜÄ£Ê½							*/
-					HT_AES->AESKEY0 = *pKeyAddr++;						/*!< ÃÜÔ¿Ð´ÈëÃÜÔ¿¼Ä´æÆ÷								*/
-					HT_AES->AESKEY1 = *pKeyAddr++;
-					HT_AES->AESKEY2 = *pKeyAddr++;
-					HT_AES->AESKEY3 = *pKeyAddr;
-			}
-			else if(AESKeyMode == KEY_Mode_192bits)
-			{
-					HT_AES->AESCON = 0x02; 										/*!< key-192bits,¼ÓÃÜÄ£Ê½							*/
-					HT_AES->AESKEY0 = *pKeyAddr++;						/*!< ÃÜÔ¿Ð´ÈëÃÜÔ¿¼Ä´æÆ÷								*/
-					HT_AES->AESKEY1 = *pKeyAddr++;
-					HT_AES->AESKEY2 = *pKeyAddr++;
-					HT_AES->AESKEY3 = *pKeyAddr++;
-					HT_AES->AESKEY4 = *pKeyAddr++;
-					HT_AES->AESKEY5 = *pKeyAddr;
-			}
-			else if(AESKeyMode == KEY_Mode_256bits)
-			{
-					HT_AES->AESCON = 0x04; 										/*!< key-256bits,¼ÓÃÜÄ£Ê½							*/
-					HT_AES->AESKEY0 = *pKeyAddr++;						/*!< ÃÜÔ¿Ð´ÈëÃÜÔ¿¼Ä´æÆ÷								*/
-					HT_AES->AESKEY1 = *pKeyAddr++;
-					HT_AES->AESKEY2 = *pKeyAddr++;
-					HT_AES->AESKEY3 = *pKeyAddr++;
-					HT_AES->AESKEY4 = *pKeyAddr++;
-					HT_AES->AESKEY5 = *pKeyAddr++;
-					HT_AES->AESKEY6 = *pKeyAddr++;
-					HT_AES->AESKEY7 = *pKeyAddr;
-			}
-			
-			HT_AES->AESINLL = *pIntDataAddr++;					/*!< ´ý¼ÓÃÜÊý¾Ý£¨Ã÷ÎÄ£©Ð´Èë¼Ä´æÆ÷				*/
-			HT_AES->AESINML = *pIntDataAddr++;
-			HT_AES->AESINHM =	*pIntDataAddr++;
-			HT_AES->AESINHH = *pIntDataAddr;
-			
-			HT_AES->AESSTR = 0x8329;										/*!< Æô¶¯AES¼ÓÃÜ												*/
+      if(AESKeyMode == KEY_Mode_128bits)
+      {
+          HT_AES->AESCON = 0x00;                    /*!< key-128bits,åŠ å¯†æ¨¡å¼             */
+          HT_AES->AESKEY0 = *pKeyAddr++;            /*!< å¯†é’¥å†™å…¥å¯†é’¥å¯„å­˜å™¨               */
+          HT_AES->AESKEY1 = *pKeyAddr++;
+          HT_AES->AESKEY2 = *pKeyAddr++;
+          HT_AES->AESKEY3 = *pKeyAddr;
+      }
+      else if(AESKeyMode == KEY_Mode_192bits)
+      {
+          HT_AES->AESCON = 0x02;                    /*!< key-192bits,åŠ å¯†æ¨¡å¼             */
+          HT_AES->AESKEY0 = *pKeyAddr++;            /*!< å¯†é’¥å†™å…¥å¯†é’¥å¯„å­˜å™¨               */
+          HT_AES->AESKEY1 = *pKeyAddr++;
+          HT_AES->AESKEY2 = *pKeyAddr++;
+          HT_AES->AESKEY3 = *pKeyAddr++;
+          HT_AES->AESKEY4 = *pKeyAddr++;
+          HT_AES->AESKEY5 = *pKeyAddr;
+      }
+      else if(AESKeyMode == KEY_Mode_256bits)
+      {
+          HT_AES->AESCON = 0x04;                    /*!< key-256bits,åŠ å¯†æ¨¡å¼             */
+          HT_AES->AESKEY0 = *pKeyAddr++;            /*!< å¯†é’¥å†™å…¥å¯†é’¥å¯„å­˜å™¨               */
+          HT_AES->AESKEY1 = *pKeyAddr++;
+          HT_AES->AESKEY2 = *pKeyAddr++;
+          HT_AES->AESKEY3 = *pKeyAddr++;
+          HT_AES->AESKEY4 = *pKeyAddr++;
+          HT_AES->AESKEY5 = *pKeyAddr++;
+          HT_AES->AESKEY6 = *pKeyAddr++;
+          HT_AES->AESKEY7 = *pKeyAddr;
+      }
+
+      HT_AES->AESINLL = *pIntDataAddr++;          /*!< å¾…åŠ å¯†æ•°æ®ï¼ˆæ˜Žæ–‡ï¼‰å†™å…¥å¯„å­˜å™¨       */
+      HT_AES->AESINML = *pIntDataAddr++;
+      HT_AES->AESINHM = *pIntDataAddr++;
+      HT_AES->AESINHH = *pIntDataAddr;
+
+      HT_AES->AESSTR = 0x8329;                    /*!< å¯åŠ¨AESåŠ å¯†                        */
 }
 
 /*
 *********************************************************************************************************
 *                                      AES Decrypt MODULE
 *
-* º¯ÊýËµÃ÷: AES½âÃÜÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: AESè§£å¯†æ¨¡å—
 *
-* Èë¿Ú²ÎÊý: AESKeyMode			Ã¶¾Ù±äÁ¿£¬Ñ¡Ôñ½âÃÜÄ£Ê½
-*														KEY_Mode_128bits
-*														KEY_Mode_192bits
-*														KEY_Mode_256bits
-*						pKeyAddr  			uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢AES key : pKeyAddr[0]Îª¸ßÎ»
-*                       
-*						pIntDataAddr  	uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢´ý½âÃÜÊý¾Ý£¨ÃÜÎÄ£©: pIntDataAddr[0]ÎªµÍÎ»
-*   
+* å…¥å£å‚æ•°: AESKeyMode      æžšä¸¾å˜é‡ï¼Œé€‰æ‹©è§£å¯†æ¨¡å¼
+*                           KEY_Mode_128bits
+*                           KEY_Mode_192bits
+*                           KEY_Mode_256bits
+*           pKeyAddr        uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨AES key : pKeyAddr[0]ä¸ºé«˜ä½
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+*           pIntDataAddr    uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å¾…è§£å¯†æ•°æ®ï¼ˆå¯†æ–‡ï¼‰: pIntDataAddr[0]ä¸ºä½Žä½
+*
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž:
 *********************************************************************************************************
 */
 void HT_AES_Decrypt(AESKeyMode_TypeDef AESKeyMode, uint32_t *pKeyAddr, uint32_t *pIntDataAddr)
 {
-			if(AESKeyMode == KEY_Mode_128bits)
-			{
-					HT_AES->AESCON = 0x01; 										/*!< key-128bits,½âÃÜÄ£Ê½							*/
-					HT_AES->AESKEY0 = *pKeyAddr++;						/*!< ÃÜÔ¿Ð´ÈëÃÜÔ¿¼Ä´æÆ÷								*/
-					HT_AES->AESKEY1 = *pKeyAddr++;
-					HT_AES->AESKEY2 = *pKeyAddr++;
-					HT_AES->AESKEY3 = *pKeyAddr;
-			}
-			else if(AESKeyMode == KEY_Mode_192bits)
-			{
-					HT_AES->AESCON = 0x03; 										/*!< key-192bits,½âÃÜÄ£Ê½							*/
-					HT_AES->AESKEY0 = *pKeyAddr++;						/*!< ÃÜÔ¿Ð´ÈëÃÜÔ¿¼Ä´æÆ÷								*/
-					HT_AES->AESKEY1 = *pKeyAddr++;
-					HT_AES->AESKEY2 = *pKeyAddr++;
-					HT_AES->AESKEY3 = *pKeyAddr++;
-					HT_AES->AESKEY4 = *pKeyAddr++;
-					HT_AES->AESKEY5 = *pKeyAddr;
-			}
-			else if(AESKeyMode == KEY_Mode_256bits)
-			{
-					HT_AES->AESCON = 0x05; 										/*!< key-256bits,½âÃÜÄ£Ê½							*/
-					HT_AES->AESKEY0 = *pKeyAddr++;						/*!< ÃÜÔ¿Ð´ÈëÃÜÔ¿¼Ä´æÆ÷								*/
-					HT_AES->AESKEY1 = *pKeyAddr++;
-					HT_AES->AESKEY2 = *pKeyAddr++;
-					HT_AES->AESKEY3 = *pKeyAddr++;
-					HT_AES->AESKEY4 = *pKeyAddr++;
-					HT_AES->AESKEY5 = *pKeyAddr++;
-					HT_AES->AESKEY6 = *pKeyAddr++;
-					HT_AES->AESKEY7 = *pKeyAddr;
-			}
-			
-			HT_AES->AESINLL = *pIntDataAddr++;					/*!< ´ý½âÃÜÊý¾Ý£¨ÃÜÎÄ£©Ð´Èë¼Ä´æÆ÷				*/
-			HT_AES->AESINML = *pIntDataAddr++;
-			HT_AES->AESINHM =	*pIntDataAddr++;
-			HT_AES->AESINHH = *pIntDataAddr;
-			
-			HT_AES->AESSTR = 0x8329;										/*!< Æô¶¯AES½âÃÜ												*/
+      if(AESKeyMode == KEY_Mode_128bits)
+      {
+          HT_AES->AESCON = 0x01;                    /*!< key-128bits,è§£å¯†æ¨¡å¼             */
+          HT_AES->AESKEY0 = *pKeyAddr++;            /*!< å¯†é’¥å†™å…¥å¯†é’¥å¯„å­˜å™¨               */
+          HT_AES->AESKEY1 = *pKeyAddr++;
+          HT_AES->AESKEY2 = *pKeyAddr++;
+          HT_AES->AESKEY3 = *pKeyAddr;
+      }
+      else if(AESKeyMode == KEY_Mode_192bits)
+      {
+          HT_AES->AESCON = 0x03;                    /*!< key-192bits,è§£å¯†æ¨¡å¼             */
+          HT_AES->AESKEY0 = *pKeyAddr++;            /*!< å¯†é’¥å†™å…¥å¯†é’¥å¯„å­˜å™¨               */
+          HT_AES->AESKEY1 = *pKeyAddr++;
+          HT_AES->AESKEY2 = *pKeyAddr++;
+          HT_AES->AESKEY3 = *pKeyAddr++;
+          HT_AES->AESKEY4 = *pKeyAddr++;
+          HT_AES->AESKEY5 = *pKeyAddr;
+      }
+      else if(AESKeyMode == KEY_Mode_256bits)
+      {
+          HT_AES->AESCON = 0x05;                    /*!< key-256bits,è§£å¯†æ¨¡å¼             */
+          HT_AES->AESKEY0 = *pKeyAddr++;            /*!< å¯†é’¥å†™å…¥å¯†é’¥å¯„å­˜å™¨               */
+          HT_AES->AESKEY1 = *pKeyAddr++;
+          HT_AES->AESKEY2 = *pKeyAddr++;
+          HT_AES->AESKEY3 = *pKeyAddr++;
+          HT_AES->AESKEY4 = *pKeyAddr++;
+          HT_AES->AESKEY5 = *pKeyAddr++;
+          HT_AES->AESKEY6 = *pKeyAddr++;
+          HT_AES->AESKEY7 = *pKeyAddr;
+      }
+
+      HT_AES->AESINLL = *pIntDataAddr++;          /*!< å¾…è§£å¯†æ•°æ®ï¼ˆå¯†æ–‡ï¼‰å†™å…¥å¯„å­˜å™¨       */
+      HT_AES->AESINML = *pIntDataAddr++;
+      HT_AES->AESINHM = *pIntDataAddr++;
+      HT_AES->AESINHH = *pIntDataAddr;
+
+      HT_AES->AESSTR = 0x8329;                    /*!< å¯åŠ¨AESè§£å¯†                        */
 }
 
 /*
 *********************************************************************************************************
-*                                      GHASH ³Ë·¨ÔËËã MODULE
+*                                      GHASH ä¹˜æ³•è¿ç®— MODULE
 *
-* º¯ÊýËµÃ÷: GHASH ³Ë·¨ÔËËãÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: GHASH ä¹˜æ³•è¿ç®—æ¨¡å—
 *
-* Èë¿Ú²ÎÊý: 
-*						pIntDataAddr1		uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢³ËÊý1Êý¾Ý : pIntDataAddr1[0]ÎªµÍÎ»
-*                       
-*						pIntDataAddr2  	uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢³ËÊý2Êý¾Ý : pIntDataAddr2[0]ÎªµÍÎ»
-*   
+* å…¥å£å‚æ•°:
+*           pIntDataAddr1   uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ä¹˜æ•°1æ•°æ® : pIntDataAddr1[0]ä¸ºä½Žä½
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+*           pIntDataAddr2   uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ä¹˜æ•°2æ•°æ® : pIntDataAddr2[0]ä¸ºä½Žä½
+*
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž:
 *********************************************************************************************************
 */
 void HT_GHASH_Multiply(uint32_t *pIntDataAddr1, uint32_t *pIntDataAddr2)
 {
-		HT_GHASH->INPUT1LL = *pIntDataAddr1++;				/*!< Ð´Èë³ËÊý1													*/
-		HT_GHASH->INPUT1ML = *pIntDataAddr1++;
-		HT_GHASH->INPUT1HM = *pIntDataAddr1++;
-		HT_GHASH->INPUT1HH = *pIntDataAddr1;
-		
-		HT_GHASH->INPUT2LL = *pIntDataAddr2++;				/*!< Ð´Èë³ËÊý2													*/
-		HT_GHASH->INPUT2ML = *pIntDataAddr2++;
-		HT_GHASH->INPUT2HM = *pIntDataAddr2++;
-		HT_GHASH->INPUT2HH = *pIntDataAddr2;
-	
-		HT_GHASH->GHASHSTR = 0x0501;									/*!< Æô¶¯GHASH³Ë·¨											*/
-		
+    HT_GHASH->INPUT1LL = *pIntDataAddr1++;        /*!< å†™å…¥ä¹˜æ•°1                          */
+    HT_GHASH->INPUT1ML = *pIntDataAddr1++;
+    HT_GHASH->INPUT1HM = *pIntDataAddr1++;
+    HT_GHASH->INPUT1HH = *pIntDataAddr1;
+
+    HT_GHASH->INPUT2LL = *pIntDataAddr2++;        /*!< å†™å…¥ä¹˜æ•°2                          */
+    HT_GHASH->INPUT2ML = *pIntDataAddr2++;
+    HT_GHASH->INPUT2HM = *pIntDataAddr2++;
+    HT_GHASH->INPUT2HH = *pIntDataAddr2;
+
+    HT_GHASH->GHASHSTR = 0x0501;                  /*!< å¯åŠ¨GHASHä¹˜æ³•                      */
+
 }
 /*
 *********************************************************************************************************
-*                                      AES/GHASH³Ë·¨Êä³öÊý¾Ý¶ÁÈ¡ MODULE
+*                                      AES/GHASHä¹˜æ³•è¾“å‡ºæ•°æ®è¯»å– MODULE
 *
-* º¯ÊýËµÃ÷: AES/GHASH³Ë·¨Êä³öÊý¾Ý¶ÁÈ¡
+* å‡½æ•°è¯´æ˜Ž: AES/GHASHä¹˜æ³•è¾“å‡ºæ•°æ®è¯»å–
 *
-* Èë¿Ú²ÎÊý: 
-                     
-*						pOutDataAddr  	uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢´ý½âÃÜÊý¾Ý£¨ÃÜÎÄ£©: pIntDataAddr[0]ÎªµÍÎ»
-*   
+* å…¥å£å‚æ•°:
+*           pOutDataAddr    uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å¾…è§£å¯†æ•°æ®ï¼ˆå¯†æ–‡ï¼‰: pIntDataAddr[0]ä¸ºä½Žä½
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž:
 *********************************************************************************************************
 */
 
 void HT_AES_Read(uint32_t *pOutDataAddr)
 {
-		*pOutDataAddr++ = HT_AES->AESOUTLL;
-		*pOutDataAddr++ = HT_AES->AESOUTML;
-		*pOutDataAddr++ = HT_AES->AESOUTHM;
-		*pOutDataAddr 	= HT_AES->AESOUTHH;
+    *pOutDataAddr++ = HT_AES->AESOUTLL;
+    *pOutDataAddr++ = HT_AES->AESOUTML;
+    *pOutDataAddr++ = HT_AES->AESOUTHM;
+    *pOutDataAddr   = HT_AES->AESOUTHH;
 }
 
 void HT_GHASH_Multiply_Read(uint32_t *pOutDataAddr)
 {
-		*pOutDataAddr++ = HT_GHASH->OUTPUTLL;
-		*pOutDataAddr++ = HT_GHASH->OUTPUTML;
-		*pOutDataAddr++ = HT_GHASH->OUTPUTHM;
-		*pOutDataAddr   = HT_GHASH->OUTPUTHH;
+    *pOutDataAddr++ = HT_GHASH->OUTPUTLL;
+    *pOutDataAddr++ = HT_GHASH->OUTPUTML;
+    *pOutDataAddr++ = HT_GHASH->OUTPUTHM;
+    *pOutDataAddr   = HT_GHASH->OUTPUTHH;
 }
 
 /*
 *********************************************************************************************************
-*                                 ENABLE OR DISABLE AES/GHASH/RAND INTERRUPT    
+*                                 ENABLE OR DISABLE AES/GHASH/RAND INTERRUPT
 *
-* º¯ÊýËµÃ÷: Ê¹ÄÜ»òÕß¹Ø±ÕAES/GHASH/RANDÖÐ¶Ï
+* å‡½æ•°è¯´æ˜Ž: ä½¿èƒ½æˆ–è€…å…³é—­AES/GHASH/RANDä¸­æ–­
 *
-* Èë¿Ú²ÎÊý: ITEn       AES/GHASH/RANDÖÐ¶ÏÉèÖÃÎ»£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ
+* å…¥å£å‚æ•°: ITEn       AES/GHASH/RANDä¸­æ–­è®¾ç½®ä½ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ
 *                        @arg AES_IE
 *                        @arg GHASH_IE
 *                        @arg RAND_IE
 *
 *
-*           NewState   = ENABLE£º Ê¹ÄÜÖÐ¶Ï
-*                      = DISABLE£º¹Ø±ÕÖÐ¶Ï
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+*           NewState   = ENABLEï¼š ä½¿èƒ½ä¸­æ–­
+*                      = DISABLEï¼šå…³é—­ä¸­æ–­
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_AES_GHASH_RAND_ITConfig(AES_ITEnTypeDef ITEn, FunctionalState NewState)
 {
     /*  assert_param  */
-    
+
     if (NewState != DISABLE)
-    {       
-        HT_GHASH->AESGHASHIE |= (uint32_t)ITEn;            /*!< Ê¹ÄÜAES/GHASH/RANDÖÐ¶Ï           */
+    {
+        HT_GHASH->AESGHASHIE |= (uint32_t)ITEn;            /*!< ä½¿èƒ½AES/GHASH/RANDä¸­æ–­           */
     }
     else
     {
-        HT_GHASH->AESGHASHIE &= ~(uint32_t)ITEn;           /*!< ¹Ø±ÕAES/GHASH/RANDÖÐ¶Ï           */
-    } 
+        HT_GHASH->AESGHASHIE &= ~(uint32_t)ITEn;           /*!< å…³é—­AES/GHASH/RANDä¸­æ–­           */
+    }
 }
 
 /*
 *********************************************************************************************************
 *                            GET SPECIFIED AES/GHASH/RAND INTERRUPT FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦AES/GHASH/RANDÖÐ¶Ï±êÖ¾×´Ì¬
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”AES/GHASH/RANDä¸­æ–­æ ‡å¿—çŠ¶æ€
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒª¼ì²éµÄAES/GHASH/RANDÖÐ¶Ï£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ£€æŸ¥çš„AES/GHASH/RANDä¸­æ–­ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg AES_IF
 *                        @arg GHASH_IF
 *                        @arg RAND_IF
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  ÏàÓ¦ÖÐ¶Ï±êÖ¾²úÉú
-*                       = RESET£ºÏàÓ¦ÖÐ¶Ï±êÖ¾Î´²úÉú
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  ç›¸åº”ä¸­æ–­æ ‡å¿—äº§ç”Ÿ
+*                       = RESETï¼šç›¸åº”ä¸­æ–­æ ‡å¿—æœªäº§ç”Ÿ
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_AES_GHASH_RAND_ITFlagStatusGet(AES_ITFlagTypeDef ITFlag)
 {
     /*  assert_param  */
-    
+
     if (HT_GHASH->AESGHASHIF & ITFlag)
-    {       
+    {
         return SET;                        /*!< AES/GHASH/RAND Interrupt Flag is set   */
     }
     else
     {
         return RESET;                      /*!< AES/GHASH/RAND Interrupt Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                                   CLEAR AES/GHASH/RAND INTERRUPT FLAG
 *
-* º¯ÊýËµÃ÷: Çå³ýAES/GHASH/RANDÖÐ¶Ï±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: æ¸…é™¤AES/GHASH/RANDä¸­æ–­æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒªÇå³ýµÄÄ³¸öRTCÖÐ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ¸…é™¤çš„æŸä¸ªRTCä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
 *                        @arg AES_IF
 *                        @arg GHASH_IF
 *                        @arg RAND_IF
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_AES_GHASH_RAND_ClearITPendingBit(AES_ITFlagTypeDef ITFlag)
 {
     /*  assert_param  */
-    
-      
+
+
     HT_GHASH->AESGHASHIF  &= ~((uint32_t)ITFlag);                  /*!< Clear AES/GHASH/RAND Interrupt Flag       */
-    
+
 }
 
 /*
 *********************************************************************************************************
 *                            GET AES/GHASH/RAND BUSY STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦AES/GHASH/RANDÖÐBUSY×´Ì¬
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”AES/GHASH/RANDä¸­BUSYçŠ¶æ€
 *
-* Èë¿Ú²ÎÊý: ÎÞ
+* å…¥å£å‚æ•°: æ— 
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  busyÃ¦Âµ
-*                       = RESET£ºbusy¿ÕÏÐ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  busyå¿™ç¢Œ
+*                       = RESETï¼šbusyç©ºé—²
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_AES_Busy_StatusGet(void)
 {
     /*  assert_param  */
-    return (ITStatus)HT_AES->AESFLG;                        		/*!< ·µ»ØAES busy status  				*/
+    return (ITStatus)HT_AES->AESFLG;                            /*!< è¿”å›žAES busy status          */
 }
 
 ITStatus HT_GHASH_Busy_StatusGet(void)
 {
     /*  assert_param  */
-    return (ITStatus)HT_GHASH->GHASHFLG;                        /*!< ·µ»ØGHASHCH³Ë·¨ busy status  */
+    return (ITStatus)HT_GHASH->GHASHFLG;                        /*!< è¿”å›žGHASHCHä¹˜æ³• busy status  */
 }
 
 /*
 *********************************************************************************************************
 *                          128bits  xor function
 *
-* º¯ÊýËµÃ÷: 128bits Òì»òº¯Êý
+* å‡½æ•°è¯´æ˜Ž: 128bits å¼‚æˆ–å‡½æ•°
 *
-* Èë¿Ú²ÎÊý: 
-*						pIntDataAddr1		uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢Òì»òÇ°Êý¾Ý1 : pIntDataAddr1[0]ÎªµÍÎ»
-*                       
-*						pIntDataAddr2  	uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢Òì»òÇ°Êý¾Ý2:  pIntDataAddr2[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°:
+*           pIntDataAddr1   uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å¼‚æˆ–å‰æ•°æ®1 : pIntDataAddr1[0]ä¸ºä½Žä½
 *
-* ·µ»Ø²ÎÊý: 
-*						pOutDataAddr  	uint32_t *ÐÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢Òì»òºóÊý¾Ý : pOutDataAddr[0]ÎªµÍÎ»
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+*           pIntDataAddr2   uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å¼‚æˆ–å‰æ•°æ®2:  pIntDataAddr2[0]ä¸ºä½Žä½
+*
+* è¿”å›žå‚æ•°:
+*           pOutDataAddr    uint32_t *åž‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å¼‚æˆ–åŽæ•°æ® : pOutDataAddr[0]ä¸ºä½Žä½
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_AES_Xor128bits(uint32_t *pIntDataAddr1, uint32_t *pIntDataAddr2, uint32_t *pOutDataAddr)
 {
     /*  assert_param  */
-		uint8_t i;
-	
-		for(i=0;i<4;i++)
-		{
-			*pOutDataAddr++ = (*pIntDataAddr1++) ^ (*pIntDataAddr2++);		/*!< Òì»ò¼ÆËã 				*/
-		}
-           		
-}
+    uint8_t i;
 
+    for(i=0;i<4;i++)
+    {
+      *pOutDataAddr++ = (*pIntDataAddr1++) ^ (*pIntDataAddr2++);    /*!< å¼‚æˆ–è®¡ç®—         */
+    }
+
+}
 
 
 #endif                                        /* This File Only support HT6x2x and HT501x */

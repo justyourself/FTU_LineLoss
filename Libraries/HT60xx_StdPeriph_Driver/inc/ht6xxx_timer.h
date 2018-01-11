@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_timer.h
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.0
-* Description  : 
+* Version      : V1.0.2
+* Description  :
 **********************************************************************************************************
 */
 
@@ -20,113 +20,132 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
-    
+#endif
+
 #include "ht6xxx.h"
-    
+
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Í/Ω·ππÃÂ
+*                                           ÂÖ®Â±ÄÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
 
-/* 
-* @brief  Timerπ§◊˜ƒ£ Ω∂®“Â
+/*
+* @brief  TimerÂ∑•‰ΩúÊ®°ÂºèÂÆö‰πâ
 */
 typedef enum
-{ 
-    TIMPWMCountUpLevelHigh = 0x02,               /*!< PWMœÚ…œº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆Ω∏ﬂ    */
-    TIMPWMCountDownLevelHigh = 0x12,             /*!< PWMœÚœ¬º∆ ˝∑Ω Ω£¨≥ı ºµÁ∆Ω∏ﬂ    */
-    TIMPWMCenterAlignedLevelHigh = 0x22,         /*!< PWM÷–—Î∂‘∆Îº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆Ω∏ﬂ*/
-    TIMPWMCountUpLevelLow = 0x42,                /*!< PWMœÚ…œº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆ΩµÕ    */
-    TIMPWMCountDownLevelLow	= 0x52,              /*!< PWMœÚœ¬º∆ ˝∑Ω Ω£¨≥ı ºµÁ∆ΩµÕ    */
-    TIMPWMCenterAlignedLevelLow = 0x62,          /*!< PWM÷–—Î∂‘∆Îº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆ΩµÕ*/
-    TIMCaptureRiseEdge = 0x04,                   /*!< …œ…˝—ÿ≤∂ªÒ∑Ω Ω                 */
-    TIMCaptureFallEdge = 0x0c,                   /*!< œ¬…˝—ÿ≤∂ªÒ∑Ω Ω                 */
-#if defined HT6x2x
-    TIMEventRecordRiseEdge = 0x00,               /*!< …œ…˝—ÿ ¬º˛º«¬º                 */
-    TIMEventRecordFallEdge = 0x08,               /*!< œ¬…˝—ÿ ¬º˛º«¬º                 */    
+{
+    TIMPWMCountUpLevelHigh       = (TMR_TMRCON_PWMHL_HIGH|TMR_TMRCON_PWMC_UP|TMR_TMRCON_MODE_PWM),      /*!< PWMÂêë‰∏äËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥È´ò    */
+    TIMPWMCountDownLevelHigh     = (TMR_TMRCON_PWMHL_HIGH|TMR_TMRCON_PWMC_DOWM|TMR_TMRCON_MODE_PWM),    /*!< PWMÂêë‰∏ãËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥È´ò    */
+    TIMPWMCenterAlignedLevelHigh = (TMR_TMRCON_PWMHL_HIGH|TMR_TMRCON_PWMC_CENTER|TMR_TMRCON_MODE_PWM),  /*!< PWM‰∏≠Â§ÆÂØπÈΩêËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥È´ò*/
+    TIMPWMCountUpLevelLow        = (TMR_TMRCON_PWMHL_LOW|TMR_TMRCON_PWMC_UP|TMR_TMRCON_MODE_PWM),       /*!< PWMÂêë‰∏äËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥‰Ωé    */
+    TIMPWMCountDownLevelLow      = (TMR_TMRCON_PWMHL_LOW|TMR_TMRCON_PWMC_DOWM|TMR_TMRCON_MODE_PWM),     /*!< PWMÂêë‰∏ãËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥‰Ωé    */
+    TIMPWMCenterAlignedLevelLow  = (TMR_TMRCON_PWMHL_LOW|TMR_TMRCON_PWMC_CENTER|TMR_TMRCON_MODE_PWM),   /*!< PWM‰∏≠Â§ÆÂØπÈΩêËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥‰Ωé*/
+    TIMCaptureRiseEdge           = (TMR_TMRCON_CCMODE_RISE|TMR_TMRCON_MODE_CAPTURE),                    /*!< ‰∏äÂçáÊ≤øÊçïËé∑ÊñπÂºè                */
+    TIMCaptureFallEdge           = (TMR_TMRCON_CCMODE_FALL|TMR_TMRCON_MODE_CAPTURE),                    /*!< ‰∏ãÂçáÊ≤øÊçïËé∑ÊñπÂºè                */
+#if  defined  HT6x1x  ||  defined  HT501x  ||  defined  HT502x
+    TIMCycleTiming               = TMR_TMRCON_MODE_COMPARE,                                             /*!< ÂÆöÊó∂Âô®Âë®ÊúüÂÆöÊó∂                */
+#else
+    TIMCycleTiming               = TMR_TMRCON_MODE_TIMING,                                              /*!< ÂÆöÊó∂Âô®Âë®ÊúüÂÆöÊó∂                */
 #endif
-    TIMCycleTiming = 0x06,                       /*!< ∂® ±∆˜÷‹∆⁄∂® ±                 */
-}TMRMode_TypeDef;                                /*!< end of group TMRMode_TypeDef   */   
+}TMRMode_TypeDef;                                /*!< end of group TMRMode_TypeDef   */
 
-/* 
-* @brief  TimerExtπ§◊˜ƒ£ Ω∂®“Â     only for HT6x2x  Timer4 & Timer5  
+/*
+* @brief  TimerPWMËæìÂá∫Ê®°ÂºèÂíåÊûÅÊÄß     only for HT6x3x
 */
-#if defined HT6x2x
+#if  defined  HT6x3x
 typedef enum
-{ 
-    TIMExtPWMCountUpLevelHigh = 0x02,            /*!< PWMœÚ…œº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆Ω∏ﬂ    */
-    TIMExtPWMCountDownLevelHigh = 0x12,          /*!< PWMœÚœ¬º∆ ˝∑Ω Ω£¨≥ı ºµÁ∆Ω∏ﬂ    */
-    TIMExtPWMCenterAlignedLevelHigh = 0x22,      /*!< PWM÷–—Î∂‘∆Îº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆Ω∏ﬂ*/
-    TIMExtPWMCountUpLevelLow = 0x42,             /*!< PWMœÚ…œº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆ΩµÕ    */
-    TIMExtPWMCountDownLevelLow	= 0x52,          /*!< PWMœÚœ¬º∆ ˝∑Ω Ω£¨≥ı ºµÁ∆ΩµÕ    */
-    TIMExtPWMCenterAlignedLevelLow = 0x62,       /*!< PWM÷–—Î∂‘∆Îº∆ ˝∑Ω Ω£¨≥ı ºµÁ∆ΩµÕ*/
-    TIMExtCycleTiming = 0x06,                    /*!< ∂® ±∆˜÷‹∆⁄∂® ±                 */
-}TMRExtMode_TypeDef;                             /*!< end of group TMRExtMode_TypeDef*/ 
-
-typedef enum
-{ 
-    TIMExtClk_LRC = TMR_TMRCON_CLKSEL_LRC,       /*!< Timer Clk ±÷”‘¥Œ™LRC                */
-    TIMExtClk_LF  = TMR_TMRCON_CLKSEL_LF,        /*!< Timer Clk ±÷”‘¥Œ™LF                 */
-    TIMExtClk_HRC = TMR_TMRCON_CLKSEL_HRC,       /*!< Timer Clk ±÷”‘¥Œ™HRC                */
-    TIMExtClk_PLL = TMR_TMRCON_CLKSEL_PLL,       /*!< Timer Clk ±÷”‘¥Œ™PLL                */    
-    TIMExtClk_MEMS= TMR_TMRCON_CLKSEL_MEMS,      /*!< Timer Clk ±÷”‘¥Œ™MEMS               */     
-}TMRExtClkSource_TypeDef;                        /*!< end of group TMRExtClkSource_TypeDef*/ 
+{
+    TIMPWMSyncOut                  = TMR_TMRCODT_SYNC_OUT,                     /*!< PWMÊ®°Âºè‰∏ãÂêåÊ≠•ËæìÂá∫Ê®°ÂºèÊó†Ê≠ªÂå∫    */
+    TIMPWMCompOutDeadTimeLevelLow  = (TMR_TMRCODT_COMP_OUT|TMR_TMRCODT_DT_LL), /*!< PWMÊ®°Âºè‰∏ã‰∫íË°•ËæìÂá∫Ê®°ÂºèÊ≠ªÂå∫‰ΩéÊûÅÊÄß */
+    TIMPWMCompOutDeadTimeLevelHigh = (TMR_TMRCODT_COMP_OUT|TMR_TMRCODT_DT_HL), /*!< PWMÊ®°Âºè‰∏ã‰∫íË°•ËæìÂá∫Ê®°ÂºèÊ≠ªÂå∫È´òÊûÅÊÄß */
+}TMRPwnMode_TypeDef;                             /*!< end of group TMRPwnMode_TypeDef */
 #endif
 
-/* 
-* @brief  Timerƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+/*
+* @brief  TimerExtÂ∑•‰ΩúÊ®°ÂºèÂÆö‰πâ     only for HT6x2x & HT6x3x  Timer4 & Timer5
+*/
+#if defined HT6x2x  ||  defined  HT6x3x
+typedef enum
+{
+    TIMExtPWMCountUpLevelHigh       = (TMR_TMRCON_PWMHL_HIGH|TMR_TMRCON_PWMC_UP|TMR_TMRCON_MODE_PWM),     /*!< PWMÂêë‰∏äËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥È´ò    */
+    TIMExtPWMCountDownLevelHigh     = (TMR_TMRCON_PWMHL_HIGH|TMR_TMRCON_PWMC_DOWM|TMR_TMRCON_MODE_PWM),   /*!< PWMÂêë‰∏ãËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥È´ò    */
+    TIMExtPWMCenterAlignedLevelHigh = (TMR_TMRCON_PWMHL_HIGH|TMR_TMRCON_PWMC_CENTER|TMR_TMRCON_MODE_PWM), /*!< PWM‰∏≠Â§ÆÂØπÈΩêËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥È´ò*/
+    TIMExtPWMCountUpLevelLow        = (TMR_TMRCON_PWMHL_LOW|TMR_TMRCON_PWMC_UP|TMR_TMRCON_MODE_PWM),      /*!< PWMÂêë‰∏äËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥‰Ωé    */
+    TIMExtPWMCountDownLevelLow      = (TMR_TMRCON_PWMHL_LOW|TMR_TMRCON_PWMC_DOWM|TMR_TMRCON_MODE_PWM),    /*!< PWMÂêë‰∏ãËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥‰Ωé    */
+    TIMExtPWMCenterAlignedLevelLow  = (TMR_TMRCON_PWMHL_LOW|TMR_TMRCON_PWMC_CENTER|TMR_TMRCON_MODE_PWM),  /*!< PWM‰∏≠Â§ÆÂØπÈΩêËÆ°Êï∞ÊñπÂºèÔºåÂàùÂßãÁîµÂπ≥‰Ωé*/
+    TIMExtCycleTiming               = TMR_TMRCON_MODE_TIMING,                                             /*!< ÂÆöÊó∂Âô®Âë®ÊúüÂÆöÊó∂                 */
+}TMRExtMode_TypeDef;                             /*!< end of group TMRExtMode_TypeDef*/
+
+typedef enum
+{
+    TIMExtClk_LRC = TMR_TMRCON_CLKSEL_LRC,       /*!< Timer ClkÊó∂ÈíüÊ∫ê‰∏∫LRC                */
+    TIMExtClk_LF  = TMR_TMRCON_CLKSEL_LF,        /*!< Timer ClkÊó∂ÈíüÊ∫ê‰∏∫LF                 */
+    TIMExtClk_HRC = TMR_TMRCON_CLKSEL_HRC,       /*!< Timer ClkÊó∂ÈíüÊ∫ê‰∏∫HRC                */
+    TIMExtClk_PLL = TMR_TMRCON_CLKSEL_PLL,       /*!< Timer ClkÊó∂ÈíüÊ∫ê‰∏∫PLL                */
+#if  defined  HT6x2x
+    TIMExtClk_MEMS= TMR_TMRCON_CLKSEL_MEMS,      /*!< Timer ClkÊó∂ÈíüÊ∫ê‰∏∫MEMS               */
+#endif
+}TMRExtClkSource_TypeDef;                        /*!< end of group TMRExtClkSource_TypeDef*/
+#endif
+
+/*
+* @brief  TimerÊ®°ÂùóÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-    TMRMode_TypeDef TimerMode;                   /*!< ∂® ±∆˜π§◊˜ƒ£ Ω                 */
-    uint16_t TimerPreDiv;                        /*!< ∂® ±∆˜ ±÷”‘§∑÷∆µ…Ë÷√           */ 
-    uint16_t TimerPeriod;                        /*!< ∂® ±∆˜∂® ±÷‹∆⁄                 */
-    uint16_t TimerCompare;                       /*!< ∂® ±∆˜±»Ωœºƒ¥Ê∆˜               */                      
+    TMRMode_TypeDef TimerMode;                   /*!< ÂÆöÊó∂Âô®Â∑•‰ΩúÊ®°Âºè                 */
+#if  defined  HT6x3x
+    TMRPwnMode_TypeDef PwmMode;                  /*!< PWMËæìÂá∫Ê®°Âºè                    */
+    uint16_t PwmDeadTime;                        /*!< PWMÊ≠ªÂå∫Êó∂Èó¥                    */
+#endif
+    uint16_t TimerPreDiv;                        /*!< ÂÆöÊó∂Âô®Êó∂ÈíüÈ¢ÑÂàÜÈ¢ëËÆæÁΩÆ           */
+    uint16_t TimerPeriod;                        /*!< ÂÆöÊó∂Âô®ÂÆöÊó∂Âë®Êúü                 */
+    uint16_t TimerCompare;                       /*!< ÂÆöÊó∂Âô®ÊØîËæÉÂØÑÂ≠òÂô®               */
 }TMR_InitTypeDef;                                /*!< end of group TMR_InitTypeDef   */
 
-/* 
-* @brief  TimerExtƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+/*
+* @brief  TimerExtÊ®°ÂùóÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
-#if defined HT6x2x
+#if defined HT6x2x  ||  defined  HT6x3x
 typedef struct
 {
-    TMRExtClkSource_TypeDef TimerSource;         /*!< ∂® ±∆˜ ±÷”‘¥—°‘Ò               */
-    TMRExtMode_TypeDef TimerMode;                /*!< ∂® ±∆˜π§◊˜ƒ£ Ω                 */
-    uint16_t TimerPreDiv;                        /*!< ∂® ±∆˜ ±÷”‘§∑÷∆µ…Ë÷√           */ 
-    uint16_t TimerPeriod;                        /*!< ∂® ±∆˜∂® ±÷‹∆⁄                 */     
+    TMRExtClkSource_TypeDef TimerSource;         /*!< ÂÆöÊó∂Âô®Êó∂ÈíüÊ∫êÈÄâÊã©               */
+    TMRExtMode_TypeDef TimerMode;                /*!< ÂÆöÊó∂Âô®Â∑•‰ΩúÊ®°Âºè                 */
+    uint16_t TimerPreDiv;                        /*!< ÂÆöÊó∂Âô®Êó∂ÈíüÈ¢ÑÂàÜÈ¢ëËÆæÁΩÆ           */
+    uint16_t TimerPeriod;                        /*!< ÂÆöÊó∂Âô®ÂÆöÊó∂Âë®Êúü                 */
+    uint16_t TimerCompare;                       /*!< ÂÆöÊó∂Âô®ÊØîËæÉÂØÑÂ≠òÂô®               */
 }TMRExt_InitTypeDef;                             /*!< end of group TMRExt_InitTypeDef*/
 #endif
 
 /*
 *********************************************************************************************************
-*                                             »´æ÷±‰¡ø
+*                                             ÂÖ®Â±ÄÂèòÈáè
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Ø ˝…Í√˜
+*                                           ÂÖ®Â±ÄÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
 
 void HT_TMR_Init(HT_TMR_TypeDef* TMRx, TMR_InitTypeDef* TMR_InitStruct);
-#if defined HT6x2x
-void HT_TMRExt_Init(HT_TMR_TypeDef* TMRx, TMRExt_InitTypeDef* TMR_InitStruct); /*only for HT6x2x Timer4&Timer5 */
+#if defined HT6x2x  ||  defined  HT6x3x
+void HT_TMRExt_Init(HT_TMR_TypeDef* TMRx, TMRExt_InitTypeDef* TMR_InitStruct); /*only for HT6x2x & HT6x3x Timer4&Timer5 */
 #endif
+void HT_TMR_PeriodSet(HT_TMR_TypeDef* TMRx, uint16_t TimerPeriod);
+void HT_TMR_CompareSet(HT_TMR_TypeDef* TMRx, uint16_t TimerCompare);
 uint16_t HT_TMR_CaptureGet(HT_TMR_TypeDef* TMRx);
 uint16_t HT_TMR_CountGet(HT_TMR_TypeDef* TMRx);
-void HT_TMR_ITConfig(HT_TMR_TypeDef* TMRx, uint8_t ITEn, FunctionalState NewState);
-ITStatus HT_TMR_ITFlagStatusGet(HT_TMR_TypeDef* TMRx, uint8_t ITFlag);
-void HT_TMR_ClearITPendingBit(HT_TMR_TypeDef* TMRx, uint8_t ITFlag);
-
-
+void HT_TMR_ITConfig(HT_TMR_TypeDef* TMRx, uint16_t ITEn, FunctionalState NewState);
+ITStatus HT_TMR_ITFlagStatusGet(HT_TMR_TypeDef* TMRx, uint16_t ITFlag);
+void HT_TMR_ClearITPendingBit(HT_TMR_TypeDef* TMRx, uint16_t ITFlag);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __HT6XXX_TIMER_H__ */ 
+#endif /* __HT6XXX_TIMER_H__ */

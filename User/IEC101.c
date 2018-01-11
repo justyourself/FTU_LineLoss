@@ -1,4 +1,6 @@
-
+#include <string.h>
+#include <stdio.h>
+#include "serial.h"
 #include "iec101.h"
 #include "TypeRAM.h"
 #include "data.h"
@@ -14,6 +16,8 @@
 
 #define FIXDMSG  "LINELOSS/FIXD/fixd01.msg"
 #define FIXDXML  "LINELOSS/FIXD/fixd01.xml"
+#define RANDMSG  "LINELOSS/RAND/rand01.msg"
+#define RANDXML  "LINELOSS/RAND/rand01.xml"
 #define FRZDMSG  "LINELOSS/FRZD/frzd01.msg"
 #define FRZDXML  "LINELOSS/FRZD/frzd01.xml"
 #define SHARPMSG "LINELOSS/SHARPD/sharpd01.msg"
@@ -23,6 +27,40 @@
 #define EVTMSG   "LINELOSS/EVENTD/eventd01.msg"
 #define EVTXML   "LINELOSS/EVENTD/eventd01.xml"
 
+
+static char Block_buf[1024];
+static int Blk_size;
+static int Blk_ptr;
+static int Record_no;
+static int Record_num;
+int Assamble_XmlFormat(int sect,char *In,char *Out)
+{
+  int Len=0,i;
+  unsigned long l_val;
+  float f_val;
+  char tmp[64];
+  sprintf(Out,"\t<DataRec sect=\"%d\" tm=\"%04d%02d%02d_%02d%02d%02d\">\r\n",sect,2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len = strlen(Out);
+  for(i=0;i<8;++i)
+  {
+    memcpy(&l_val,In+6+i*4,4);
+    f_val = l_val/1000;
+    sprintf(tmp,"\t\t<DI val=\"%.3f\"/>\r\n",f_val);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  for(i=0;i<4;++i)
+  {
+    memcpy(&l_val,In+38+i*4,4);
+    f_val = l_val/1000;
+    sprintf(tmp,"\t\t<DI val=\"%.3f\"/>\r\n",f_val);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  strcpy(Out+Len,"\t</DataRec>\r\n");
+  Len += strlen("\t</DataRec>\r\n");
+  return Len; 
+}
 
 typedef struct {
   u16 info_addr;
@@ -52,11 +90,116 @@ S_SNINFO s_sninfo[]=
 };
 
 
-unsigned char *File_List[]={FIXDMSG,FIXDXML,FRZDMSG,FRZDXML,SHARPMSG,SHARPXML,MONMSG,MONXML,EVTMSG,EVTXML};
+unsigned char *File_List[]={FIXDMSG,FIXDXML,RANDMSG,RANDXML,FRZDMSG,FRZDXML,SHARPMSG,SHARPXML,MONMSG,MONXML,EVTMSG,EVTXML};
 
 static struct IEC101_STRUCT m_IEC101;
 struct IEC101_STRUCT *lpIEC101=&m_IEC101;	//IEC101规约私用数据指针
 
+
+int Send_LoadXmlFile_Head(char *buf)
+{
+      int byMsgNum=0;
+      strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      strcpy(buf + byMsgNum,"FIXD");
+      byMsgNum += strlen("FIXD");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
+      return byMsgNum;
+}
+
+int Send_RandXmlFile_Head(char *buf)
+{
+      int byMsgNum=0;
+      strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      strcpy(buf + byMsgNum,"RAND");
+      byMsgNum += strlen("RAND");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      return byMsgNum;
+}
+
+int Send_FrzdXmlFile_Head(char *buf)
+{
+      int byMsgNum=0;
+      strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      strcpy(buf + byMsgNum,"FRZD");
+      byMsgNum += strlen("FRZD");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      return byMsgNum;
+}
+
+int Send_SharpdXmlFile_Head(char *buf)
+{
+      int byMsgNum=0;
+      strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      strcpy(buf + byMsgNum,"SHARPD");
+      byMsgNum += strlen("SHARPD");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      return byMsgNum;
+}
+
+int Send_MonthdXmlFile_Head(char *buf)
+{
+      int byMsgNum=0;
+      strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      strcpy(buf + byMsgNum,"MONTHD");
+      byMsgNum += strlen("MONTHD");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      return byMsgNum;
+}
+
+int Send_XmlDataType1(char * buf)
+{
+  int byMsgNum=0;
+  strcpy(buf + byMsgNum,"\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25602\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25603\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25604\" type=\"float\" unit=\"kVARh\" />\r\n");
+  byMsgNum += strlen("\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25602\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25603\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25604\" type=\"float\" unit=\"kVARh\" />\r\n");
+    return byMsgNum;
+}
+
+int Send_XmlDataType2(char * buf)
+{
+  int byMsgNum=0;
+  strcpy(buf + byMsgNum,"\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25605\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25606\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25607\" type=\"float\" unit=\"kVARh\" />\r\n");
+      byMsgNum += strlen("\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
+    \t\t<DI ioa=\"25605\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25606\" type=\"float\" unit=\"kVARh\" />\r\n \
+    \t\t<DI ioa=\"25607\" type=\"float\" unit=\"kVARh\" />\r\n");
+    return byMsgNum;
+}
+
+int Send_XmlDataType3(char * buf)
+{
+  int byMsgNum=0;
+  strcpy(buf + byMsgNum,"\t\t<DI ioa=\"16392\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16393\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16394\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16395\" type=\"float\" unit=\"W\" />\r\n \
+  \t</DataAttr>\r\n");
+      byMsgNum += strlen("\t\t<DI ioa=\"16392\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16393\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16394\" type=\"float\" unit=\"W\" />\r\n \
+    \t\t<DI ioa=\"16395\" type=\"float\" unit=\"W\" />\r\n \
+  \t</DataAttr>\r\n");
+    return byMsgNum;
+}
+                         
 unsigned long GetYc(unsigned short ycno)
 {
   unsigned long *Ptr;
@@ -127,8 +270,8 @@ void IEC101RErrorProcess(void)
 
 void Iec101LinkRecv(void)
 {
-  u8 Count,byRecv,bySum = 0;
-  int i,j;
+  u8 Count;
+  int i;
   Count=Serial_Read(2,lpIEC101->byRecvBuf+lpIEC101->wRecvNum,128);
   if(Count)
   {
@@ -557,7 +700,7 @@ void WatchPWindow(void)
 //搜索一级数据
 void SearchFirstData(void)
 {     
-    	short wYxChang,wSendNo;
+    	//short wYxChang,wSendNo;
     	if(lpIEC101->FlagPingH)	  //如果是平衡方式
     	{
           if((lpIEC101->PRecvFrame.byFunCode == RESET_LINK) && (lpIEC101->PWinTimer>200) && (lpIEC101->initstatus == justinit))
@@ -689,11 +832,11 @@ u8 OrgnizeInitEndMsg(u8* pbyMsg)
 //组读数据信息体
 u8 OrgnizeReadDataMsg(u8* lpby)
 {
-	int wYxTNo;
-	u8 byYxVal,i;
+	//int wYxTNo;
+	u8 i;
 	int wYcTNo;
 	int  iYcVal;
-	int wDdTNo;
+	//int wDdTNo;
 	int dwDdVal;
 	u8 byMsgNum = 1;
 #if 1       
@@ -732,7 +875,7 @@ u8 OrgnizeReadDataMsg(u8* lpby)
 		else if( (lpIEC101->dwReadAd.Word[0] >= IEC101_DDSA_2002) && (lpIEC101->dwReadAd.Word[0] <= IEC101_DDEA_2002) )//fulianqiang 2005.9.2
 		{
 			*(lpby + 0) = 15;
-			wDdTNo = lpIEC101->dwReadAd.Word[0] - IEC101_DDSA_2002;
+			//wDdTNo = lpIEC101->dwReadAd.Word[0] - IEC101_DDSA_2002;
 			//dwDdVal = GetDd(wDdTNo);
                         dwDdVal = 0x12345678;
 			*(lpby + byMsgNum ++) = (u8)dwDdVal;
@@ -772,7 +915,7 @@ u8 OrgnizeReadDataMsg(u8* lpby)
 		else if( (lpIEC101->dwReadAd.Word[0] >= IEC101_DDSA) && (lpIEC101->dwReadAd.Word[0] <= IEC101_DDEA) )//fulianqiang 2005.9.2
 		{
 			*(lpby + 0) = 15;
-			wDdTNo = lpIEC101->dwReadAd.Word[0] - IEC101_DDSA;	   //fulianqiang 2005.9.2
+			//wDdTNo = lpIEC101->dwReadAd.Word[0] - IEC101_DDSA;	   //fulianqiang 2005.9.2
 			dwDdVal = 0x12345678;//GetDd(wDdTNo);
 			*(lpby + byMsgNum ++) = (u8)dwDdVal;
 			*(lpby + byMsgNum ++) = (u8)(dwDdVal >> 8);
@@ -836,12 +979,12 @@ void SendData1(void)
 //组SOE信息体
 u8 OrgnizeSoeMsg(void)
 {
-	int wSendNo;
-	int  dwInfoAd;
-	int wMs;
+	//int wSendNo;
+	//int  dwInfoAd;
+	//int wMs;
 //	u8 *lpby = lpIEC101->PSeAppLayer.lpByBuf;
-	u8 i,byMsgNum = 0,bySendSoeNum = 0;
-	u8 * lpInfoNum;
+	u8 byMsgNum = 0;
+	//u8 * lpInfoNum;
 #if 0        
 	if( lpIEC101->PC56Time2a )
 		*(lpby + byMsgNum ++) = 30;
@@ -905,14 +1048,14 @@ u8 OrgnizeSoeMsg(void)
 //组遥测越限值信息体
 u8 OrgnizeYcOverMsg(void)
 {
-	int i;
-	int  dwYcAdd;
-	int  nTempYc;
-	int  iThreshold;	//门限值
-	int  iDifference;	//差值
-	u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
-	u8  j,byMsgNum = 0,bySendYcOverNum = 0;
-	u8* lpInfoNum;
+	//int i;
+	//int  dwYcAdd;
+	//int  nTempYc;
+	//int  iThreshold;	//门限值
+	//int  iDifference;	//差值
+	//u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
+	//u8  j,byMsgNum = 0,bySendYcOverNum = 0;
+	//u8* lpInfoNum;
 #if 0        
 	*(lpby + byMsgNum ++) = 21;			// 类型标识21
 	lpInfoNum = lpby + byMsgNum ++;		//信息体数目
@@ -958,7 +1101,7 @@ u8 OrgnizeYcOverMsg(void)
 	else
 		byMsgNum = 0;
 #endif        
-	return byMsgNum;
+	return 0;
 }
 //上送二级数据
 void SendData2(void)
@@ -1018,8 +1161,8 @@ u8 OrgnizeGenAck(u8 bySendReason)
 //组全遥信信息体
 u8 OrgnizeYxMsg(u8 *lpby,u8 bySendReason,u8 byFrameNo)
 {
-	u8 j,byYxVal;
-	u8 byMsgNum = 0;
+	//u8 j,byYxVal;
+	//u8 byMsgNum = 0;
 #if 0        
     //WORD wStartAd;
  FOUR_BYTE_TO_DWORD  dwStartAd;
@@ -1057,7 +1200,7 @@ u8 OrgnizeYxMsg(u8 *lpby,u8 bySendReason,u8 byFrameNo)
 		}
 	}
 #endif        
-	return byMsgNum;
+	return 0;
 }
 //组全遥测信息体
 u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
@@ -1068,7 +1211,7 @@ u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
        //	WORD wStartAd;      
         union IEC101_DADD dwStartAd;
         unsigned char databuf[8];
-	unsigned long  nVal;
+	//unsigned long  nVal;
         float f_val;
 	u8 j,byYcNPF;	//每帧遥测数
 	static unsigned short wStartYcAd[8] = {0x701, 0x741, 0x781, 0x7C1, 0x801, 0x841, 0x881, 0x8C1};
@@ -1288,7 +1431,7 @@ u8 OrgnizeTimeMsg(void)
         HT_RTC_Read(Point);
 	u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
 	u8 j,byMsgNum = 0;
-	u8 byTimeValid = 0;
+	//u8 byTimeValid = 0;
 
 	*(lpby + byMsgNum ++) = 103;	// 103
 	*(lpby + byMsgNum ++) = 1;
@@ -1583,13 +1726,13 @@ void Dir_Send(void)
     *(lpby + byMsgNum ++) = 0x01;
   }
   *(lpby + byMsgNum ++) = 0x05;
-  for(i=0;i<5;++i)
+  for(i=0;i<6;++i)
   {
-    *(lpby + byMsgNum) = strlen(File_List[i+lpIEC101->byPSGenStep*5]);
-    memcpy((lpby + byMsgNum + 1),File_List[i+lpIEC101->byPSGenStep*5],*(lpby + byMsgNum));
+    *(lpby + byMsgNum) = strlen((char const *)File_List[i+lpIEC101->byPSGenStep*6]);
+    memcpy((lpby + byMsgNum + 1),File_List[i+lpIEC101->byPSGenStep*6],*(lpby + byMsgNum));
     byMsgNum += (*(lpby + byMsgNum)+1);
     *(lpby + byMsgNum++) = 0;
-    *(lpby + byMsgNum++) = 0x88+i+lpIEC101->byPSGenStep*5;
+    *(lpby + byMsgNum++) = 0x88+i+lpIEC101->byPSGenStep*6;
     *(lpby + byMsgNum++) = 0;
     *(lpby + byMsgNum++) = 0;
     *(lpby + byMsgNum++) = 0;
@@ -1613,7 +1756,7 @@ void File_Recv(void)
 //文件召唤确认信息体
 u8 SendFileGenAck(u8 bySendReason)
 {
-  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
+  char* lpby = (char *)lpIEC101->PSeAppLayer.lpByBuf;
   u8 i,byMsgNum = 0;
   u32 m_filelen;
   *(lpby + byMsgNum ++) = F_FR_NA_1;		// 210
@@ -1642,7 +1785,7 @@ u8 SendFileGenAck(u8 bySendReason)
 //文件信息体
 u8 SendFileInfo(u8 bySendReason)
 {
-  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
+  char* lpby = (char *)lpIEC101->PSeAppLayer.lpByBuf;
   u8 i,byMsgNum = 0,pos,bySum=0,j;
   char *p_filename;
   u32 m_filelen;
@@ -1697,7 +1840,8 @@ u8 SendFileInfo(u8 bySendReason)
 //文件数据
 u8 SendFileData(u8 bySendReason)
 {
-  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
+  char * lpby = (char *)lpIEC101->PSeAppLayer.lpByBuf;
+  char tmpbuf[64];
   u8 i,byMsgNum = 0,pos,bySum=0,j;
   u32 m_filelen;
   *(lpby + byMsgNum ++) = F_FR_NA_1;		// 210
@@ -1717,7 +1861,8 @@ u8 SendFileData(u8 bySendReason)
   m_filelen = (lpIEC101->byPSGenStep-1)*256;
   memcpy(lpby + byMsgNum,&(m_filelen),4);
   byMsgNum += 4;
-  if(lpIEC101->byPSGenStep<9)
+  //if(lpIEC101->byPSGenStep<9)
+  if(Record_no<Record_num)
     *(lpby + byMsgNum ++) = 0x1;
   else
     *(lpby + byMsgNum ++) = 0x0;
@@ -1726,14 +1871,38 @@ u8 SendFileData(u8 bySendReason)
   {
     strcpy(lpby + byMsgNum,"12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
     byMsgNum += strlen("12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
+    if(++Record_no>=Record_num)
+    {
+      lpIEC101->byPSGenStep=254;
+    }
   }
   else if(strstr(lpIEC101->Fname,".xml"))
   {
     switch(lpIEC101->byPSGenStep)
     {
     case 2:
-      strcpy(lpby + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
-      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
+      if(strstr(lpIEC101->Fname,"FIXD"))
+      {
+        byMsgNum +=Send_LoadXmlFile_Head(lpby + byMsgNum);
+      }
+      else if(strstr(lpIEC101->Fname,"RAND"))
+      {
+        byMsgNum +=Send_RandXmlFile_Head(lpby + byMsgNum);
+      }
+      else if(strstr(lpIEC101->Fname,"FRZD"))
+      {
+        byMsgNum +=Send_FrzdXmlFile_Head(lpby + byMsgNum);
+      }
+      else if(strstr(lpIEC101->Fname,"SHARPD"))
+      {
+        byMsgNum +=Send_SharpdXmlFile_Head(lpby + byMsgNum);
+      }
+      else if(strstr(lpIEC101->Fname,"MONTHD"))
+      {
+        byMsgNum +=Send_MonthdXmlFile_Head(lpby + byMsgNum);
+      }
+      //strcpy(lpby + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
+      //byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
       break;
     case 3:
       strcpy(lpby + byMsgNum,"\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
@@ -1766,8 +1935,11 @@ u8 SendFileData(u8 bySendReason)
     \t\t<DI ioa=\"16394\" type=\"float\" unit=\"W\" />\r\n \
     \t\t<DI ioa=\"16395\" type=\"float\" unit=\"W\" />\r\n \
   \t</DataAttr>\r\n");
-             break;
+    Record_no=0;
+    Record_num=10;
+    break;
     default:
+#if 0      
       if(lpIEC101->byPSGenStep%2==0)
       {
       strcpy(lpby + byMsgNum,"\t<DataRec sect=\"1\" tm=\"20171025_113000\">\r\n \
@@ -1804,7 +1976,36 @@ u8 SendFileData(u8 bySendReason)
           strcpy(lpby + byMsgNum,"</DataFile>\r\n");
           byMsgNum += strlen("</DataFile>\r\n");
         }
-      } 
+      }
+#endif
+      if(Blk_size<=Blk_ptr)
+      {
+        Get_LoadData(Record_no,0,tmpbuf);
+        Blk_size=Assamble_XmlFormat(Record_no,tmpbuf,Block_buf);
+        Blk_ptr=0;
+        Record_no++;
+        if(Record_no>=Record_num)
+        {
+          strcpy(Block_buf + Blk_size,"</DataFile>\r\n");
+          Blk_size += strlen("</DataFile>\r\n");
+        }
+      }
+      if((Blk_size-Blk_ptr)>220)
+      {
+        memcpy(lpby + byMsgNum,Block_buf+Blk_ptr,220); 
+        byMsgNum +=220;
+        Blk_ptr +=220;
+      }
+      else
+      {
+        memcpy(lpby + byMsgNum,Block_buf+Blk_ptr,Blk_size-Blk_ptr); 
+        byMsgNum +=Blk_size-Blk_ptr;
+        Blk_ptr=Blk_size;
+        if(Record_no>=Record_num)
+        {
+          lpIEC101->byPSGenStep=254;
+        }
+      }
       break;
     }
   }
@@ -1825,8 +2026,10 @@ void File_Send(void)
       byMsgNum=SendFileInfo(1);
       lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
       lpIEC101->PSeAppLayer.LinkFunCode = 3;
+      Record_no=0;
+      Record_num=10;
     }
-    else if(lpIEC101->byPSGenStep<10)
+    else if(lpIEC101->byPSGenStep<254)
     {
       byMsgNum=SendFileData(1);
       lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;

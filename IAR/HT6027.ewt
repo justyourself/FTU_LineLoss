@@ -176,7 +176,7 @@
       <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</name>
+      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x3x.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</name>
@@ -195,6 +195,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6x3x_emu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</name>

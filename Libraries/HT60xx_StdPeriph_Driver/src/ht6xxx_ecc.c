@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
-* File         : ht6xxx_aes&rand.c
+* File         : ht6xxx_ecc.c
 * By           : Hitrendtech_SocTeam
 * Version      : V1.0.1
-* Description  : Only support HT6x2x, HT501x and HT502x 
+* Description  : Only support HT502x and HT6x3x
 *********************************************************************************************************
 */
 
@@ -19,11 +19,11 @@
 
 #include "ht6xxx_ecc.h"
 
-#if defined  HT502x             /* This File Only support HT502x */
+#if defined  HT502x  ||  defined  HT6x3x             /* This File Only support HT502x */
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æ„ä½“
 *********************************************************************************************************
 */
 
@@ -31,471 +31,471 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊıÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜
 *********************************************************************************************************
 */
 /*
 *********************************************************************************************************
-*                              ECDSA ECC²ÎÊı³õÊ¼»¯ 
+*                              ECDSA ECCå‚æ•°åˆå§‹åŒ–
 *
-* º¯ÊıËµÃ÷: ECDSA ECC²ÎÊı³õÊ¼»¯ 
+* å‡½æ•°è¯´æ˜: ECDSA ECCå‚æ•°åˆå§‹åŒ–
 *
-* Èë¿Ú²ÎÊı: ECC_ECDSA_InitStruct    ECDSA ECC²ÎÊı³õÊ¼»¯ ±äÁ¿½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬5¸ö²ÎÊı: 
-*														1) pECCpAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢ËØÓòµÄ½×p : pECCpAddr[0]ÎªµÍÎ»
-*														2) pECCaAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢ËØÓòÉÏµÄÇúÏß²ÎÊıA : pECCaAddr[0]ÎªµÍÎ»
-*														3) pECCnAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢»ùµãµÄ½×n : pECCnAddr[0]ÎªµÍÎ»
-*														4) pECCGxAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢»ùµãx×ø±ê : pECCGxAddr[0]ÎªµÍÎ»
-*														5) pECCGyAddr  			uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢»ùµãy×ø±ê : pECCGyAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_ECDSA_InitStruct    ECDSA ECCå‚æ•°åˆå§‹åŒ– å˜é‡ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«5ä¸ªå‚æ•°:
+*                           1) pECCpAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç´ åŸŸçš„é˜¶p : pECCpAddr[0]ä¸ºä½ä½
+*                           2) pECCaAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç´ åŸŸä¸Šçš„æ›²çº¿å‚æ•°A : pECCaAddr[0]ä¸ºä½ä½
+*                           3) pECCnAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨åŸºç‚¹çš„é˜¶n : pECCnAddr[0]ä¸ºä½ä½
+*                           4) pECCGxAddr       uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨åŸºç‚¹xåæ ‡ : pECCGxAddr[0]ä¸ºä½ä½
+*                           5) pECCGyAddr       uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨åŸºç‚¹yåæ ‡ : pECCGyAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_ECDSA_Init(ECC_ECDSA_InitTypedef* ECC_ECDSA_InitStruct)
 {
-		uint8_t	i;
+    uint8_t i;
 
-		for(i=0;i<8;i++)
-		{
-				HT_ECC->PREG = *ECC_ECDSA_InitStruct->pECCpAddr++;			//¼ÓÔØECC_p
-				HT_ECC->AREG = *ECC_ECDSA_InitStruct->pECCaAddr++;			//¼ÓÔØECC_a
-				HT_ECC->PXREG = *ECC_ECDSA_InitStruct->pECCGxAddr++;		//¼ÓÔØECC_Gx
-				HT_ECC->PYREG = *ECC_ECDSA_InitStruct->pECCGyAddr++;		//¼ÓÔØECC_Gy
-				HT_ECC->SXREG = *ECC_ECDSA_InitStruct->pECCnAddr++;			//¼ÓÔØECC_n
-		}
+    for(i=0;i<8;i++)
+    {
+        HT_ECC->PREG = *ECC_ECDSA_InitStruct->pECCpAddr++;      //åŠ è½½ECC_p
+        HT_ECC->AREG = *ECC_ECDSA_InitStruct->pECCaAddr++;      //åŠ è½½ECC_a
+        HT_ECC->PXREG = *ECC_ECDSA_InitStruct->pECCGxAddr++;    //åŠ è½½ECC_Gx
+        HT_ECC->PYREG = *ECC_ECDSA_InitStruct->pECCGyAddr++;    //åŠ è½½ECC_Gy
+        HT_ECC->SXREG = *ECC_ECDSA_InitStruct->pECCnAddr++;     //åŠ è½½ECC_n
+    }
 }
 
 /*
 *********************************************************************************************************
-*                              ECC PointOperate ²ÎÊı³õÊ¼»¯ 
+*                              ECC PointOperate å‚æ•°åˆå§‹åŒ–
 *
-* º¯ÊıËµÃ÷: ECC PointOperate²ÎÊı³õÊ¼»¯ 
+* å‡½æ•°è¯´æ˜: ECC PointOperateå‚æ•°åˆå§‹åŒ–
 *
-* Èë¿Ú²ÎÊı: ECC_PointOperate_InitStruct    PointOperate ECC²ÎÊı³õÊ¼»¯ ±äÁ¿½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬2¸ö²ÎÊı: 
-*														1) pECCpAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢ËØÓòµÄ½×p : pECCpAddr[0]ÎªµÍÎ»
-*														2) pECCaAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢ËØÓòÉÏµÄÇúÏß²ÎÊıa : pECCaAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_PointOperate_InitStruct    PointOperate ECCå‚æ•°åˆå§‹åŒ– å˜é‡ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«2ä¸ªå‚æ•°:
+*                           1) pECCpAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç´ åŸŸçš„é˜¶p : pECCpAddr[0]ä¸ºä½ä½
+*                           2) pECCaAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç´ åŸŸä¸Šçš„æ›²çº¿å‚æ•°a : pECCaAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_PointOperate_Init(ECC_PointOperate_InitTypedef* ECC_PointOperate_InitStruct)
 {
-		uint8_t	i;
+    uint8_t i;
 
-		for(i=0;i<8;i++)
-		{
-				HT_ECC->PREG = *ECC_PointOperate_InitStruct->pECCpAddr++;			//¼ÓÔØECC_p
-				HT_ECC->AREG = *ECC_PointOperate_InitStruct->pECCaAddr++;			//¼ÓÔØECC_a
-		}
+    for(i=0;i<8;i++)
+    {
+        HT_ECC->PREG = *ECC_PointOperate_InitStruct->pECCpAddr++;     //åŠ è½½ECC_p
+        HT_ECC->AREG = *ECC_PointOperate_InitStruct->pECCaAddr++;     //åŠ è½½ECC_a
+    }
 }
 
 /*
 *********************************************************************************************************
 *                              EC Digital Signature Algorithm (ECDSA) Signature operation
 *
-* º¯ÊıËµÃ÷: ÍÖÔ²ÇúÏßÊı×ÖÇ©ÃûËã·¨£¬ECDSA-S
+* å‡½æ•°è¯´æ˜: æ¤­åœ†æ›²çº¿æ•°å­—ç­¾åç®—æ³•ï¼ŒECDSA-S
 *
-* Èë¿Ú²ÎÊı: ECC_ECDSA_S_InputStruct    ECDSA-SÔËËãÊäÈë±äÁ¿½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬3¸ö²ÎÊı: 
-*								           	1) pdAddr						uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢Ë½Ô¿d : pdAddrÎªµÍÎ»            
-*														2) pkAddr  					uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢Ëæ»ú´óÕûÊık: pkAddr[0]ÎªµÍÎ»
-*									   				3) pMAddr						uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢HASHºóµÄÏûÏ¢ÕªÒªm: pMAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_ECDSA_S_InputStruct    ECDSA-Sè¿ç®—è¾“å…¥å˜é‡ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«3ä¸ªå‚æ•°:
+*                           1) pdAddr           uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç§é’¥d : pdAddrä¸ºä½ä½
+*                           2) pkAddr           uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨éšæœºå¤§æ•´æ•°k: pkAddr[0]ä¸ºä½ä½
+*                           3) pMAddr           uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨HASHåçš„æ¶ˆæ¯æ‘˜è¦m: pMAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_ECDSA_S(ECC_ECDSA_Signature_InputTypedef* ECC_ECDSA_S_InputStruct)
 {
-		uint8_t	i;
-		uint32_t tempreg = 0;
+    uint8_t i;
+    uint32_t tempreg = 0;
 
-		tempreg = HT_ECC->ECCCON;
-		tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ECCCON_OP_SEL_ECDSA_S);						
-																											/*!< ÅäÖÃÔËËãÄ£Ê½Îª£ºECDSA-S				*/
-		for(i=0;i<8;i++)
-		{
-				HT_ECC->KEYREG = *ECC_ECDSA_S_InputStruct->pdAddr++;			//¼ÓÔØ d
-				HT_ECC->SYREG = *ECC_ECDSA_S_InputStruct->pkAddr++;				//¼ÓÔØ k
-				HT_ECC->MREG = *ECC_ECDSA_S_InputStruct->pMAddr++;				//¼ÓÔØ M
-		}
-		HT_ECC->ECCSTA = 0x0;															/*!< ÇåÁã±êÖ¾												*/			
-		HT_ECC->ECCCON = tempreg;					
-		HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;							/*!< Æô¶¯ÔËËã												*/
+    tempreg = HT_ECC->ECCCON;
+    tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ECCCON_OP_SEL_ECDSA_S);
+                                                      /*!< é…ç½®è¿ç®—æ¨¡å¼ä¸ºï¼šECDSA-S        */
+    for(i=0;i<8;i++)
+    {
+        HT_ECC->KEYREG = *ECC_ECDSA_S_InputStruct->pdAddr++;      //åŠ è½½ d
+        HT_ECC->SYREG = *ECC_ECDSA_S_InputStruct->pkAddr++;       //åŠ è½½ k
+        HT_ECC->MREG = *ECC_ECDSA_S_InputStruct->pMAddr++;        //åŠ è½½ M
+    }
+    HT_ECC->ECCSTA = 0x0;                             /*!< æ¸…é›¶æ ‡å¿—                       */
+    HT_ECC->ECCCON = tempreg;
+    HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;              /*!< å¯åŠ¨è¿ç®—                       */
 }
 
 /*
 *********************************************************************************************************
 *                              EC Digital Signature Algorithm (ECDSA) Verification operation
 *
-* º¯ÊıËµÃ÷: ÍÖÔ²ÇúÏßÊı×ÖÇ©ÃûËã·¨£¬ECDSA-V
+* å‡½æ•°è¯´æ˜: æ¤­åœ†æ›²çº¿æ•°å­—ç­¾åç®—æ³•ï¼ŒECDSA-V
 *
-* Èë¿Ú²ÎÊı: ECC_ECDSA_V_InputStruct    ECDSA-VÔËËãÊäÈë±äÁ¿½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬5¸ö²ÎÊı: 
-*								           	1) pECCDxAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢¹«Ô¿x×ø±ê : pECCDxAddr[0]ÎªµÍÎ»            
-*														2) pECCDyAddr  			uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢¹«Ô¿y×ø±ê : pECCDyAddr[0]ÎªµÍÎ»
-*									   				3) pMAddr						uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢HASHºóµÄÏûÏ¢ÕªÒªm: pMAddr[0]ÎªµÍÎ»
-*														4) prAddr;					uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢Ç©Ãû½á¹ûr²ÎÊı:prAddr[0]ÎªµÍÎ»
-*														5) psAddr;					uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢Ç©Ãû½á¹ûs²ÎÊı:psAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_ECDSA_V_InputStruct    ECDSA-Vè¿ç®—è¾“å…¥å˜é‡ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«5ä¸ªå‚æ•°:
+*                           1) pECCDxAddr       uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å…¬é’¥xåæ ‡ : pECCDxAddr[0]ä¸ºä½ä½
+*                           2) pECCDyAddr       uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨å…¬é’¥yåæ ‡ : pECCDyAddr[0]ä¸ºä½ä½
+*                           3) pMAddr           uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨HASHåçš„æ¶ˆæ¯æ‘˜è¦m: pMAddr[0]ä¸ºä½ä½
+*                           4) prAddr;          uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç­¾åç»“æœrå‚æ•°:prAddr[0]ä¸ºä½ä½
+*                           5) psAddr;          uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç­¾åç»“æœså‚æ•°:psAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_ECDSA_V(ECC_ECDSA_Verification_InputTypedef* ECC_ECDSA_V_InputStruct)
 {
-		uint8_t	i;
-		uint32_t tempreg = 0;
-	
-		tempreg = HT_ECC->ECCCON;
-		tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ECCCON_OP_SEL_ECDSA_V);						
-																											/*!< ÅäÖÃÔËËãÄ£Ê½Îª£ºECDSA-v				*/
-		for(i=0;i<8;i++)
-		{
-				HT_ECC->KEYREG = *ECC_ECDSA_V_InputStruct->pECCDxAddr++;	//¼ÓÔØECC_Dx
-				HT_ECC->SYREG = *ECC_ECDSA_V_InputStruct->pECCDyAddr++;		//¼ÓÔØECC_Dy
-				HT_ECC->MREG = *ECC_ECDSA_V_InputStruct->pMAddr++;				//¼ÓÔØ M
-				HT_ECC->RXREG = *ECC_ECDSA_V_InputStruct->prAddr++;				//¼ÓÔØ r
-				HT_ECC->RYREG = *ECC_ECDSA_V_InputStruct->psAddr++;				//¼ÓÔØ s
-		}
-		HT_ECC->ECCSTA = 0x0;															/*!< ÇåÁã±êÖ¾												*/			
-		HT_ECC->ECCCON = tempreg;					
-		HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;							/*!< Æô¶¯ÔËËã												*/
+    uint8_t i;
+    uint32_t tempreg = 0;
+
+    tempreg = HT_ECC->ECCCON;
+    tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ECCCON_OP_SEL_ECDSA_V);
+                                                      /*!< é…ç½®è¿ç®—æ¨¡å¼ä¸ºï¼šECDSA-v        */
+    for(i=0;i<8;i++)
+    {
+        HT_ECC->KEYREG = *ECC_ECDSA_V_InputStruct->pECCDxAddr++;  //åŠ è½½ECC_Dx
+        HT_ECC->SYREG = *ECC_ECDSA_V_InputStruct->pECCDyAddr++;   //åŠ è½½ECC_Dy
+        HT_ECC->MREG = *ECC_ECDSA_V_InputStruct->pMAddr++;        //åŠ è½½ M
+        HT_ECC->RXREG = *ECC_ECDSA_V_InputStruct->prAddr++;       //åŠ è½½ r
+        HT_ECC->RYREG = *ECC_ECDSA_V_InputStruct->psAddr++;       //åŠ è½½ s
+    }
+    HT_ECC->ECCSTA = 0x0;                             /*!< æ¸…é›¶æ ‡å¿—                       */
+    HT_ECC->ECCCON = tempreg;
+    HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;              /*!< å¯åŠ¨è¿ç®—                       */
 }
 /*
 *********************************************************************************************************
-*                              ECC Point operationÔËËã
+*                              ECC Point operationè¿ç®—
 *
-* º¯ÊıËµÃ÷: ÍÖÔ²ÇúÏßµãÔËËã
+* å‡½æ•°è¯´æ˜: æ¤­åœ†æ›²çº¿ç‚¹è¿ç®—
 *
-* Èë¿Ú²ÎÊı: ECC_PointOperate_InputStruct    ÍÖÔ²ÇúÏßµãÔËËãÊäÈë±äÁ¿½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬10¸ö²ÎÊı: 
-*														1) PointMode				ECC_PointMode_TypeDef±äÁ¿£¬ECCµãÔËËãÄ£Ê½
-*																EccAdd_Mode £ºP(X1,Y1) + S(X2,Y2) = R(X3,Y3)
-*																EccDou_Mode £º2 *P(X1,Y1) = R(X3,Y3)
-*																EccMul_Mode £ºk*P(X1,Y1) = R(X3,Y3)
-*														2) pECCPxAddr				uint32_t *ĞÍ±äÁ¿£¬ECCÇúÏßµÚ1µãx×ø±ê: pECCPxAddr[0]ÎªµÍÎ»
-*														3) pECCPyAddr  			uint32_t *ĞÍ±äÁ¿£¬ECCÇúÏßµÚ1µãy×ø±ê: pECCPyAddr[0]ÎªµÍÎ»
-*								           	4) pECCSxAddr				uint32_t *ĞÍ±äÁ¿£¬ECCÇúÏßµÚ2µãx×ø±ê: pECCSxAddr[0]ÎªµÍÎ»            
-*														5) pECCSyAddr  			uint32_t *ĞÍ±äÁ¿£¬ECCÇúÏßµÚ2µãy×ø±ê : pECCSyAddr[0]ÎªµÍÎ»
-*									   				6) pKscalAddr				uint32_t *ĞÍ±äÁ¿£¬ECCµã³Ë±êÁ¿k: pKscalAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_PointOperate_InputStruct    æ¤­åœ†æ›²çº¿ç‚¹è¿ç®—è¾“å…¥å˜é‡ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«10ä¸ªå‚æ•°:
+*                           1) PointMode        ECC_PointMode_TypeDefå˜é‡ï¼ŒECCç‚¹è¿ç®—æ¨¡å¼
+*                               EccAdd_Mode ï¼šP(X1,Y1) + S(X2,Y2) = R(X3,Y3)
+*                               EccDou_Mode ï¼š2 *P(X1,Y1) = R(X3,Y3)
+*                               EccMul_Mode ï¼šk*P(X1,Y1) = R(X3,Y3)
+*                           2) pECCPxAddr       uint32_t *å‹å˜é‡ï¼ŒECCæ›²çº¿ç¬¬1ç‚¹xåæ ‡: pECCPxAddr[0]ä¸ºä½ä½
+*                           3) pECCPyAddr       uint32_t *å‹å˜é‡ï¼ŒECCæ›²çº¿ç¬¬1ç‚¹yåæ ‡: pECCPyAddr[0]ä¸ºä½ä½
+*                           4) pECCSxAddr       uint32_t *å‹å˜é‡ï¼ŒECCæ›²çº¿ç¬¬2ç‚¹xåæ ‡: pECCSxAddr[0]ä¸ºä½ä½
+*                           5) pECCSyAddr       uint32_t *å‹å˜é‡ï¼ŒECCæ›²çº¿ç¬¬2ç‚¹yåæ ‡ : pECCSyAddr[0]ä¸ºä½ä½
+*                           6) pKscalAddr       uint32_t *å‹å˜é‡ï¼ŒECCç‚¹ä¹˜æ ‡é‡k: pKscalAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_PointOperate(ECC_PointOperate_InputTypedef* ECC_PointOperate_InputStruct)
 {
-		uint8_t	i;
-		uint32_t tempreg = 0;
-	
-		tempreg = HT_ECC->ECCCON;
-		tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_PointOperate_InputStruct->PointMode);						
-																											/*!< ÅäÖÃÔËËãÄ£Ê½Îª£ºECC µã¼Ó				*/
-		switch(ECC_PointOperate_InputStruct->PointMode)
-		{
-				case EccAdd_Mode:
-					for(i=0;i<8;i++)
-					{
-							HT_ECC->PXREG = *ECC_PointOperate_InputStruct->pECCPxAddr++;		//¼ÓÔØECC_Px
-							HT_ECC->PYREG = *ECC_PointOperate_InputStruct->pECCPyAddr++;		//¼ÓÔØECC_Py
-							HT_ECC->SXREG = *ECC_PointOperate_InputStruct->pECCSxAddr++;		//¼ÓÔØECC_Sx
-							HT_ECC->SYREG = *ECC_PointOperate_InputStruct->pECCSyAddr++;		//¼ÓÔØECC_Sy
-					}	
-					break;
-				case EccDou_Mode:
-					for(i=0;i<8;i++)
-					{
-							HT_ECC->PXREG = *ECC_PointOperate_InputStruct->pECCPxAddr++;		//¼ÓÔØECC_Px
-							HT_ECC->PYREG = *ECC_PointOperate_InputStruct->pECCPyAddr++;		//¼ÓÔØECC_Py
-					}
-					break;
-				case EccMul_Mode:
-					for(i=0;i<8;i++)
-					{
-							HT_ECC->PXREG = *ECC_PointOperate_InputStruct->pECCPxAddr++;		//¼ÓÔØECC_Px
-							HT_ECC->PYREG = *ECC_PointOperate_InputStruct->pECCPyAddr++;		//¼ÓÔØECC_Py
-							HT_ECC->KEYREG = *ECC_PointOperate_InputStruct->pKscalAddr++;		//¼ÓÔØ k
-					}	
-					break;
-				default:
-					break;
-		}
-		HT_ECC->ECCSTA = 0x0;															/*!< ÇåÁã±êÖ¾												*/			
-		HT_ECC->ECCCON = tempreg;					
-		HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;							/*!< Æô¶¯ÔËËã												*/
+    uint8_t i;
+    uint32_t tempreg = 0;
+
+    tempreg = HT_ECC->ECCCON;
+    tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_PointOperate_InputStruct->PointMode);
+                                                      /*!< é…ç½®è¿ç®—æ¨¡å¼ä¸ºï¼šECC ç‚¹åŠ        */
+    switch(ECC_PointOperate_InputStruct->PointMode)
+    {
+        case EccAdd_Mode:
+          for(i=0;i<8;i++)
+          {
+              HT_ECC->PXREG = *ECC_PointOperate_InputStruct->pECCPxAddr++;    //åŠ è½½ECC_Px
+              HT_ECC->PYREG = *ECC_PointOperate_InputStruct->pECCPyAddr++;    //åŠ è½½ECC_Py
+              HT_ECC->SXREG = *ECC_PointOperate_InputStruct->pECCSxAddr++;    //åŠ è½½ECC_Sx
+              HT_ECC->SYREG = *ECC_PointOperate_InputStruct->pECCSyAddr++;    //åŠ è½½ECC_Sy
+          }
+          break;
+        case EccDou_Mode:
+          for(i=0;i<8;i++)
+          {
+              HT_ECC->PXREG = *ECC_PointOperate_InputStruct->pECCPxAddr++;    //åŠ è½½ECC_Px
+              HT_ECC->PYREG = *ECC_PointOperate_InputStruct->pECCPyAddr++;    //åŠ è½½ECC_Py
+          }
+          break;
+        case EccMul_Mode:
+          for(i=0;i<8;i++)
+          {
+              HT_ECC->PXREG = *ECC_PointOperate_InputStruct->pECCPxAddr++;    //åŠ è½½ECC_Px
+              HT_ECC->PYREG = *ECC_PointOperate_InputStruct->pECCPyAddr++;    //åŠ è½½ECC_Py
+              HT_ECC->KEYREG = *ECC_PointOperate_InputStruct->pKscalAddr++;   //åŠ è½½ k
+          }
+          break;
+        default:
+          break;
+    }
+    HT_ECC->ECCSTA = 0x0;                             /*!< æ¸…é›¶æ ‡å¿—                       */
+    HT_ECC->ECCCON = tempreg;
+    HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;              /*!< å¯åŠ¨è¿ç®—                       */
 }
 
 /*
 *********************************************************************************************************
 *                              ECC Public Key Validation operation
 *
-* º¯ÊıËµÃ÷: ÍÖÔ²ÇúÏß¹«Ô¿ÑéÖ¤£¬PKV
+* å‡½æ•°è¯´æ˜: æ¤­åœ†æ›²çº¿å…¬é’¥éªŒè¯ï¼ŒPKV
 *
-* Èë¿Ú²ÎÊı: ECC_PKV_InputStruct    PKVÔËËãÊäÈë±äÁ¿½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬10¸ö²ÎÊı: 
-*														1) pECCpAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢ËØÓòµÄ½×p : pECCpAddr[0]ÎªµÍÎ»
-*														2) pECCaAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢ÇúÏß²ÎÊıa : pECCaAddr[0]ÎªµÍÎ»
-*														3) pECCbAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢ÇúÏß²ÎÊıb : pECCbAddr[0]ÎªµÍÎ»
-*														4) pECCPxAddr				uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢»ùµãx×ø±ê : pECCPxAddr[0]ÎªµÍÎ»
-*														5) pECCPyAddr  			uint32_t *ĞÍ±äÁ¿£¬ÆäÖ¸Ïò¶ÔÏó´æ´¢»ùµãy×ø±ê : pECCPyAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_PKV_InputStruct    PKVè¿ç®—è¾“å…¥å˜é‡ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«10ä¸ªå‚æ•°:
+*                           1) pECCpAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨ç´ åŸŸçš„é˜¶p : pECCpAddr[0]ä¸ºä½ä½
+*                           2) pECCaAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨æ›²çº¿å‚æ•°a : pECCaAddr[0]ä¸ºä½ä½
+*                           3) pECCbAddr        uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨æ›²çº¿å‚æ•°b : pECCbAddr[0]ä¸ºä½ä½
+*                           4) pECCPxAddr       uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨åŸºç‚¹xåæ ‡ : pECCPxAddr[0]ä¸ºä½ä½
+*                           5) pECCPyAddr       uint32_t *å‹å˜é‡ï¼Œå…¶æŒ‡å‘å¯¹è±¡å­˜å‚¨åŸºç‚¹yåæ ‡ : pECCPyAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_PublickeyValidate(ECC_PKV_InputTypedef* ECC_PKV_InputStruct)
 {
-		uint8_t	i;
-		uint32_t tempreg = 0;
-	
-		tempreg = HT_ECC->ECCCON;
-		tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ECCCON_OP_SEL_PKV);						
-																											/*!< ÅäÖÃÔËËãÄ£Ê½Îª£ºPKV				*/
-		for(i=0;i<8;i++)
-		{
-				HT_ECC->PREG = *ECC_PKV_InputStruct->pECCpAddr++;			//¼ÓÔØECC_p
-				HT_ECC->AREG = *ECC_PKV_InputStruct->pECCaAddr++;			//¼ÓÔØECC_a
-				HT_ECC->PXREG = *ECC_PKV_InputStruct->pECCPxAddr++;		//¼ÓÔØECC_Px
-				HT_ECC->PYREG = *ECC_PKV_InputStruct->pECCPyAddr++;		//¼ÓÔØECC_Py
-				HT_ECC->SYREG = *ECC_PKV_InputStruct->pECCbAddr++;		//¼ÓÔØECC_b
-		}
-		HT_ECC->ECCSTA = 0x0;															/*!< ÇåÁã±êÖ¾										*/			
-		HT_ECC->ECCCON = tempreg;					
-		HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;							/*!< Æô¶¯ÔËËã										*/
+    uint8_t i;
+    uint32_t tempreg = 0;
+
+    tempreg = HT_ECC->ECCCON;
+    tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ECCCON_OP_SEL_PKV);
+                                                      /*!< é…ç½®è¿ç®—æ¨¡å¼ä¸ºï¼šPKV        */
+    for(i=0;i<8;i++)
+    {
+        HT_ECC->PREG = *ECC_PKV_InputStruct->pECCpAddr++;     //åŠ è½½ECC_p
+        HT_ECC->AREG = *ECC_PKV_InputStruct->pECCaAddr++;     //åŠ è½½ECC_a
+        HT_ECC->PXREG = *ECC_PKV_InputStruct->pECCPxAddr++;   //åŠ è½½ECC_Px
+        HT_ECC->PYREG = *ECC_PKV_InputStruct->pECCPyAddr++;   //åŠ è½½ECC_Py
+        HT_ECC->SYREG = *ECC_PKV_InputStruct->pECCbAddr++;    //åŠ è½½ECC_b
+    }
+    HT_ECC->ECCSTA = 0x0;                             /*!< æ¸…é›¶æ ‡å¿—                   */
+    HT_ECC->ECCCON = tempreg;
+    HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;              /*!< å¯åŠ¨è¿ç®—                   */
 }
 
 
 /*
 *********************************************************************************************************
-*                              Modular operationÔËËã
+*                              Modular operationè¿ç®—
 *
-* º¯ÊıËµÃ÷: ´óÊıÄ£ÔËËã
+* å‡½æ•°è¯´æ˜: å¤§æ•°æ¨¡è¿ç®—
 *
-* Èë¿Ú²ÎÊı: ECC_ModOperate_InputStruct    ´óÊıÄ£ÔËËãÊäÈë±äÁ¿½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬10¸ö²ÎÊı: 
-*														1) ModMode				ECC_ModMode_TypeDef±äÁ¿£¬Ä£ÔËËãÄ£Ê½
-*																ModAdd_Mode £ºPX + PY ( mod n ) = RX
-*																ModSub_Mode £ºPX - PY ( mod n ) = RX
-*																ModMul_Mode £ºPX * PY ( mod n ) = RX
-*																ModDiv_Mode £ºPY / PX ( mod n ) = RX
-*																ModInv_Mode £ºPX-1 ( mod n ) = RX
-*														2) pnAddr				uint32_t *ĞÍ±äÁ¿£¬´óÊıÄ£n : pnAddr[0]ÎªµÍÎ»
-*														3) pPxAddr				uint32_t *ĞÍ±äÁ¿£¬µÚ1¸ö±êÁ¿PX: pPxAddr[0]ÎªµÍÎ»
-*														4) pPyAddr				uint32_t *ĞÍ±äÁ¿£¬µÚ2¸ö±êÁ¿PX: pPyAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_ModOperate_InputStruct    å¤§æ•°æ¨¡è¿ç®—è¾“å…¥å˜é‡ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«10ä¸ªå‚æ•°:
+*                           1) ModMode        ECC_ModMode_TypeDefå˜é‡ï¼Œæ¨¡è¿ç®—æ¨¡å¼
+*                               ModAdd_Mode ï¼šPX + PY ( mod n ) = RX
+*                               ModSub_Mode ï¼šPX - PY ( mod n ) = RX
+*                               ModMul_Mode ï¼šPX * PY ( mod n ) = RX
+*                               ModDiv_Mode ï¼šPY / PX ( mod n ) = RX
+*                               ModInv_Mode ï¼šPX-1 ( mod n ) = RX
+*                           2) pnAddr       uint32_t *å‹å˜é‡ï¼Œå¤§æ•°æ¨¡n : pnAddr[0]ä¸ºä½ä½
+*                           3) pPxAddr        uint32_t *å‹å˜é‡ï¼Œç¬¬1ä¸ªæ ‡é‡PX: pPxAddr[0]ä¸ºä½ä½
+*                           4) pPyAddr        uint32_t *å‹å˜é‡ï¼Œç¬¬2ä¸ªæ ‡é‡PX: pPyAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_ModOperate(ECC_ModOperate_InputTypedef* ECC_ModOperate_InputStruct)
 {
-		uint8_t	i;
-		uint32_t tempreg = 0;
-	
-		tempreg = HT_ECC->ECCCON;
-		tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ModOperate_InputStruct->ModMode);						
-																											/*!< ÅäÖÃÔËËãÄ£Ê½Îª£ºECC µã¼Ó				*/
-		switch(ECC_ModOperate_InputStruct->ModMode)
-		{
-				case ModAdd_Mode:
-				case ModSub_Mode:
-				case ModMul_Mode:
-				case ModDiv_Mode:	
-					for(i=0;i<8;i++)
-					{
-							HT_ECC->PREG = *ECC_ModOperate_InputStruct->pnAddr++;			//¼ÓÔØn
-							HT_ECC->PXREG = *ECC_ModOperate_InputStruct->pPxAddr++;		//¼ÓÔØPx
-							HT_ECC->PYREG = *ECC_ModOperate_InputStruct->pPyAddr++;		//¼ÓÔØPy
-					}	
-					break;
-				case ModInv_Mode:
-					for(i=0;i<8;i++)
-					{
-							HT_ECC->PREG = *ECC_ModOperate_InputStruct->pnAddr++;			//¼ÓÔØn
-							HT_ECC->PXREG = *ECC_ModOperate_InputStruct->pPxAddr++;		//¼ÓÔØPx
-					}
-					break;
-				default:
-					break;
-		}
-		HT_ECC->ECCSTA = 0x0;															/*!< ÇåÁã±êÖ¾												*/			
-		HT_ECC->ECCCON = tempreg;					
-		HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;							/*!< Æô¶¯ÔËËã												*/
+    uint8_t i;
+    uint32_t tempreg = 0;
+
+    tempreg = HT_ECC->ECCCON;
+    tempreg = ((tempreg & (~ECC_ECCCON_OP_SEL)) | ECC_ModOperate_InputStruct->ModMode);
+                                                      /*!< é…ç½®è¿ç®—æ¨¡å¼ä¸ºï¼šECC ç‚¹åŠ        */
+    switch(ECC_ModOperate_InputStruct->ModMode)
+    {
+        case ModAdd_Mode:
+        case ModSub_Mode:
+        case ModMul_Mode:
+        case ModDiv_Mode:
+          for(i=0;i<8;i++)
+          {
+              HT_ECC->PREG = *ECC_ModOperate_InputStruct->pnAddr++;     //åŠ è½½n
+              HT_ECC->PXREG = *ECC_ModOperate_InputStruct->pPxAddr++;   //åŠ è½½Px
+              HT_ECC->PYREG = *ECC_ModOperate_InputStruct->pPyAddr++;   //åŠ è½½Py
+          }
+          break;
+        case ModInv_Mode:
+          for(i=0;i<8;i++)
+          {
+              HT_ECC->PREG = *ECC_ModOperate_InputStruct->pnAddr++;     //åŠ è½½n
+              HT_ECC->PXREG = *ECC_ModOperate_InputStruct->pPxAddr++;   //åŠ è½½Px
+          }
+          break;
+        default:
+          break;
+    }
+    HT_ECC->ECCSTA = 0x0;                             /*!< æ¸…é›¶æ ‡å¿—                       */
+    HT_ECC->ECCCON = tempreg;
+    HT_ECC->ECCCON |= ECC_ECCCON_OP_STR;              /*!< å¯åŠ¨è¿ç®—                       */
 }
 
 
 
 /*
 *********************************************************************************************************
-*                                      ECCÔËËã½á¹ûÊı¾İ¶ÁÈ¡ MODULE
+*                                      ECCè¿ç®—ç»“æœæ•°æ®è¯»å– MODULE
 *
-* º¯ÊıËµÃ÷: ECCÔËËã½á¹ûÊı¾İ¶ÁÈ¡ 
+* å‡½æ•°è¯´æ˜: ECCè¿ç®—ç»“æœæ•°æ®è¯»å–
 *
-* Èë¿Ú²ÎÊı: ECC_PointOperate_OutputStruct   ECCÔËËã½á¹ûÊı¾İ½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬10¸ö²ÎÊı: 
-*										1) pRxAddr				uint32_t *ĞÍ±äÁ¿£¬ECCµãÔËËã½á¹ûx×ø±ê/ECDSAÇ©Ãû½á¹ûr: pRxAddr[0]ÎªµÍÎ»
-*										2) pRyAddr				uint32_t *ĞÍ±äÁ¿£¬ECCµãÔËËã½á¹ûy×ø±ê/ECDSAÇ©Ãû½á¹ûs: pRyAddr[0]ÎªµÍÎ»
+* å…¥å£å‚æ•°: ECC_PointOperate_OutputStruct   ECCè¿ç®—ç»“æœæ•°æ®ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«10ä¸ªå‚æ•°:
+*                   1) pRxAddr        uint32_t *å‹å˜é‡ï¼ŒECCç‚¹è¿ç®—ç»“æœxåæ ‡/ECDSAç­¾åç»“æœr: pRxAddr[0]ä¸ºä½ä½
+*                   2) pRyAddr        uint32_t *å‹å˜é‡ï¼ŒECCç‚¹è¿ç®—ç»“æœyåæ ‡/ECDSAç­¾åç»“æœs: pRyAddr[0]ä¸ºä½ä½
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 void HT_ECC_PointOperate_Read(ECC_PointOperate_OutputTypedef* ECC_PointOperate_OutputStruct)
 {
-		uint8_t i;
-	
-		ECC_PointOperate_OutputStruct->pRxAddr += 7;
-		ECC_PointOperate_OutputStruct->pRyAddr += 7;
-		for(i=0;i<8;i++)
-		{
-				*ECC_PointOperate_OutputStruct->pRxAddr-- = HT_ECC->RXREG;
-				*ECC_PointOperate_OutputStruct->pRyAddr-- = HT_ECC->RYREG;
-		}
+    uint8_t i;
+
+    ECC_PointOperate_OutputStruct->pRxAddr += 7;
+    ECC_PointOperate_OutputStruct->pRyAddr += 7;
+    for(i=0;i<8;i++)
+    {
+        *ECC_PointOperate_OutputStruct->pRxAddr-- = HT_ECC->RXREG;
+        *ECC_PointOperate_OutputStruct->pRyAddr-- = HT_ECC->RYREG;
+    }
 }
 
 /*
 *********************************************************************************************************
-*                                      ´óÊıÄ£ÔËËã½á¹ûÊı¾İ¶ÁÈ¡ MODULE
+*                                      å¤§æ•°æ¨¡è¿ç®—ç»“æœæ•°æ®è¯»å– MODULE
 *
-* º¯ÊıËµÃ÷: ´óÊıÄ£ÔËËã½á¹ûÊı¾İ¶ÁÈ¡ 
+* å‡½æ•°è¯´æ˜: å¤§æ•°æ¨¡è¿ç®—ç»“æœæ•°æ®è¯»å–
 *
-* Èë¿Ú²ÎÊı: pModOperateOutAddr   uint32_t *ĞÍ±äÁ¿,´óÊıÄ£ÔËËã½á¹ûÊı¾İÖ¸Õë
-*   
+* å…¥å£å‚æ•°: pModOperateOutAddr   uint32_t *å‹å˜é‡,å¤§æ•°æ¨¡è¿ç®—ç»“æœæ•°æ®æŒ‡é’ˆ
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: 
+*
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜:
 *********************************************************************************************************
 */
 
 void HT_ECC_ModOperate_Read(uint32_t *pModOperateOutAddr)
 {
-		uint8_t i;
-	
-		pModOperateOutAddr += 7;
-		for(i=0;i<8;i++)
-		{
-				*pModOperateOutAddr-- = HT_ECC->RXREG;
-		}
+    uint8_t i;
+
+    pModOperateOutAddr += 7;
+    for(i=0;i<8;i++)
+    {
+        *pModOperateOutAddr-- = HT_ECC->RXREG;
+    }
 }
 
 /*
 *********************************************************************************************************
-*                                 ENABLE OR DISABLE ECC INTERRUPT    
+*                                 ENABLE OR DISABLE ECC INTERRUPT
 *
-* º¯ÊıËµÃ÷: Ê¹ÄÜ»òÕß¹Ø±ÕECCÖĞ¶Ï
+* å‡½æ•°è¯´æ˜: ä½¿èƒ½æˆ–è€…å…³é—­ECCä¸­æ–­
 *
-* Èë¿Ú²ÎÊı: 
-*           NewState   = ENABLE£º Ê¹ÄÜÖĞ¶Ï
-*                      = DISABLE£º¹Ø±ÕÖĞ¶Ï
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* å…¥å£å‚æ•°:
+*           NewState   = ENABLEï¼š ä½¿èƒ½ä¸­æ–­
+*                      = DISABLEï¼šå…³é—­ä¸­æ–­
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
 void HT_ECC_ITConfig(FunctionalState NewState)
 {
     /*  assert_param  */
-    
+
     if (NewState != DISABLE)
-    {       
-        HT_ECC->ECCCON |= (uint32_t)ECC_ECCCON_ECCIE;            /*!< Ê¹ÄÜECCÖĞ¶Ï           */
+    {
+        HT_ECC->ECCCON |= (uint32_t)ECC_ECCCON_ECCIE;            /*!< ä½¿èƒ½ECCä¸­æ–­           */
     }
     else
     {
-        HT_ECC->ECCCON &= ~(uint32_t)ECC_ECCCON_ECCIE;           /*!< ¹Ø±ÕECCÖĞ¶Ï           */
-    } 
+        HT_ECC->ECCCON &= ~(uint32_t)ECC_ECCCON_ECCIE;           /*!< å…³é—­ECCä¸­æ–­           */
+    }
 }
 
 /*
 *********************************************************************************************************
 *                            GET SPECIFIED ECC INTERRUPT FLAG STATUS
 *
-* º¯ÊıËµÃ÷: »ñÈ¡ÏàÓ¦ECCÖĞ¶Ï±êÖ¾×´Ì¬
+* å‡½æ•°è¯´æ˜: è·å–ç›¸åº”ECCä¸­æ–­æ ‡å¿—çŠ¶æ€
 *
-* Èë¿Ú²ÎÊı: ITFlag     ÏëÒª¼ì²éµÄECCÖĞ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊı:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ£€æŸ¥çš„ECCä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg ECC_IF
 *                        @arg ECC_FLG_BUSY
 *                        @arg ECC_FLG_ECDSA_V
 *                        @arg ECC_FLG_ECDSA_S
 *                        @arg ECC_FLG_PKV
 *
-* ·µ»Ø²ÎÊı: ITStatus    = SET£º  ÏàÓ¦ÖĞ¶Ï±êÖ¾²úÉú
-*                       = RESET£ºÏàÓ¦ÖĞ¶Ï±êÖ¾Î´²úÉú
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* è¿”å›å‚æ•°: ITStatus    = SETï¼š  ç›¸åº”ä¸­æ–­æ ‡å¿—äº§ç”Ÿ
+*                       = RESETï¼šç›¸åº”ä¸­æ–­æ ‡å¿—æœªäº§ç”Ÿ
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_ECC_ITFlagStatusGet(ECC_ITFlagTypeDef ITFlag)
 {
     /*  assert_param  */
-    
+
     if (HT_ECC->ECCSTA & ITFlag)
-    {       
+    {
         return SET;                        /*!< ECC Interrupt Flag is set   */
     }
     else
     {
         return RESET;                      /*!< ECC Interrupt Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                                   CLEAR ECC INTERRUPT FLAG
 *
-* º¯ÊıËµÃ÷: Çå³ıECCÖĞ¶Ï±êÖ¾
+* å‡½æ•°è¯´æ˜: æ¸…é™¤ECCä¸­æ–­æ ‡å¿—
 *
-* Èë¿Ú²ÎÊı: ITFlag     ÏëÒªÇå³ıµÄÄ³¸öECCÖĞ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊı»òÆä×éºÏ:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ¸…é™¤çš„æŸä¸ªECCä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
 *                        @arg ECC_IF
 *                        @arg ECC_FLG_BUSY
 *                        @arg ECC_FLG_ECDSA_V
 *                        @arg ECC_FLG_ECDSA_S
 *                        @arg ECC_FLG_PKV
 *
-* ·µ»Ø²ÎÊı: ÎŞ
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
 void HT_ECC_ClearITPendingBit(ECC_ITFlagTypeDef ITFlag)
 {
     /*  assert_param  */
-    
-      
+
+
     HT_ECC->ECCSTA  &= ~((uint32_t)ITFlag);                  /*!< Clear ECC Interrupt Flag       */
-    
+
 }
 
 /*
 *********************************************************************************************************
 *                            GET ECC BUSY STATUS
 *
-* º¯ÊıËµÃ÷: »ñÈ¡ÏàÓ¦ECCÖĞBUSY×´Ì¬
+* å‡½æ•°è¯´æ˜: è·å–ç›¸åº”ECCä¸­BUSYçŠ¶æ€
 *
-* Èë¿Ú²ÎÊı: ÎŞ
+* å…¥å£å‚æ•°: æ— 
 *
-* ·µ»Ø²ÎÊı: ITStatus    = SET£º  busyÃ¦Âµ
-*                       = RESET£ºbusy¿ÕÏĞ
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* è¿”å›å‚æ•°: ITStatus    = SETï¼š  busyå¿™ç¢Œ
+*                       = RESETï¼šbusyç©ºé—²
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_ECC_Busy_StatusGet(void)
 {
     /*  assert_param  */
-    return (ITStatus)(HT_ECC->ECCSTA & ECC_FLG_BUSY);               /*!< ·µ»ØECC busy status  				*/
+    return (ITStatus)(HT_ECC->ECCSTA & ECC_FLG_BUSY);               /*!< è¿”å›ECC busy status          */
 }
 
 

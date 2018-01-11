@@ -1,17 +1,17 @@
 /*
-**********************************************************************************************************
+*********************************************************************************************************
 *                                              HT6XXX
 *                                          Library Function
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_ecc.h
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : Only support HT502x 
+* Version      : V1.0.2
+* Description  : Only support HT502x and HT6x3x
 **********************************************************************************************************
 */
 
@@ -20,152 +20,152 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
-    
-#include "ht6xxx.h"
-    
-#if defined  HT502x             /* This File Only support HT502x */
+#endif
 
-    
+#include "ht6xxx.h"
+
+#if defined  HT502x  ||  defined  HT6x3x             /* This File Only support HT502x */
+
+
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Í/Ω·ππÃÂ
+*                                           ÂÖ®Â±ÄÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
-	
-/* 
-* @brief  ¥Û ˝ƒ£‘ÀÀ„ƒ£ Ω∂®“Â
-*/
-typedef enum
-{ 
-    ModAdd_Mode = ECC_ECCCON_OP_SEL_MA,       /*!< ƒ£º”‘ÀÀ„                     */
-    ModSub_Mode = ECC_ECCCON_OP_SEL_MS,       /*!< ƒ£ºı‘ÀÀ„                     */
-    ModMul_Mode = ECC_ECCCON_OP_SEL_MM,       /*!< ƒ£≥À‘ÀÀ„                  		*/
-		ModDiv_Mode = ECC_ECCCON_OP_SEL_MD,				/*!< ƒ£≥˝‘ÀÀ„                  		*/
-		ModInv_Mode = ECC_ECCCON_OP_SEL_MI,				/*!< ƒ£ƒÊ‘ÀÀ„                  		*/
-}ECC_ModMode_TypeDef;                										/*!<end of group ECC_ModMode_TypeDef  */	
 
-/* 
-* @brief  ECCµ„‘ÀÀ„ƒ£ Ω∂®“Â
+/*
+* @brief  Â§ßÊï∞Ê®°ËøêÁÆóÊ®°ÂºèÂÆö‰πâ
 */
 typedef enum
-{ 
-    EccAdd_Mode = ECC_ECCCON_OP_SEL_ECA,       /*!< ECCµ„º”‘ÀÀ„                   */
-    EccDou_Mode = ECC_ECCCON_OP_SEL_ECD,       /*!< ECC±∂º”‘ÀÀ„                   */
-    EccMul_Mode = ECC_ECCCON_OP_SEL_ECSM,      /*!< ECCµ„≥À‘ÀÀ„                  	*/
-}ECC_PointMode_TypeDef;                										/*!<end of group ECC_PointMode_TypeDef  */	
+{
+    ModAdd_Mode = ECC_ECCCON_OP_SEL_MA,       /*!< Ê®°Âä†ËøêÁÆó                     */
+    ModSub_Mode = ECC_ECCCON_OP_SEL_MS,       /*!< Ê®°ÂáèËøêÁÆó                     */
+    ModMul_Mode = ECC_ECCCON_OP_SEL_MM,       /*!< Ê®°‰πòËøêÁÆó                     */
+    ModDiv_Mode = ECC_ECCCON_OP_SEL_MD,       /*!< Ê®°Èô§ËøêÁÆó                     */
+    ModInv_Mode = ECC_ECCCON_OP_SEL_MI,       /*!< Ê®°ÈÄÜËøêÁÆó                     */
+}ECC_ModMode_TypeDef;                         /*!<end of group ECC_ModMode_TypeDef  */
 
-/* 
-* @brief  ECC÷–∂œ±Í÷æ∂®“Â
+/*
+* @brief  ECCÁÇπËøêÁÆóÊ®°ÂºèÂÆö‰πâ
 */
 typedef enum
-{ 
-    ECC_IF = ECC_ECCSTA_ECCFLG,       							/*!< ECC‘ÀÀ„ÕÍ≥…÷–∂œ±Í÷æ            	*/
-    ECC_FLG_BUSY = ECC_ECCSTA_BUSY,       					/*!< ECC‘ÀÀ„busy±Í÷æ                  */
-		ECC_FLG_ECDSA_V = ECC_ECCSTA_ECDSA_V,       		/*!< ECDSA»œ÷§±Í÷æ		                */
-		ECC_FLG_ECDSA_S = ECC_ECCSTA_ECDSA_S,						/*!< ECDSA«©√˚÷ÿ ‘±Í÷æ     		        */
-		ECC_FLG= ECC_ECCSTA_PKV,												/*!< ECDSAπ´‘ø—È÷§±Í÷æ   	            */
+{
+    EccAdd_Mode = ECC_ECCCON_OP_SEL_ECA,       /*!< ECCÁÇπÂä†ËøêÁÆó                   */
+    EccDou_Mode = ECC_ECCCON_OP_SEL_ECD,       /*!< ECCÂÄçÂä†ËøêÁÆó                   */
+    EccMul_Mode = ECC_ECCCON_OP_SEL_ECSM,      /*!< ECCÁÇπ‰πòËøêÁÆó                   */
+}ECC_PointMode_TypeDef;                        /*!<end of group ECC_PointMode_TypeDef  */
+
+/*
+* @brief  ECC‰∏≠Êñ≠Ê†áÂøóÂÆö‰πâ
+*/
+typedef enum
+{
+    ECC_IF = ECC_ECCSTA_ECCFLG,                     /*!< ECCËøêÁÆóÂÆåÊàê‰∏≠Êñ≠Ê†áÂøó              */
+    ECC_FLG_BUSY = ECC_ECCSTA_BUSY,                 /*!< ECCËøêÁÆóbusyÊ†áÂøó                  */
+    ECC_FLG_ECDSA_V = ECC_ECCSTA_ECDSA_V,           /*!< ECDSAËÆ§ËØÅÊ†áÂøó                    */
+    ECC_FLG_ECDSA_S = ECC_ECCSTA_ECDSA_S,           /*!< ECDSAÁ≠æÂêçÈáçËØïÊ†áÂøó                */
+    ECC_FLG= ECC_ECCSTA_PKV,                        /*!< ECDSAÂÖ¨Èí•È™åËØÅÊ†áÂøó                */
 }ECC_ITFlagTypeDef;
 
-/* 
-* @brief  Modular operation‘ÀÀ„  ‰»Î±‰¡øΩ·ππ∂®“Â
+/*
+* @brief  Modular operationËøêÁÆó ËæìÂÖ•ÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			ECC_ModMode_TypeDef	ModMode;				//ƒ£‘ÀÀ„ƒ£ Ω
-			uint32_t *pnAddr;										//¥Û ˝ƒ£n
-			uint32_t *pPxAddr;									//µ⁄1∏ˆ±Í¡øPX
-			uint32_t *pPyAddr;									//µ⁄2∏ˆ±Í¡øPY
-}ECC_ModOperate_InputTypedef;							/*!< end of group ECC_ModOperate_InputTypedef*/
+      ECC_ModMode_TypeDef ModMode;        //Ê®°ËøêÁÆóÊ®°Âºè
+      uint32_t *pnAddr;                   //Â§ßÊï∞Ê®°n
+      uint32_t *pPxAddr;                  //Á¨¨1‰∏™Ê†áÈáèPX
+      uint32_t *pPyAddr;                  //Á¨¨2‰∏™Ê†áÈáèPY
+}ECC_ModOperate_InputTypedef;             /*!< end of group ECC_ModOperate_InputTypedef*/
 
-/* 
-* @brief  ECC PointOperate Initial±‰¡øΩ·ππ∂®“Â
+/*
+* @brief  ECC PointOperate InitialÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			uint32_t *pECCpAddr;								//Àÿ”ÚFpµƒΩ◊p
-			uint32_t *pECCaAddr;								//ECC«˙œﬂ≤Œ ˝a
-}ECC_PointOperate_InitTypedef;						/*!< end of group ECC_PointOperate_InitTypedef*/
-/* 
-* @brief  ECC Point operation‘ÀÀ„  ‰»Î±‰¡øΩ·ππ∂®“Â
+      uint32_t *pECCpAddr;                //Á¥†ÂüüFpÁöÑÈò∂p
+      uint32_t *pECCaAddr;                //ECCÊõ≤Á∫øÂèÇÊï∞a
+}ECC_PointOperate_InitTypedef;            /*!< end of group ECC_PointOperate_InitTypedef*/
+/*
+* @brief  ECC Point operationËøêÁÆó ËæìÂÖ•ÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			ECC_PointMode_TypeDef	PointMode;		//ECCµ„‘ÀÀ„ƒ£ Ω
-			uint32_t *pECCPxAddr;								//ECC«˙œﬂµ⁄1µ„x◊¯±Í
-			uint32_t *pECCPyAddr;								//ECC«˙œﬂµ⁄1µ„y◊¯±Í
-			uint32_t *pECCSxAddr;								//ECC«˙œﬂµ⁄2µ„x◊¯±Í
-			uint32_t *pECCSyAddr;								//ECC«˙œﬂµ⁄2µ„y◊¯±Í
-			uint32_t *pKscalAddr;								//ECCµ„≥À±Í¡øk
-}ECC_PointOperate_InputTypedef;						/*!< end of group ECC_PointOperate_InputTypedef*/
+      ECC_PointMode_TypeDef PointMode;    //ECCÁÇπËøêÁÆóÊ®°Âºè
+      uint32_t *pECCPxAddr;               //ECCÊõ≤Á∫øÁ¨¨1ÁÇπxÂùêÊ†á
+      uint32_t *pECCPyAddr;               //ECCÊõ≤Á∫øÁ¨¨1ÁÇπyÂùêÊ†á
+      uint32_t *pECCSxAddr;               //ECCÊõ≤Á∫øÁ¨¨2ÁÇπxÂùêÊ†á
+      uint32_t *pECCSyAddr;               //ECCÊõ≤Á∫øÁ¨¨2ÁÇπyÂùêÊ†á
+      uint32_t *pKscalAddr;               //ECCÁÇπ‰πòÊ†áÈáèk
+}ECC_PointOperate_InputTypedef;           /*!< end of group ECC_PointOperate_InputTypedef*/
 
-/* 
-* @brief  ECC Point operation‘ÀÀ„  ‰≥ˆ±‰¡øΩ·ππ∂®“Â
+/*
+* @brief  ECC Point operationËøêÁÆó ËæìÂá∫ÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			uint32_t *pRxAddr;									//ECCµ„‘ÀÀ„Ω·π˚x◊¯±Í
-			uint32_t *pRyAddr;									//ECCµ„‘ÀÀ„Ω·π˚y◊¯±Í
-}ECC_PointOperate_OutputTypedef;				/*!< end of group ECC_ModOperate_InputTypedef*/
+      uint32_t *pRxAddr;                  //ECCÁÇπËøêÁÆóÁªìÊûúxÂùêÊ†á
+      uint32_t *pRyAddr;                  //ECCÁÇπËøêÁÆóÁªìÊûúyÂùêÊ†á
+}ECC_PointOperate_OutputTypedef;          /*!< end of group ECC_ModOperate_InputTypedef*/
 
-/* 
-* @brief  ECDSA Initial±‰¡øΩ·ππ∂®“Â
+/*
+* @brief  ECDSA InitialÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			uint32_t *pECCpAddr;								//Àÿ”ÚFpµƒΩ◊p
-			uint32_t *pECCaAddr;								//ECC«˙œﬂ≤Œ ˝a
-			uint32_t *pECCGxAddr;								//ECC«˙œﬂª˘µ„x◊¯±Í
-			uint32_t *pECCGyAddr;								//ECC«˙œﬂª˘µ„y◊¯±Í
-			uint32_t *pECCnAddr;								//ECC«˙œﬂª˘µ„µƒΩ◊n
-}ECC_ECDSA_InitTypedef;									/*!< end of group ECC_ECDSA_InitTypedef*/
+      uint32_t *pECCpAddr;                //Á¥†ÂüüFpÁöÑÈò∂p
+      uint32_t *pECCaAddr;                //ECCÊõ≤Á∫øÂèÇÊï∞a
+      uint32_t *pECCGxAddr;               //ECCÊõ≤Á∫øÂü∫ÁÇπxÂùêÊ†á
+      uint32_t *pECCGyAddr;               //ECCÊõ≤Á∫øÂü∫ÁÇπyÂùêÊ†á
+      uint32_t *pECCnAddr;                //ECCÊõ≤Á∫øÂü∫ÁÇπÁöÑÈò∂n
+}ECC_ECDSA_InitTypedef;                   /*!< end of group ECC_ECDSA_InitTypedef*/
 
-/* 
-* @brief  ECDSA Signature operation‘ÀÀ„  ‰»Î±‰¡øΩ·ππ∂®“Â
+/*
+* @brief  ECDSA Signature operationËøêÁÆó ËæìÂÖ•ÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			uint32_t *pdAddr;										//ÀΩ‘ød
-			uint32_t *pkAddr;										//ÀÊª˙¥Û’˚ ˝k
-			uint32_t *pMAddr;										//HASH∫Ûµƒœ˚œ¢’™“™M
-}ECC_ECDSA_Signature_InputTypedef;						/*!< end of group ECC_ECDSA_Signature_InputTypedef*/
+      uint32_t *pdAddr;                   //ÁßÅÈí•d
+      uint32_t *pkAddr;                   //ÈöèÊú∫Â§ßÊï¥Êï∞k
+      uint32_t *pMAddr;                   //HASHÂêéÁöÑÊ∂àÊÅØÊëòË¶ÅM
+}ECC_ECDSA_Signature_InputTypedef;        /*!< end of group ECC_ECDSA_Signature_InputTypedef*/
 
-/* 
-* @brief  ECDSA Verification operation‘ÀÀ„  ‰»Î±‰¡øΩ·ππ∂®“Â
+/*
+* @brief  ECDSA Verification operationËøêÁÆó ËæìÂÖ•ÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			uint32_t *pECCDxAddr;								//ECC«˙œﬂπ´‘øx◊¯±Í
-			uint32_t *pECCDyAddr;								//ECC«˙œﬂπ´‘øy◊¯±Í
-			uint32_t *pMAddr;										//HASH∫Ûµƒœ˚œ¢’™“™M
-			uint32_t *prAddr;										//«©√˚Ω·π˚r≤Œ ˝
-			uint32_t *psAddr;										//«©√˚Ω·π˚s≤Œ ˝
-}ECC_ECDSA_Verification_InputTypedef;						/*!< end of group ECC_ECDSA_Verification_InputTypedef*/
+      uint32_t *pECCDxAddr;               //ECCÊõ≤Á∫øÂÖ¨Èí•xÂùêÊ†á
+      uint32_t *pECCDyAddr;               //ECCÊõ≤Á∫øÂÖ¨Èí•yÂùêÊ†á
+      uint32_t *pMAddr;                   //HASHÂêéÁöÑÊ∂àÊÅØÊëòË¶ÅM
+      uint32_t *prAddr;                   //Á≠æÂêçÁªìÊûúrÂèÇÊï∞
+      uint32_t *psAddr;                   //Á≠æÂêçÁªìÊûúsÂèÇÊï∞
+}ECC_ECDSA_Verification_InputTypedef;     /*!< end of group ECC_ECDSA_Verification_InputTypedef*/
 
-/* 
-* @brief  ECC Public Key Validationπ´‘ø—È÷§ ‘ÀÀ„  ‰»Î±‰¡øΩ·ππ∂®“Â
+/*
+* @brief  ECC Public Key ValidationÂÖ¨Èí•È™åËØÅ ËøêÁÆó ËæìÂÖ•ÂèòÈáèÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-			uint32_t *pECCpAddr;								//Àÿ”ÚFpµƒΩ◊p
-			uint32_t *pECCaAddr;								//ECC«˙œﬂ≤Œ ˝a
-			uint32_t *pECCbAddr;								//ECC«˙œﬂ≤Œ ˝b
-			uint32_t *pECCPxAddr;								//ECC«˙œﬂµ„x◊¯±Í
-			uint32_t *pECCPyAddr;								//ECC«˙œﬂµ„y◊¯±Í
-}ECC_PKV_InputTypedef;						/*!< end of group ECC_PKV_InputTypedef*/
+      uint32_t *pECCpAddr;                //Á¥†ÂüüFpÁöÑÈò∂p
+      uint32_t *pECCaAddr;                //ECCÊõ≤Á∫øÂèÇÊï∞a
+      uint32_t *pECCbAddr;                //ECCÊõ≤Á∫øÂèÇÊï∞b
+      uint32_t *pECCPxAddr;               //ECCÊõ≤Á∫øÁÇπxÂùêÊ†á
+      uint32_t *pECCPyAddr;               //ECCÊõ≤Á∫øÁÇπyÂùêÊ†á
+}ECC_PKV_InputTypedef;                    /*!< end of group ECC_PKV_InputTypedef*/
 
 
 
 /*
 *********************************************************************************************************
-*                                             »´æ÷±‰¡ø
+*                                             ÂÖ®Â±ÄÂèòÈáè
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Ø ˝…Í√˜
+*                                           ÂÖ®Â±ÄÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
 void HT_ECC_PointOperate_Init(ECC_PointOperate_InitTypedef* ECC_PointOperate_InitStruct);
@@ -183,11 +183,10 @@ void HT_ECC_ClearITPendingBit(ECC_ITFlagTypeDef ITFlag);
 ITStatus HT_ECC_Busy_StatusGet(void);
 
 
-
-#endif                                        /* This File Only support HT6x2x £¨HT501xand HT502x */
+#endif                                        /* This File Only support HT6x2x ÔºåHT501xand HT502x */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __HT6XXX_ECC_H__ */ 
+#endif /* __HT6XXX_ECC_H__ */

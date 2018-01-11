@@ -60,7 +60,7 @@ struct IEC101_STRUCT
   u32 initstatus;
   u16 Sn;
   u8  Fop;  //文件操作标识
-  u8  Fname[32];
+  char  Fname[32];
   u32 FId;
   u16 List_para[32];
   union IEC101_ADD wRecvCmmAdd;
@@ -381,6 +381,8 @@ u8 OrgnizeReadDataMsg(u8* lpby);
 u8 OrgnizeSubChgMsg(void);
 u8 OrgnizeVarFrame(u8 *lpby,u8 byMsgNum,u8 byConField);
 u8 OrgnizeFixFrame(u8 *lpby,u8 byConField) ;
+void IEC101Process(void);
+short Read_LastData(int ch,unsigned char *buf);
 //全局变量声明
 extern struct IEC101_STRUCT *lpIEC101;	//IEC101规约私用数据指针
 #endif

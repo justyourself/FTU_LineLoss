@@ -1,6 +1,6 @@
 ﻿;/*
 ;*********************************************************************************************************
-;*                                             HT501X
+;*                                             HT6X3X
 ;*                                         Library Function
 ;*
 ;*                                  Copyright 2013, Hi-Trend Tech, Corp.
@@ -8,9 +8,9 @@
 ;*
 ;*
 ;* Project      : HT6xxx
-;* File         : startup_ht501x.s
+;* File         : startup_ht6x3x.s
 ;* By           : SocTeam
-;* Version      : CurrentVersion1_6_20171108
+;* Version      : CurrentVersion1_2_20171108
 ;* Description  :
 ;*********************************************************************************************************
 ;*/
@@ -21,7 +21,7 @@
         SECTION CSTACK:DATA:NOROOT(3)
 
         SECTION .password:CODE
-        DCD     0xFFFFFFF2
+        DCD     0xE7FFFFA2
 
         SECTION .intvec:CODE:NOROOT(2)
 
@@ -71,16 +71,16 @@ __vector_table
         DCD     TBS_IRQHandler            ; 16+19: TBS
         DCD     RTC_IRQHandler            ; 16+20: RTC
         DCD     I2C_IRQHandler            ; 16+21: I2C
-        DCD     SPI_IRQHandler            ; 16+22: SPI
-        DCD     Reserved_IRQHandler       ; 16+23: Reserved
-        DCD     SelfTestFreq_IRQHandler   ; 16+24: SelfTestFreq
-        DCD     EMU_IRQHandler            ; 16+25: EMU
-        DCD     DMA_IRQHandler            ; 16+26: DMA
-        DCD     KEY_IRQHandler            ; 16+27: KEY
-        DCD     Reserved_IRQHandler       ; 16+28: Reserved
+        DCD     SPI0_IRQHandler           ; 16+22: SPI0
+        DCD     SPI1_IRQHandler           ; 16+23: SPI1
+        DCD     SelfTestFreq_IRQHandler   ; 16+24: FreqTest
+        DCD     TIMER_4_IRQHandler        ; 16+25: Timer4
+        DCD     TIMER_5_IRQHandler        ; 16+26: Timer5
+        DCD     UART6_IRQHandler          ; 16+27: UART6
+        DCD     EXTI7_IRQHandler          ; 16+28: EXTI7、EXTI8、EXTI9
         DCD     Reserved_IRQHandler       ; 16+29: Reserved
-        DCD     Reserved_IRQHandler       ; 16+30: Reserved
-        DCD     Reserved_IRQHandler       ; 16+31: Reserved
+        DCD     SPI2_IRQHandler           ; 16+30: SPI2
+        DCD     DMA_IRQHandler            ; 16+31: DMA
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -232,35 +232,55 @@ RTC_IRQHandler
 I2C_IRQHandler
         B I2C_IRQHandler
 
-        PUBWEAK SPI_IRQHandler
+        PUBWEAK SPI0_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
-SPI_IRQHandler
-        B SPI_IRQHandler
+SPI0_IRQHandler
+        B SPI0_IRQHandler
 
-        PUBWEAK Reserved_IRQHandler
+        PUBWEAK SPI1_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
-Reserved_IRQHandler
-        B Reserved_IRQHandler
+SPI1_IRQHandler
+        B SPI1_IRQHandler
 
         PUBWEAK SelfTestFreq_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
 SelfTestFreq_IRQHandler
         B SelfTestFreq_IRQHandler
 
-        PUBWEAK EMU_IRQHandler
+        PUBWEAK TIMER_4_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
-EMU_IRQHandler
-        B EMU_IRQHandler
+TIMER_4_IRQHandler
+        B TIMER_4_IRQHandler
+
+        PUBWEAK TIMER_5_IRQHandler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+TIMER_5_IRQHandler
+        B TIMER_5_IRQHandler
+
+        PUBWEAK UART6_IRQHandler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+UART6_IRQHandler
+        B UART6_IRQHandler
+
+        PUBWEAK EXTI7_IRQHandler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+EXTI7_IRQHandler
+        B EXTI7_IRQHandler
+
+        PUBWEAK SPI2_IRQHandler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+SPI2_IRQHandler
+        B SPI2_IRQHandler
 
         PUBWEAK DMA_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
 DMA_IRQHandler
         B DMA_IRQHandler
 
-        PUBWEAK KEY_IRQHandler
+        PUBWEAK Reserved_IRQHandler
         SECTION .text:CODE:REORDER:NOROOT(1)
-KEY_IRQHandler
-        B KEY_IRQHandler
+Reserved_IRQHandler
+        B Reserved_IRQHandler
 
         END
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

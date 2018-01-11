@@ -28,10 +28,28 @@
 #define IEC_LINK_ADDR                    ClockAdj+6      //2
 #define IEC_COMM_ADDR                    IEC_LINK_ADDR+4  //2
 #define	LoadRecord_Time		         IEC_COMM_ADDR+4 //符合去的时间，指针记录
+#define	RandRecord_Time                  LoadRecord_Time+10 //瞬时冻结
+#define	FrzdRecord_Time                  RandRecord_Time+10  //日冻结
+#define	ShrpdRecord_Time                 FrzdRecord_Time+10 //整点冻结
+#define	MonthdRecord_Time                ShrpdRecord_Time+10  //考核日冻结
+#define	EventdRecord_Time                MonthdRecord_Time+10
 
+
+#define ONE_RECORD_LEN                   54
 #define LOAD_RECORD_NUM                  96
-#define ONE_RECORD_SIZE                  40
+#define ONE_RECORD_SIZE                  64
 #define LOAD_RECORD_SIZE                 (LOAD_RECORD_NUM*ONE_RECORD_SIZE)
+
+#define DAY_RECORD_NUM                   40
+#define DAY_RECORD_SIZE                  (DAY_RECORD_NUM*ONE_RECORD_SIZE)
+
+#define HOUR_RECORD_NUM                  264
+#define HOUR_RECORD_SIZE                 (HOUR_RECORD_NUM*ONE_RECORD_SIZE)
+
+#define LOAD_DATA_ADDR                   0
+#define DAY_DATA_ADDR                    0xC000 //负荷记录留48k空间
+#define HOUR_DATA_ADDR                  (0xC000+0x5000) //20k空间
+#define END_DATA_ADDR                  (HOUR_DATA_ADDR+0x21000) //132K空间
 
 
 

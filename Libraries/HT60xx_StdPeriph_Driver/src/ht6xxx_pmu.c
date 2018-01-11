@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_pmu.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : 
+* Version      : V1.0.3
+* Description  :
 *********************************************************************************************************
 */
 
@@ -21,7 +21,7 @@
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æž„ä½“
 *********************************************************************************************************
 */
 
@@ -29,15 +29,15 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
-
 static const uint32_t RegisterWriteProtect[]={CMU_WPREG_Protected, CMU_WPREG_UnProtected};
 
+
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊýÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜Ž
 *********************************************************************************************************
 */
 
@@ -46,126 +46,140 @@ static const uint32_t RegisterWriteProtect[]={CMU_WPREG_Protected, CMU_WPREG_UnP
 *********************************************************************************************************
 *                                         INITIAL PMU MODULE
 *
-* º¯ÊýËµÃ÷: ³õÊ¼»¯PMUÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: åˆå§‹åŒ–PMUæ¨¡å—
 *
-* Èë¿Ú²ÎÊý: PMU_InitStruct     PMU³õÊ¼»¯½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬6¸ö²ÎÊý: 
-*                              1) LvdinState     : Lvdin×´Ì¬ÉèÖÃ
-*                              2) BorState       : Bor×´Ì¬ÉèÖÃ
-*                              3) VccLvlSet      : Vcc¼ì²âãÐÖµÉè¶¨
-*                              4) BorLvlSet      : Bor¼ì²âãÐÖµÉè¶¨
-*                              5) VccBorDetTime  : VccÒÔ¼°Bor¼ì²âÊ±¼äÉèÖÃ
-*                              6) VccBorDetPeriod: VccÒÔ¼°Bor¼ì²âÖÜÆÚÉèÖÃ
+* å…¥å£å‚æ•°: PMU_InitStruct     PMUåˆå§‹åŒ–ç»“æž„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«å‡ ä¸ªå‚æ•°:
+*                              1) Lvdin0State      : Lvdin0çŠ¶æ€è®¾ç½®
+*                              2) Lvdin1State      : Lvdin1çŠ¶æ€è®¾ç½® (for HT501x, HT502x, HT602x, HT6x3x)
+*                              3) Lvdin2State      : Lvdin2çŠ¶æ€è®¾ç½® (for HT6x3x)
+*                              4) POWState         : PowçŠ¶æ€è®¾ç½®    (for HT501x, HT502x, HT602x, HT6x3x)
+*                              5) POWFilter        : Powæ»¤æ³¢è®¾ç½®    (for HT6x3x)
+*                              6) BorState         : BorçŠ¶æ€è®¾ç½®
+*                              7) VccLvlSet        : Vccæ£€æµ‹é˜ˆå€¼è®¾å®š
+*                              8) BorLvlSet        : Boræ£€æµ‹é˜ˆå€¼è®¾å®š
+*                              9) VccBorDetTime    : Vccä»¥åŠBoræ£€æµ‹æ—¶é—´è®¾ç½®
+*                              10) VccBorDetPeriod : Vccä»¥åŠBoræ£€æµ‹å‘¨æœŸè®¾ç½®
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦±£Ö¤´Ëº¯ÊýÖ´ÐÐ¹ý³ÌÖÐ¼Ä´æÆ÷Ð´±£»¤×´Ì¬²»±»ÐÞ¸Ä
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”ä¿è¯æ­¤å‡½æ•°æ‰§è¡Œè¿‡ç¨‹ä¸­å¯„å­˜å™¨å†™ä¿æŠ¤çŠ¶æ€ä¸è¢«ä¿®æ”¹
 *********************************************************************************************************
 */
 void HT_PMU_Init(PMU_InitTypeDef* PMU_InitStruct)
 {
     /*  assert_param  */
-    
     uint32_t tempreg = 0;
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-    
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
     tempreg = HT_PMU->PMUCON & 0x8010;
-    
-    tempreg |= PMU_InitStruct->Lvdin0State;                                /*!< ÅäÖÃLVDIN0¹¦ÄÜ         */
-#if  defined  HT501x ||  defined  HT6x2x  ||  defined  HT502x
-    tempreg |= (PMU_InitStruct->Lvdin1State<<1);                           /*!< LVDIN1×´Ì¬ÉèÖÃ         */
-#endif 
-#if  defined  HT6x2x 	
-		tempreg |= PMU_InitStruct->POWState;                                	 /*!< ÅäÖÃPOW¹¦ÄÜ         */
+    tempreg |= (PMU_InitStruct->Lvdin0State & 0x000F);                     /*!< LVDIN0çŠ¶æ€è®¾ç½®         */
+#if  defined  HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x  ||  defined  HT502x
+    tempreg |= ((PMU_InitStruct->Lvdin1State & 0x000F)<<1);                /*!< LVDIN1çŠ¶æ€è®¾ç½®         */
 #endif
-    tempreg |= PMU_InitStruct->BorState;                                   /*!< ÅäÖÃBOR¹¦ÄÜ            */
-    
+#if  defined  HT6x3x
+    tempreg |= ((PMU_InitStruct->Lvdin2State & 0x000F)<<4);                /*!< LVDIN2çŠ¶æ€è®¾ç½®         */
+#endif
+#if  defined  HT6x2x  ||  defined  HT6x3x
+    tempreg |= PMU_InitStruct->POWState;                                   /*!< é…ç½®POWåŠŸèƒ½            */
+#endif
+    tempreg |= PMU_InitStruct->BorState;                                   /*!< é…ç½®BORåŠŸèƒ½            */
     HT_PMU->PMUCON = tempreg;
-   
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */
-    
-    HT_PMU->VDETCFG &= ~(PMU_VDETCFG_VCCLVL|PMU_VDETCFG_BORLVL);   
-    HT_PMU->VDETCFG |= (PMU_InitStruct->VccLvlSet | PMU_InitStruct->BorLvlSet);
-                                                                           /*!< VccBor¼ì²âãÐÖµÉèÖÃ     */
-    HT_PMU->VDETPCFG &= ~(PMU_VDETPCFG_VDETPRD|PMU_VDETPCFG_VDETTIME);                                                                       
-    HT_PMU->VDETPCFG |= (PMU_InitStruct->VccBorDetTime | PMU_InitStruct->VccBorDetPeriod);
-#if defined  HT6x2x                                                                           /*!< VccBor¼ì²âãÐÖµÉèÖÃ     */  
-		HT_PMU->PDTFLT = PMU_InitStruct->POWFilter;                            /*!< POWÊý×ÖÂË²¨ÖµÉèÖÃ     */ 
+
+#if  defined  HT6x3x
+    tempreg = 0;                                                           /*!< é…ç½®LVDINçš„QRåŠŸèƒ½      */
+    tempreg |= ((PMU_InitStruct->Lvdin0State & 0x00F0)>>4);                /*!< LVDIN0çŠ¶æ€è®¾ç½®         */
+    tempreg |= ((PMU_InitStruct->Lvdin1State & 0x00F0)>>3);                /*!< LVDIN1çŠ¶æ€è®¾ç½®         */
+    tempreg |= ((PMU_InitStruct->Lvdin2State & 0x00F0)>>2);                /*!< LVDIN2çŠ¶æ€è®¾ç½®         */
+    HT_PMU->LVDINQR = tempreg;
 #endif
-} 
+
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
+
+    HT_PMU->VDETCFG &= ~(PMU_VDETCFG_VCCLVL | PMU_VDETCFG_BORLVL);
+    HT_PMU->VDETCFG |= ((uint32_t)PMU_InitStruct->VccLvlSet | (uint32_t)PMU_InitStruct->BorLvlSet);
+                                                                           /*!< VccBoræ£€æµ‹é˜ˆå€¼è®¾ç½®     */
+    HT_PMU->VDETPCFG &= ~(PMU_VDETPCFG_VDETPRD | PMU_VDETPCFG_VDETTIME);
+    HT_PMU->VDETPCFG |= ((uint32_t)PMU_InitStruct->VccBorDetTime | (uint32_t)PMU_InitStruct->VccBorDetPeriod);
+#if defined  HT6x2x  ||  defined  HT6x3x                                   /*!< ä½ŽåŠŸè€—æ£€æµ‹æ»¤æ³¢è®¾ç½®     */
+    HT_PMU->PDTFLT = PMU_InitStruct->POWFilter & 0x000F;                   /*!< POWæ•°å­—æ»¤æ³¢å€¼è®¾ç½®      */
+#endif
+}
 
 /*
 *********************************************************************************************************
 *                            Enable/Disable THE BIG POWER LDO ON HOLD MODE
 *
-* º¯ÊýËµÃ÷: ÅäÖÃHoldÄ£Ê½ÏÂ´ó¹¦ºÄLDO
+* å‡½æ•°è¯´æ˜Ž: é…ç½®Holdæ¨¡å¼ä¸‹å¤§åŠŸè€—LDO
 *
-* Èë¿Ú²ÎÊý: NewState    = ENABLE£º HoldÄ£Ê½ÏÂÊ¹ÄÜ´ó¹¦ºÄLDO
-*                       = DISABLE£ºHoldÄ£Ê½ÏÂ¹Ø±Õ´ó¹¦ºÄLDO
+* å…¥å£å‚æ•°: NewState    = ENABLEï¼š Holdæ¨¡å¼ä¸‹ä½¿èƒ½å¤§åŠŸè€—LDO
+*                       = DISABLEï¼šHoldæ¨¡å¼ä¸‹å…³é—­å¤§åŠŸè€—LDO
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦±£Ö¤´Ëº¯ÊýÖ´ÐÐ¹ý³ÌÖÐ¼Ä´æÆ÷Ð´±£»¤×´Ì¬²»±»ÐÞ¸Ä
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”ä¿è¯æ­¤å‡½æ•°æ‰§è¡Œè¿‡ç¨‹ä¸­å¯„å­˜å™¨å†™ä¿æŠ¤çŠ¶æ€ä¸è¢«ä¿®æ”¹
 *********************************************************************************************************
 */
 void HT_PMU_HoldLDOConfig(FunctionalState NewState)
 {
     /*  assert_param  */
-    
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-    
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
     if (NewState != DISABLE)
-    {       
-        HT_PMU->PMUCON |= PMU_PMUCON_HoldLDO;                              /*!< HoldÄ£Ê½ÏÂÊ¹ÄÜ´ó¹¦ºÄLDO*/ 
+    {
+        HT_PMU->PMUCON |= PMU_PMUCON_HoldLDO;                              /*!< Holdæ¨¡å¼ä¸‹ä½¿èƒ½å¤§åŠŸè€—LDO*/
     }
     else
     {
-        HT_PMU->PMUCON &= ~PMU_PMUCON_HoldLDO;                             /*!< HoldÄ£Ê½ÏÂ¹Ø±Õ´ó¹¦ºÄLDO*/  
-    }       
-   
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */ 
-} 
+        HT_PMU->PMUCON &= ~PMU_PMUCON_HoldLDO;                             /*!< Holdæ¨¡å¼ä¸‹å…³é—­å¤§åŠŸè€—LDO*/
+    }
+
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
+}
 
 /*
 *********************************************************************************************************
 *                                    DISCHARGE  CONFIGURE
 *
-* º¯ÊýËµÃ÷: µç³Ø¶Û»¯ÅäÖÃ
+* å‡½æ•°è¯´æ˜Ž: ç”µæ± é’åŒ–é…ç½®
 *
-* Èë¿Ú²ÎÊý: ChargeMode  = DisCharge0mA
+* å…¥å£å‚æ•°: ChargeMode  = DisCharge0mA
 *                       = DisCharge1mA
 *                       = DisCharge2mA
+*                       = DisCharge50uA  (for HT6x2x, HT6x3x)
+*                       = DisCharge100uA (for HT6x2x, HT6x3x)
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦±£Ö¤´Ëº¯ÊýÖ´ÐÐ¹ý³ÌÖÐ¼Ä´æÆ÷Ð´±£»¤×´Ì¬²»±»ÐÞ¸Ä
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”ä¿è¯æ­¤å‡½æ•°æ‰§è¡Œè¿‡ç¨‹ä¸­å¯„å­˜å™¨å†™ä¿æŠ¤çŠ¶æ€ä¸è¢«ä¿®æ”¹
 *********************************************************************************************************
 */
-#if  defined  HT6x2x  ||  defined HT501x  ||  HT502x
+#if  defined  HT6x2x  ||  defined  HT6x3x  ||  defined HT501x  ||  HT502x
 void HT_PMU_DisChargeConfig(DISCharge_TypeDef ChargeMode)
 {
     /*  assert_param  */
     uint32_t tempreg;
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-    
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
     tempreg  =  HT_PMU->PMUCON & 0x7FFF;
-    tempreg |=  ChargeMode & 0x8000; 
-    HT_PMU->PMUCON = tempreg;                                              /*!< ÉèÖÃDisChargeÊ¹ÄÜ      */       
-   
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */ 
-#if defined   HT6x2x  
+    tempreg |=  ChargeMode & 0x8000;
+    HT_PMU->PMUCON = tempreg;                                              /*!< è®¾ç½®DisChargeä½¿èƒ½      */
+
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
+
+#if defined  HT6x2x  ||  defined  HT6x3x
     tempreg  =  HT_PMU->VDETCFG & 0x3FFF;
-    tempreg |=  (ChargeMode>>4)&0xC000; 
-#elif defined  HT501x  || HT502x
+    tempreg |=  (ChargeMode>>4) & 0xC000;
+#elif defined  HT501x  ||  defined  HT502x
     tempreg  =  HT_PMU->VDETCFG & 0x7FFF;
-    tempreg |=  (ChargeMode>>4)&0x8000;
+    tempreg |=  (ChargeMode>>4) & 0x8000;
 #endif
-    HT_PMU->VDETCFG = tempreg;                                             /*!< ÉèÖÃDisChargeµçÁ÷      */     
+    HT_PMU->VDETCFG = tempreg;                                             /*!< è®¾ç½®DisChargeç”µæµ      */
 }
 #endif
 
@@ -173,122 +187,123 @@ void HT_PMU_DisChargeConfig(DISCharge_TypeDef ChargeMode)
 *********************************************************************************************************
 *                               GET SPECIFIED PMU STATE FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦PMU¼ì²â×´Ì¬±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”PMUæ£€æµ‹çŠ¶æ€æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: STAFlag    ÏëÒª¼ì²éµÄÄ³¸öPMUÖÐ¶Ï£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
+* å…¥å£å‚æ•°: STAFlag    æƒ³è¦æ£€æŸ¥çš„æŸä¸ªPMUä¸­æ–­ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg PMU_PMUSTA_VCCFLG
 *                        @arg PMU_PMUSTA_BORFLG
 *                        @arg PMU_PMUSTA_LVD0FLG
-*                        @arg PMU_PMUSTA_LVD1FLG   (for HT6x2x, HT501x, HT502x)
+*                        @arg PMU_PMUSTA_LVD1FLG (for HT501x, HT502x, HT6x2x, HT6x3x)
+*                        @arg PMU_PMUSTA_POWFLG  (for HT6x2x, HT6x3x)
+*                        @arg PMU_PMUSTA_LVD2FLG (for HT6x3x)
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  ¼ì²âÖµ´óÓÚÉè¶¨ãÐÖµ
-*                       = RESET£º¼ì²âÖµµÍÓÚÉè¶¨ãÐÖµ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  æ£€æµ‹å€¼å¤§äºŽè®¾å®šé˜ˆå€¼
+*                       = RESETï¼šæ£€æµ‹å€¼ä½ŽäºŽè®¾å®šé˜ˆå€¼
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 FlagStatus HT_PMUState_FlagStatusGet(uint8_t STAFlag)
 {
     /*  assert_param  */
-    
     if (HT_PMU->PMUSTA & STAFlag)
-    {       
-        return SET;                        /*!< ¼ì²âÖµ´óÓÚÉè¶¨ãÐÖµ         */
+    {
+        return SET;                        /*!< æ£€æµ‹å€¼å¤§äºŽè®¾å®šé˜ˆå€¼         */
     }
     else
     {
-        return RESET;                      /*!< ¼ì²âÖµµÍÓÚÉè¶¨ãÐÖµ         */
-    } 
+        return RESET;                      /*!< æ£€æµ‹å€¼ä½ŽäºŽè®¾å®šé˜ˆå€¼         */
+    }
 }
 
 /*
 *********************************************************************************************************
-*                                 ENABLE OR DISABLE PMU INTERRUPT    
+*                                 ENABLE OR DISABLE PMU INTERRUPT
 *
-* º¯ÊýËµÃ÷: Ê¹ÄÜ»òÕß¹Ø±ÕPMUÖÐ¶Ï
+* å‡½æ•°è¯´æ˜Ž: ä½¿èƒ½æˆ–è€…å…³é—­PMUä¸­æ–­
 *
-* Èë¿Ú²ÎÊý: ITEn       PMUÖÐ¶ÏÉèÖÃÎ»£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ
+* å…¥å£å‚æ•°: ITEn       PMUä¸­æ–­è®¾ç½®ä½ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ
 *                        @arg PMU_PMUIE_VCCIE
 *                        @arg PMU_PMUIE_BORIE
 *                        @arg PMU_PMUIE_LVD0IE
-*                        @arg PMU_PMUIE_LVD1IE    (for HT6x2x, HT501x)
+*                        @arg PMU_PMUIE_LVD1IE (for HT501x, HT502x, HT6x2x, HT6x3x)
+*                        @arg PMU_PMUIE_POWIE  (for HT6x2x, HT6x3x)
+*                        @arg PMU_PMUIE_LVD2IE (for HT6x3x)
 *
-*           NewState   = ENABLE£º Ê¹ÄÜÖÐ¶Ï
-*                      = DISABLE£º¹Ø±ÕÖÐ¶Ï
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+*           NewState   = ENABLEï¼š ä½¿èƒ½ä¸­æ–­
+*                      = DISABLEï¼šå…³é—­ä¸­æ–­
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_PMU_ITConfig(uint8_t ITEn, FunctionalState NewState)
 {
     /*  assert_param  */
-    
     if (NewState != DISABLE)
-    {       
-        HT_PMU->PMUIE |= (uint32_t)(ITEn & PMU_PMUIE);            /*!< Ê¹ÄÜPMUÖÐ¶Ï           */
+    {
+        HT_PMU->PMUIE |= (uint32_t)(ITEn & PMU_PMUIE);            /*!< ä½¿èƒ½PMUä¸­æ–­           */
     }
     else
     {
-        HT_PMU->PMUIE &= ~(uint32_t)ITEn;                         /*!< ¹Ø±ÕPMUÖÐ¶Ï           */
-    } 
+        HT_PMU->PMUIE &= ~(uint32_t)ITEn;                         /*!< å…³é—­PMUä¸­æ–­           */
+    }
 }
 
 /*
 *********************************************************************************************************
 *                            GET SPECIFIED PMU INTERRUPT FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦PMUÖÐ¶Ï±êÖ¾×´Ì¬
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”PMUä¸­æ–­æ ‡å¿—çŠ¶æ€
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒª¼ì²éµÄÄ³¸öPMUÖÐ¶Ï£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªPMUä¸­æ–­ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg PMU_PMUIF_VCCIF
 *                        @arg PMU_PMUIF_BORIF
 *                        @arg PMU_PMUIF_LVD0IF
-*                        @arg PMU_PMUIF_LVD1IF   (for HT6x2x, HT501x)
+*                        @arg PMU_PMUIF_LVD1IF (for HT501x, HT502x, HT6x2x, HT6x3x)
+*                        @arg PMU_PMUIF_POWIF  (for HT6x2x, HT6x3x)
+*                        @arg PMU_PMUIF_LVD2IF (for HT6x3x)
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  ÏàÓ¦ÖÐ¶Ï±êÖ¾²úÉú
-*                       = RESET£ºÏàÓ¦ÖÐ¶Ï±êÖ¾Î´²úÉú
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  ç›¸åº”ä¸­æ–­æ ‡å¿—äº§ç”Ÿ
+*                       = RESETï¼šç›¸åº”ä¸­æ–­æ ‡å¿—æœªäº§ç”Ÿ
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_PMU_ITFlagStatusGet(uint8_t ITFlag)
 {
     /*  assert_param  */
-    
     if (HT_PMU->PMUIF & ITFlag)
-    {       
+    {
         return SET;                        /*!< PMU Interrupt Flag is set   */
     }
     else
     {
         return RESET;                      /*!< PMU Interrupt Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                                CLEAR PMU INTERRUPT FLAG
 *
-* º¯ÊýËµÃ÷: Çå³ýPMUÖÐ¶Ï±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: æ¸…é™¤PMUä¸­æ–­æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒªÇå³ýµÄÄ³¸öPMUÖÐ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ:
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ¸…é™¤çš„æŸä¸ªPMUä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
 *                        @arg PMU_PMUIF_VCCIF
 *                        @arg PMU_PMUIF_BORIF
 *                        @arg PMU_PMUIF_LVD0IF
-*                        @arg PMU_PMUIF_LVD1IF    (for HT6x2x, HT501x)
+*                        @arg PMU_PMUIF_LVD1IF (for HT501x, HT502x, HT6x2x, HT6x3x)
+*                        @arg PMU_PMUIF_POWIF  (for HT6x2x, HT6x3x)
+*                        @arg PMU_PMUIF_LVD2IF (for HT6x3x)
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_PMU_ClearITPendingBit(uint8_t ITFlag)
 {
     /*  assert_param  */
-    
-      
     HT_PMU->PMUIF &= ~((uint32_t)ITFlag);                  /*!< Clear PMU Interrupt Flag    */
-    
 }
-

@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_uart&7816.h
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.0
-* Description  : 
+* Version      : V1.0.2
+* Description  :
 **********************************************************************************************************
 */
 
@@ -20,157 +20,164 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
-    
+#endif
+
 #include "ht6xxx.h"
-    
+
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Í/Ω·ππÃÂ
+*                                           ÂÖ®Â±ÄÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
 
-/* 
-* @brief  UARTÕ®—∂¬ﬂº≠∂®“Â
+/*
+* @brief  UARTÈÄöËÆØÈÄªËæëÂÆö‰πâ
 */
 typedef enum
-{ 
-    UartLogicPositive = UART_UARTCON_UNEG_POSITIVE,     /*!< UARTÕ®—∂—°‘Ò’˝¬ﬂº≠             */
-    UartLogicNegetive = UART_UARTCON_UNEG_NEGETIVE,     /*!< UARTÕ®—∂—°‘Ò∏∫¬ﬂº≠             */
-#if defined  HT6x2x
-    UartLogicAuto = UART_UARTCON_UNEG_AUTO,             /*!< UARTÕ®—∂—°‘ÒΩ” ’¬ﬂº≠◊‘∂Ø≈–∂œ   */
-#endif   
-}UARTLogic_TypeDef;                                     /*!< end of group UARTLogic_TypeDef */   
+{
+    UartLogicPositive = UART_UARTCON_UNEG_POSITIVE,     /*!< UARTÈÄöËÆØÈÄâÊã©Ê≠£ÈÄªËæë             */
+    UartLogicNegetive = UART_UARTCON_UNEG_NEGETIVE,     /*!< UARTÈÄöËÆØÈÄâÊã©Ë¥üÈÄªËæë             */
+#if defined  HT6x2x  ||  defined  HT6x3x
+    UartLogicAuto = UART_UARTCON_UNEG_AUTO,             /*!< UARTÈÄöËÆØÈÄâÊã©Êé•Êî∂ÈÄªËæëËá™Âä®Âà§Êñ≠   */
+#endif
+}UARTLogic_TypeDef;                                     /*!< end of group UARTLogic_TypeDef */
 
-/* 
-* @brief  UARTÕ£÷πŒª∂®“Â
+/*
+* @brief  UARTÂÅúÊ≠¢‰ΩçÂÆö‰πâ
 */
 typedef enum
-{ 
-    OneStopBits = UART_UARTCON_STOPSEL_1Bit,            /*!< 1ŒªÕ£÷πŒª                         */
-    TwoStopBits = UART_UARTCON_STOPSEL_2Bit,            /*!< 2ŒªÕ£÷πŒª                         */
+{
+    OneStopBits = UART_UARTCON_STOPSEL_1Bit,            /*!< 1‰ΩçÂÅúÊ≠¢‰Ωç                         */
+    TwoStopBits = UART_UARTCON_STOPSEL_2Bit,            /*!< 2‰ΩçÂÅúÊ≠¢‰Ωç                         */
 }UARTStopBits_TypeDef;                                  /*!< end of group UARTStopBits_TypeDef */
 
-/* 
-* @brief  UART ˝æ›≥§∂»Œª∂®“Â
+/*
+* @brief  UARTÊï∞ÊçÆÈïøÂ∫¶‰ΩçÂÆö‰πâ
 */
 typedef enum
-{ 
-    WordLength_7Bits = UART_UARTCON_LENSEL_7Bit,        /*!< 7Œª ˝æ›Œª                          */
-    WordLength_8Bits = UART_UARTCON_LENSEL_8Bit,        /*!< 8Œª ˝æ›Œª                          */
+{
+    WordLength_7Bits = UART_UARTCON_LENSEL_7Bit,        /*!< 7‰ΩçÊï∞ÊçÆ‰Ωç                          */
+    WordLength_8Bits = UART_UARTCON_LENSEL_8Bit,        /*!< 8‰ΩçÊï∞ÊçÆ‰Ωç                          */
 }UARTWordLength_TypeDef;                                /*!< end of group UARTWordLength_TypeDef*/
 
-/* 
-* @brief  UART∆Ê≈º–£—ÈŒª∂®“Â
+/*
+* @brief  UARTÂ•áÂÅ∂Ê†°È™å‰ΩçÂÆö‰πâ
 */
 typedef enum
-{ 
-    UartParity_Disable = 0xff,                          /*!< √ª”–∆Ê≈º–£—ÈŒª                     */
-    UartParity_Always1 = UART_UARTCON_PARITYSEL_1,      /*!< ∆Ê≈º–£—ÈŒª∫„∂®Œ™1                  */
-    UartParity_Always0 = UART_UARTCON_PARITYSEL_0,      /*!< ∆Ê≈º–£—ÈŒª∫„∂®Œ™0                  */
-    UartParity_ODD = UART_UARTCON_PARITYSEL_ODD,        /*!< ∆Ê–£—È                             */
-    UartParity_EVEN = UART_UARTCON_PARITYSEL_EVEN,      /*!< ≈º–£—È                             */
+{
+    UartParity_Disable = 0xff,                          /*!< Ê≤°ÊúâÂ•áÂÅ∂Ê†°È™å‰Ωç                     */
+    UartParity_Always1 = UART_UARTCON_PARITYSEL_1,      /*!< Â•áÂÅ∂Ê†°È™å‰ΩçÊÅíÂÆö‰∏∫1                  */
+    UartParity_Always0 = UART_UARTCON_PARITYSEL_0,      /*!< Â•áÂÅ∂Ê†°È™å‰ΩçÊÅíÂÆö‰∏∫0                  */
+    UartParity_ODD = UART_UARTCON_PARITYSEL_ODD,        /*!< Â•áÊ†°È™å                             */
+    UartParity_EVEN = UART_UARTCON_PARITYSEL_EVEN,      /*!< ÂÅ∂Ê†°È™å                             */
 }UARTParity_TypeDef;                                    /*!< end of group UARTParity_TypeDef    */
 
 
-/* 
-* @brief  UARTƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+/*
+* @brief  UARTÊ®°ÂùóÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-    UARTLogic_TypeDef  UART_Logic;                      /*!< ¥Æø⁄¬ﬂº≠…Ë÷√                       */                                                                          
-    UARTStopBits_TypeDef  UART_StopBits;                /*!< ¥Æø⁄Õ£÷πŒª…Ë÷√                     */                                                                         
-    UARTWordLength_TypeDef  UART_WordLength;            /*!< ¥Æø⁄Õ®—∂ ˝æ›≥§∂»…Ë÷√               */ 
-    UARTParity_TypeDef  UART_Parity;                    /*!< ¥Æø⁄∆Ê≈º–£—ÈŒª…Ë÷√                 */
-    uint32_t  UART_BaudRate;                            /*!< ¥Æø⁄≤®Ãÿ¬ , ±»»Á1200, 2400         */
-    FunctionalState  ReceiveEN;                         /*!< ¥Æø⁄Ω” ’ πƒ‹øÿ÷∆                   */ 
-    FunctionalState  SendEN;                            /*!< ¥Æø⁄∑¢ÀÕ πƒ‹øÿ÷∆                   */ 
+    UARTLogic_TypeDef  UART_Logic;                      /*!< ‰∏≤Âè£ÈÄªËæëËÆæÁΩÆ                       */
+    UARTStopBits_TypeDef  UART_StopBits;                /*!< ‰∏≤Âè£ÂÅúÊ≠¢‰ΩçËÆæÁΩÆ                     */
+    UARTWordLength_TypeDef  UART_WordLength;            /*!< ‰∏≤Âè£ÈÄöËÆØÊï∞ÊçÆÈïøÂ∫¶ËÆæÁΩÆ               */
+    UARTParity_TypeDef  UART_Parity;                    /*!< ‰∏≤Âè£Â•áÂÅ∂Ê†°È™å‰ΩçËÆæÁΩÆ                 */
+    uint32_t  UART_BaudRate;                            /*!< ‰∏≤Âè£Ê≥¢ÁâπÁéá, ÊØîÂ¶Ç1200, 2400         */
+    FunctionalState  ReceiveEN;                         /*!< ‰∏≤Âè£Êé•Êî∂‰ΩøËÉΩÊéßÂà∂                   */
+    FunctionalState  SendEN;                            /*!< ‰∏≤Âè£ÂèëÈÄÅ‰ΩøËÉΩÊéßÂà∂                   */
 }UART_InitTypeDef;                                      /*!< end of group UART_InitTypeDef      */
 
-/* 
-* @brief  ∫ÏÕ‚µ˜÷∆ ‰≥ˆº´–‘∂®“Â
+/*
+* @brief  Á∫¢Â§ñË∞ÉÂà∂ËæìÂá∫ÊûÅÊÄßÂÆö‰πâ
 */
 typedef enum
-{ 
-    IRPolarityPositive = UART_IRCON_IRLVL_POSITIVE,     /*!< ∫ÏÕ‚µ˜÷∆ ‰≥ˆº´–‘Œ™’˝               */
-    IRPolarityNegetive = UART_IRCON_IRLVL_NEGETIVE,     /*!< ∫ÏÕ‚µ˜÷∆ ‰≥ˆº´–‘Œ™∏∫               */
+{
+    IRPolarityPositive = UART_IRCON_IRLVL_POSITIVE,     /*!< Á∫¢Â§ñË∞ÉÂà∂ËæìÂá∫ÊûÅÊÄß‰∏∫Ê≠£               */
+    IRPolarityNegetive = UART_IRCON_IRLVL_NEGETIVE,     /*!< Á∫¢Â§ñË∞ÉÂà∂ËæìÂá∫ÊûÅÊÄß‰∏∫Ë¥ü               */
 }IRPolarity_TypeDef;                                    /*!< end of group IRPolarity_TypeDef    */
 
-/* 
-* @brief  ∫ÏÕ‚µ˜÷∆ ‰≥ˆº´–‘∂®“Â
+/*
+* @brief  Á∫¢Â§ñË∞ÉÂà∂ËæìÂá∫ÊûÅÊÄßÂÆö‰πâ
 */
 typedef enum
-{ 
-    IRDuty50 = UART_IRDUTY_IRDUTY_50,                   /*!< ∫ÏÕ‚µ˜÷∆≤®–Œ’ºø’±»50%              */
-    IRDuty25 = UART_IRDUTY_IRDUTY_25,                   /*!< ∫ÏÕ‚µ˜÷∆≤®–Œ’ºø’±»25%              */
-    IRDuty12P5 = UART_IRDUTY_IRDUTY_12P5,               /*!< ∫ÏÕ‚µ˜÷∆≤®–Œ’ºø’±»12.5%            */
-    IRDuty6P25 = UART_IRDUTY_IRDUTY_6P25,               /*!< ∫ÏÕ‚µ˜÷∆≤®–Œ’ºø’±»6.25%            */
+{
+    IRDuty50 = UART_IRDUTY_IRDUTY_50,                   /*!< Á∫¢Â§ñË∞ÉÂà∂Ê≥¢ÂΩ¢Âç†Á©∫ÊØî50%              */
+    IRDuty25 = UART_IRDUTY_IRDUTY_25,                   /*!< Á∫¢Â§ñË∞ÉÂà∂Ê≥¢ÂΩ¢Âç†Á©∫ÊØî25%              */
+    IRDuty12P5 = UART_IRDUTY_IRDUTY_12P5,               /*!< Á∫¢Â§ñË∞ÉÂà∂Ê≥¢ÂΩ¢Âç†Á©∫ÊØî12.5%            */
+    IRDuty6P25 = UART_IRDUTY_IRDUTY_6P25,               /*!< Á∫¢Â§ñË∞ÉÂà∂Ê≥¢ÂΩ¢Âç†Á©∫ÊØî6.25%            */
 }IRDuty_TypeDef;                                        /*!< end of group IRDuty_TypeDef        */
 
-/* 
-* @brief  ∫ÏÕ‚ƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+/*
+* @brief  Á∫¢Â§ñÊ®°ÂùóÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-    UART_InitTypeDef  UARTModule;                        /*!< UARTÕ®—∂≥ı ºªØ                     */                                                                          
-    IRPolarity_TypeDef  IRPolarity;                      /*!< ∫ÏÕ‚µ˜÷∆ ‰≥ˆº´–‘≈‰÷√               */                                                                         
-    IRDuty_TypeDef  IRDuty;                              /*!< ∫ÏÕ‚µ˜÷∆≤®–Œ’ºø’±»…Ë÷√             */ 
+    UART_InitTypeDef  UARTModule;                        /*!< UARTÈÄöËÆØÂàùÂßãÂåñ                     */
+    IRPolarity_TypeDef  IRPolarity;                      /*!< Á∫¢Â§ñË∞ÉÂà∂ËæìÂá∫ÊûÅÊÄßÈÖçÁΩÆ               */
+    IRDuty_TypeDef  IRDuty;                              /*!< Á∫¢Â§ñË∞ÉÂà∂Ê≥¢ÂΩ¢Âç†Á©∫ÊØîËÆæÁΩÆ             */
+#if  defined  HT6x3x
+    uint16_t IRClkDiv16;                                 /*!< Á∫¢Â§ñÊó∂ÈíüÊ∫êÈ¢ÑÂàÜÈ¢ëËÆæÁΩÆÔºà0~127Ôºâ
+                                                              0   -> Firclk = Fsysclk / 16
+                                                              1   -> Firclk = Fsysclk / 32
+                                                              ......
+                                                              127 -> Firclk = Fsysclk / 2048 */
+#endif
 }IR_InitTypeDef;                                         /*!< end of group IR_InitTypeDef        */
 
-/* 
-* @brief  ISO7816∆Ê≈º–£—ÈŒª∂®“Â
+/*
+* @brief  ISO7816Â•áÂÅ∂Ê†°È™å‰ΩçÂÆö‰πâ
 */
 typedef enum
-{ 
-    ISO7816Parity_ODD = UART_ISO7816CON_7816PARITY_ODD,  /*!< ∆Ê–£—È                             */
-    ISO7816Parity_EVEN = UART_ISO7816CON_7816PARITY_EVEN,/*!< ≈º–£—È                             */
+{
+    ISO7816Parity_ODD = UART_ISO7816CON_7816PARITY_ODD,  /*!< Â•áÊ†°È™å                             */
+    ISO7816Parity_EVEN = UART_ISO7816CON_7816PARITY_EVEN,/*!< ÂÅ∂Ê†°È™å                             */
 }ISO7816Parity_TypeDef;                                  /*!< end of group ISO7816Parity_TypeDef */
 
-/* 
-* @brief  ISO7816◊‘∂Ø÷ÿ∑¢÷ÿ ’¥Œ ˝∂®“Â
+/*
+* @brief  ISO7816Ëá™Âä®ÈáçÂèëÈáçÊî∂Ê¨°Êï∞ÂÆö‰πâ
 */
 typedef enum
-{ 
-    Repeat_Zero = UART_ISO7816CON_REPTR_0,               /*!< ◊‘∂Ø÷ÿ∑¢÷ÿ ’¥Œ ˝…ËŒ™0              */
-    Repeat_One = UART_ISO7816CON_REPTR_1,                /*!< ◊‘∂Ø÷ÿ∑¢÷ÿ ’¥Œ ˝…ËŒ™1              */
-    Repeat_Two = UART_ISO7816CON_REPTR_2,                /*!< ◊‘∂Ø÷ÿ∑¢÷ÿ ’¥Œ ˝…ËŒ™2              */
-    Repeat_Three = UART_ISO7816CON_REPTR_3,              /*!< ◊‘∂Ø÷ÿ∑¢÷ÿ ’¥Œ ˝…ËŒ™3              */
+{
+    Repeat_Zero = UART_ISO7816CON_REPTR_0,               /*!< Ëá™Âä®ÈáçÂèëÈáçÊî∂Ê¨°Êï∞ËÆæ‰∏∫0              */
+    Repeat_One = UART_ISO7816CON_REPTR_1,                /*!< Ëá™Âä®ÈáçÂèëÈáçÊî∂Ê¨°Êï∞ËÆæ‰∏∫1              */
+    Repeat_Two = UART_ISO7816CON_REPTR_2,                /*!< Ëá™Âä®ÈáçÂèëÈáçÊî∂Ê¨°Êï∞ËÆæ‰∏∫2              */
+    Repeat_Three = UART_ISO7816CON_REPTR_3,              /*!< Ëá™Âä®ÈáçÂèëÈáçÊî∂Ê¨°Êï∞ËÆæ‰∏∫3              */
 }ISO7816Repeat_TypeDef;                                  /*!< end of group ISO7816Repeat_TypeDef */
 
-/* 
-* @brief  ISO7816œÏ”¶Œª≥§∂»∂®“Â
+/*
+* @brief  ISO7816ÂìçÂ∫î‰ΩçÈïøÂ∫¶ÂÆö‰πâ
 */
 typedef enum
-{ 
-    ACKLen_1Bit = UART_ISO7816CON_ACKLEN_1Bit,            /*!< ACKœÏ”¶≥§∂»1Bit                   */
-    ACKLen_1P5Bit = UART_ISO7816CON_ACKLEN_1P5Bit,        /*!< ACKœÏ”¶≥§∂»1.5Bit                 */
-    ACKLen_2Bit = UART_ISO7816CON_ACKLEN_2Bit,            /*!< ACKœÏ”¶≥§∂»2Bit                   */
-}ISO7816ACKLen_TypeDef;                                   /*!< end of group ISO7816ACKLen_TypeDef*/    
+{
+    ACKLen_1Bit = UART_ISO7816CON_ACKLEN_1Bit,            /*!< ACKÂìçÂ∫îÈïøÂ∫¶1Bit                   */
+    ACKLen_1P5Bit = UART_ISO7816CON_ACKLEN_1P5Bit,        /*!< ACKÂìçÂ∫îÈïøÂ∫¶1.5Bit                 */
+    ACKLen_2Bit = UART_ISO7816CON_ACKLEN_2Bit,            /*!< ACKÂìçÂ∫îÈïøÂ∫¶2Bit                   */
+}ISO7816ACKLen_TypeDef;                                   /*!< end of group ISO7816ACKLen_TypeDef*/
 
-/* 
-* @brief  ISO7816ƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+/*
+* @brief  ISO7816Ê®°ÂùóÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-    ISO7816Parity_TypeDef  ISO7816_Parity;                /*!< ISO7816∆Ê≈º…Ë∂®                   */                                                                          
-    ISO7816Repeat_TypeDef  ISO7816_RepeatTime;            /*!< ISO7816÷ÿ∑¢÷ÿ ’¥Œ ˝…Ë∂®           */
-    FunctionalState  AutoRxEN;                            /*!< ◊‘∂Ø÷ÿ ’π¶ƒ‹…Ë∂®                  */ 
-    FunctionalState  AutoTxEN;                            /*!< ◊‘∂Ø÷ÿ∑¢π¶ƒ‹…Ë∂®                  */ 
-    ISO7816ACKLen_TypeDef  ISO7816_AckLen;                /*!< ISO7816œÏ”¶≥§∂»…Ë∂®               */ 
-    uint32_t  ISO7816_BaudRate;                           /*!< ISO7816≤®Ãÿ¬ …Ë∂®£¨±»»Á9600       */ 
+    ISO7816Parity_TypeDef  ISO7816_Parity;                /*!< ISO7816Â•áÂÅ∂ËÆæÂÆö                   */
+    ISO7816Repeat_TypeDef  ISO7816_RepeatTime;            /*!< ISO7816ÈáçÂèëÈáçÊî∂Ê¨°Êï∞ËÆæÂÆö           */
+    FunctionalState  AutoRxEN;                            /*!< Ëá™Âä®ÈáçÊî∂ÂäüËÉΩËÆæÂÆö                  */
+    FunctionalState  AutoTxEN;                            /*!< Ëá™Âä®ÈáçÂèëÂäüËÉΩËÆæÂÆö                  */
+    ISO7816ACKLen_TypeDef  ISO7816_AckLen;                /*!< ISO7816ÂìçÂ∫îÈïøÂ∫¶ËÆæÂÆö               */
+    uint32_t  ISO7816_BaudRate;                           /*!< ISO7816Ê≥¢ÁâπÁéáËÆæÂÆöÔºåÊØîÂ¶Ç9600       */
 }ISO7816_InitTypeDef;                                     /*!< end of group ISO7816_InitTypeDef  */
 
 
 /*
 *********************************************************************************************************
-*                                             »´æ÷±‰¡ø
+*                                             ÂÖ®Â±ÄÂèòÈáè
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Ø ˝…Í√˜
+*                                           ÂÖ®Â±ÄÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
 void HT_UART_Init(HT_UART_TypeDef* UARTx, UART_InitTypeDef* UART_InitStruct);
@@ -189,12 +196,8 @@ uint8_t HT_ISO7816_ReceiveData(HT_ISO7816_TypeDef* ISO7816x);
 void HT_UART_RXFilterConfig(uint32_t RXFLTEn,FunctionalState NewState);
 
 
-
-
-
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __HT6XXX_UART7816_H__ */ 
+#endif /* __HT6XXX_UART7816_H__ */

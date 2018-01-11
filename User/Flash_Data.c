@@ -1,7 +1,8 @@
 #include "ht6xxx.h"
 #include "ht6xxx_lib.h"
 #include "port.h"
-
+#include "General.h"
+#include "Mem.h"
 /**********************************************************************
 	Asm Subroutine
 	Source File in Asms.s43
@@ -436,15 +437,15 @@ unsigned char ReadByte(void)
 	for( i=0;i<8;i++ )
 	{
 		Delay(FLASH_DELAY1);			//16.10.16
-		HT_GPIOC->PTCLR |= FSCLK;//PDIR_FlsSCK |= P_FlsSCK;
+		DF_SCK &= (~FSCLK);//HT_GPIOC->PTCLR |= FSCLK;//PDIR_FlsSCK |= P_FlsSCK;
 		Delay(FLASH_DELAY1);			//16.10.16
 		__NOP();						//16.10.17
-		HT_GPIOC->PTSET |= FSCLK;//PDIR_FlsSCK &= ~P_FlsSCK;		
+		DF_SCK |= (FSCLK);//HT_GPIOC->PTSET |= FSCLK;//PDIR_FlsSCK &= ~P_FlsSCK;		
 		Delay(FLASH_DELAY1);			//16.10.16
 //		__NOP();						//16.10.17
 //		if(( HT_GPIOB->PTDAT & GPIOB_FSO ) != 0 ) Temp |= ByteBit[7-i];//if(( PIN_FlsSDO & P_FlsSDO ) != 0 ) Temp |= ByteBit[7-i];
 		Temp <<= 1;
-		if(( HT_GPIOC->PTDAT & FSO ) != 0 ) Temp |= 0x01;	//if(( PIN_FlsSDO & P_FlsSDO ) != 0 ) Temp |= ByteBit[7-i];
+		if(( DF_SDO & FSO ) != 0 ) Temp |= 0x01;	//if(( PIN_FlsSDO & P_FlsSDO ) != 0 ) Temp |= ByteBit[7-i];
 //		HT_GPIOB->PTSET |= GPIOB_FSCLK;//PDIR_FlsSCK &= ~P_FlsSCK;		
 	}	
 	return Temp;
@@ -486,17 +487,17 @@ void WriteByte(unsigned char Byte)
 	for( i=0;i<8;i++ )
 	{
                 Delay(FLASH_DELAY1);
-		HT_GPIOC->PTCLR |= FSCLK;
+		DF_SCK &= (~FSCLK);//HT_GPIOC->PTCLR |= FSCLK;
                 Delay(FLASH_DELAY1);
-                if(( Byte & 0x80 ) == 0x80 ) HT_GPIOC->PTSET |= FSI;//if(( Byte & ByteBit[7-i] ) != 0 ) PDIR_FlsSDI &= ~P_FlsSDI;
-		else HT_GPIOC->PTCLR |= FSI;//else PDIR_FlsSDI |= P_FlsSDI;
+                if(( Byte & 0x80 ) == 0x80 ) DF_SDI |= FSI;//HT_GPIOC->PTSET |= FSI;//if(( Byte & ByteBit[7-i] ) != 0 ) PDIR_FlsSDI &= ~P_FlsSDI;
+		else DF_SDI &= (~FSI);//HT_GPIOC->PTCLR |= FSI;//else PDIR_FlsSDI |= P_FlsSDI;
 		__NOP();
                  Delay(FLASH_DELAY1);
-		HT_GPIOC->PTSET |= FSCLK;//PDIR_FlsSCK &= ~P_FlsSCK;		
+		DF_SCK |= (FSCLK);//HT_GPIOC->PTSET |= FSCLK;//PDIR_FlsSCK &= ~P_FlsSCK;		
 		Byte <<= 1;
 	}	
 //	__NOP();						//16.10.17
-	HT_GPIOC->PTSET |= FSI;//PDIR_FlsSDI &= ~P_FlsSDI;
+	DF_SDI |= FSI;//HT_GPIOC->PTSET |= FSI;//PDIR_FlsSDI &= ~P_FlsSDI;
 }
 
 /*
@@ -540,52 +541,49 @@ void WriteWord(unsigned short Word)
 //	Status Busy Check		CMD=0xD7/0x57
 short Fls_WriteBusy(void)
 {
-	unsigned short	i;
-	short Count=0;				
-	unsigned char Temp;						//V4			
-	HT_GPIOA->PTCLR |= FCS1;
-	WriteByte( Status_Read );
-	for( i=0; i<7500; i++ ) {			
-		HT_FreeDog();;		
-		Temp = ReadByte();								//V4		
-		if(( Temp & 0x0f ) == 0x02 )	//V4					
-		{
-			Count++;
-			if( Count >= 2 ) break;		
-		}	
-		else Count = 0;				
-	}
-	HT_GPIOA->PTSET |= FCS1;	
+  unsigned short i;
+  short Count=0;				
+  unsigned char Temp;						//V4			
+  DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
+  WriteByte( Status_Read );
+  for( i=0; i<7500; i++ ) 
+  {
+    HT_FreeDog();
+    Temp = ReadByte();								//V4		
+    if(( Temp & 0x0f ) == 0x02 )	//V4
+    {
+      Count++;
+      if( Count >= 2 ) 
+        break;		
+    }	
+    else 
+      Count = 0;
+  }
+  DF_CS |=(FCS1);//HT_GPIOA->PTDAT |= FCS1;
+  return !Count;
 }
 
 short Fls_Busy(void)
 {
-	unsigned short	i;
-	short Count=0;				
-	unsigned char Temp;						//V4			
-
-//	DF_CS |= P_FlsCS;
-//	DF_CS |= GPIOB_FCS1;
-	HT_GPIOA->PTCLR |= FCS1;
-	WriteByte( Status_Read );
-//	for( i=0; i<1000; i++ ) {		
-	for( i=0; i<7500; i++ ) {		
-//		WDTCTL = WDT_ARST_1000;		
-		HT_FreeDog();;		
-		Temp = ReadByte();								//V4		
-//		if((( Temp & 0x01 ) == 0 )&&( Temp != 0x00 ))	//V4
-		if(( Temp & 0x01 ) == 0 )	
-		{
-			Count++;
-			if( Count >= 2 ) break;		
-		}	
-		else Count = 0;				
-	}
-//	DF_CS &= ~P_FlsCS;
-//	DF_CS &= ~GPIOB_FCS1;
-	HT_GPIOA->PTSET |= FCS1;
-		
-	
+  unsigned short	i;
+  short Count=0;
+  unsigned char Temp;						//V4			
+  DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
+  WriteByte( Status_Read );
+  for( i=0; i<7500; i++ ) 
+  {
+    HT_FreeDog();
+    Temp = ReadByte();
+    if(( Temp & 0x01 ) == 0 )
+    {
+      Count++;
+      if( Count >= 2 ) break;
+    }
+    else 
+      Count = 0;
+  }
+  DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
+  return !Count;
 }
 
 //	Status WriteEnable		CMD=0x06
@@ -594,11 +592,11 @@ short WriteEnable(void)
 	if( Fls_Busy() == 0 ) {
 //		DF_CS |= P_FlsCS;
 //		DF_CS |= GPIOB_FCS1;
-		HT_GPIOA->PTCLR |= FCS1;
+		DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
 		WriteByte( Write_Enable );	
 //		DF_CS &= ~P_FlsCS;
 //		DF_CS &= ~GPIOB_FCS1;
-		HT_GPIOA->PTSET |= FCS1;
+		DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
 		return 0;
 	} else return -1;
 }
@@ -611,7 +609,7 @@ unsigned char ReadStatus(void)
 
 //	DF_CS |= P_FlsCS;
 //	DF_CS |= GPIOB_FCS1;
-	HT_GPIOA->PTCLR |= FCS1;
+	DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
 	WriteByte( Status_Read );
 //	WDTCTL = WDT_ARST_1000;		
 	HT_FreeDog();;		
@@ -623,7 +621,7 @@ unsigned char ReadStatus(void)
 	}	
 //	DF_CS &= ~P_FlsCS;
 //	DF_CS &= ~GPIOB_FCS1;
-	HT_GPIOA->PTSET |= FCS1;
+	DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
 	return Temp;
 }
 //	Status WriteEnable		CMD=0x06
@@ -631,10 +629,10 @@ short StatusWrite(void)
 {
 	WriteEnable();
 	if( Fls_Busy() == 0 ) {
-		HT_GPIOA->PTCLR |= FCS1;
+		DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
 		WriteByte( Status_Write );	
 		WriteByte( 0x00 );	
-		HT_GPIOA->PTSET |= FCS1;
+		DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
 		return 0;
 	} else return -1;
 }
@@ -642,74 +640,63 @@ short StatusWrite(void)
 //	Block Erase		CMD=0x20
 short BlockErase(unsigned long Fls_Src)
 {
-	unsigned char Buff[4];
-	unsigned char Temp;
-	
-	RAM_Write( Buff, (unsigned char*)&Fls_Src, 4 );
-//	WDTCTL = WDT_ARST_1000;	
-	HT_FreeDog();;		
-//	StatusWrite();	
-	Temp = ReadStatus();
-	if(( Temp & 0x0C ) != 0 ) StatusWrite();	
-	WriteEnable();
-//	if( Fls_Busy() == 0 ) {
-	if( Fls_WriteBusy() == 0 ) {
-//		DF_CS |= P_FlsCS;
-//		DF_CS |= GPIOB_FCS1;
-		HT_GPIOA->PTCLR |= FCS1;
-		WriteByte( Block_Erase );
-		WriteByte( Buff[2] );
-		WriteByte( Buff[1] );
-		WriteByte( Buff[0] );
-		
-//		DF_CS &= ~P_FlsCS;
-//		DF_CS &= ~GPIOB_FCS1;
-		HT_GPIOA->PTSET |= FCS1;
-		return 0;
-	} else return -1;
-	
+  unsigned char Buff[4];
+  unsigned char Temp;
+  RAM_Write( Buff, (unsigned char*)&Fls_Src, 4 );
+  HT_FreeDog();
+  Temp = ReadStatus();
+  if(( Temp & 0x0C ) != 0 ) StatusWrite();
+  WriteEnable();
+  if( Fls_WriteBusy() == 0 ) {
+    DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
+    WriteByte( Block_Erase );
+    WriteByte( Buff[2] );
+    WriteByte( Buff[1] );
+    WriteByte( Buff[0] );
+    DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
+    return 0;
+  } 
+  else 
+    return -1;
 }
 
 //	Read from DataFlashID 	CMD=0x9F
 short Read_FlashID( unsigned char *RAM_Dest )										//11.02.23
-{	
-	if( Fls_Busy() == 0 ) 
-	{
-		HT_GPIOA->PTCLR |= FCS1;
-		WriteByte( Read_ID );
-		*RAM_Dest = ReadByte();										
-		*(RAM_Dest+1) = ReadByte();										
-		*(RAM_Dest+2) = ReadByte();										
-		HT_GPIOA->PTSET |= FCS1;
-		return 0;
-	} else return -1;
+{
+  if( Fls_Busy() == 0 )
+  {
+    DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
+    WriteByte( Read_ID );
+    *RAM_Dest = ReadByte();
+    *(RAM_Dest+1) = ReadByte();	
+    *(RAM_Dest+2) = ReadByte();	
+    DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
+    return 0;
+  } 
+  else 
+    return -1;
 }
 
 //	Read from DataFlash	CMD=0x03
 short Read_Flash( unsigned char *RAM_Dest, unsigned long Fls_Src, unsigned short Lenth )
 {
-	unsigned char Buff[4];
-	
-	RAM_Write( Buff, (unsigned char*)&Fls_Src, 4 );
-	
-	if( Fls_Busy() == 0 ) {
-//		DF_CS |= P_FlsCS;
-//		DF_CS |= GPIOB_FCS1;
-		HT_GPIOA->PTCLR |= FCS1;
-		WriteByte( Array_Read );
-		WriteByte( Buff[2] );
-		WriteByte( Buff[1] );
-		WriteByte( Buff[0] );
-		
-		while(Lenth>0){
-			*RAM_Dest++ = ReadByte();
-			Lenth--;
-		}
-//		DF_CS &= ~P_FlsCS;
-//		DF_CS &= ~GPIOB_FCS1;
-		HT_GPIOA->PTSET |= FCS1;
-		return 0;
-	} else return -1;
+  unsigned char Buff[4];
+  RAM_Write( Buff, (unsigned char*)&Fls_Src, 4 );
+  if( Fls_Busy() == 0 ) {
+    DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
+    WriteByte( Array_Read );
+    WriteByte( Buff[2] );
+    WriteByte( Buff[1] );
+    WriteByte( Buff[0] );
+    while(Lenth>0){
+      *RAM_Dest++ = ReadByte();
+      Lenth--;
+    }
+    DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
+    return 0;
+  } 
+  else 
+    return -1;
 }
 
 // Read DataFlash
@@ -730,60 +717,55 @@ short DataFlash_Read( unsigned char *RAM_Dest, unsigned long Fls_Src, unsigned l
 //	Write To DataFlash	CMD=0x02
 short Write_Flash( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth )
 {
-	unsigned char Buff[4];
-	unsigned char Temp;
-	
-	RAM_Write( Buff, (unsigned char*)&Fls_Dest, 4 );
-	
-//	StatusWrite();
-	Temp = ReadStatus();
-	if(( Temp & 0x0C ) != 0 ) StatusWrite();	
-	WriteEnable();
-//	if( Fls_Busy() == 0 ) {
-	if( Fls_WriteBusy() == 0 ) {
-//		DF_CS |= P_FlsCS;
-//		DF_CS |= GPIOB_FCS1;
-		HT_GPIOA->PTCLR |= FCS1;
-		WriteByte( BytePage_Prg );
-		WriteByte( Buff[2] );
-		WriteByte( Buff[1] );
-		WriteByte( Buff[0] );
-		
-		while(Lenth>0){
-			WriteByte( *RAM_Src++ );
-			Lenth--;
-		}
-//		DF_CS &= ~P_FlsCS;
-//		DF_CS &= ~GPIOB_FCS1;
-		HT_GPIOA->PTSET |= FCS1;
-		return 0;
-	} else return -1;
+  unsigned char Buff[4];
+  unsigned char Temp;
+  RAM_Write( Buff, (unsigned char*)&Fls_Dest, 4 );
+  Temp = ReadStatus();
+  if(( Temp & 0x0C ) != 0 ) StatusWrite();
+  WriteEnable();
+  if( Fls_WriteBusy() == 0 ) {
+    DF_CS &=(~FCS1);//HT_GPIOA->PTCLR |= FCS1;
+    WriteByte( BytePage_Prg );
+    WriteByte( Buff[2] );
+    WriteByte( Buff[1] );
+    WriteByte( Buff[0] );
+    while(Lenth>0){
+      WriteByte( *RAM_Src++ );
+      Lenth--;
+    }
+    DF_CS |=(FCS1);//HT_GPIOA->PTSET |= FCS1;
+    return 0;
+  } 
+  else 
+    return -1;
 }
 
-short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth )
+short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned long Fls_Sta, unsigned long Fls_End,unsigned short Lenth )
 {
-	unsigned short Buf_Addr;
-	unsigned short Len;
-	unsigned long Value;
-	
-//	Value = Fls_Dest + Lenth;
-	Value = Fls_Dest;
-	if(( Value % 4096 ) == 0 )			//写数据空间为4K页的首地址
-	{
-		BlockErase( Value );
-	}		
-	while( Lenth > 0 ) 
-	{
-		Buf_Addr = Fls_Dest % FLS_PAGE;
-		if( Buf_Addr != 0 ) Len = FLS_PAGE - Buf_Addr;
-		else Len = FLS_PAGE;
-		if( Lenth < Len ) Len = Lenth;
-		Write_Flash( Fls_Dest, RAM_Src, Len );
-		Fls_Dest += Len; 
-		RAM_Src += Len;
-		Lenth -= Len;
-	}
-	return 0;
+  unsigned short Buf_Addr;
+  unsigned short Len;
+  unsigned long Value;
+  Value = Fls_Dest+Lenth;
+  if(( Value / 4096 ) != ( Fls_Dest / 4096 ))			//写数据空间超过4K分界线
+  {
+    if( Value >= Fls_End ) Value = Value - Fls_End + Fls_Sta; 
+    BlockErase( Value );
+  }
+  while( Lenth > 0 )
+  {
+    Buf_Addr = Fls_Dest % FLS_PAGE;
+    if( Buf_Addr != 0 ) 
+      Len = FLS_PAGE - Buf_Addr;
+    else 
+      Len = FLS_PAGE;
+    if( Lenth < Len ) 
+      Len = Lenth;
+    Write_Flash( Fls_Dest, RAM_Src, Len );
+    Fls_Dest += Len; 
+    RAM_Src += Len;
+    Lenth -= Len;
+  }
+  return 0;
 }
 
 short Write_Flash_Direct( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth )

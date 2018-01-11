@@ -1,3 +1,4 @@
+#include <string.h>
 #include "ht6xxx_lib.h"
 #include "serial.h"
 struct S_Serial_ m_sserial[1];
@@ -14,7 +15,7 @@ void udelay(int us)
     }
 }
 
-int8_t Serial_Open(uint8_t port,uint32_t baud,uint8_t bits,uint8_t check)
+int8_t Serial_Open(uint8_t port,uint32_t baud,uint8_t bits,UARTParity_TypeDef check)
 {
         UART_InitTypeDef UART_InitStructure;
 	HT_UART_TypeDef * pUart;
@@ -39,7 +40,10 @@ int8_t Serial_Open(uint8_t port,uint32_t baud,uint8_t bits,uint8_t check)
 
 	port = 0;
 	
-	m_sserial[port].send_pos=m_sserial[port].rx_len=m_sserial[port].rx_len=m_sserial[port].rx_pos=0;
+	m_sserial[port].send_pos=0;
+        m_sserial[port].rx_len=0;
+        m_sserial[port].rx_len=0;
+        m_sserial[port].rx_pos=0;
 	
          UART_InitStructure.UART_Logic = UartLogicPositive;		  /*!< UART逻辑为正 			  */
 	 UART_InitStructure.UART_StopBits = OneStopBits;			  /*!< 1位停止位				  */

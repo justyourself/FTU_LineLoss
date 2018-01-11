@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_lcd.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : 
+* Version      : V1.0.3
+* Description  :
 *********************************************************************************************************
 */
 
@@ -21,12 +21,14 @@
 
 /*
 *********************************************************************************************************
-*                                           ±æµÿ∫Í/Ω·ππÃÂ
+*                                           Êú¨Âú∞ÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
 
 #if  defined  HT6x1x                                                        /*!< HT6x1x                */
 #define    MaxSegNum                 36
+#elif  defined  HT6x3x                                                      /*!< HT6x3x                */
+#define    MaxSegNum                 52
 #elif  defined  HT502x                                                      /*!< HT502x                */
 #define    MaxSegNum                 43
 #else                                                                       /*!< HT6x2x  HT501x        */
@@ -35,14 +37,14 @@
 
 /*
 *********************************************************************************************************
-*                                             ±æµÿ±‰¡ø
+*                                             Êú¨Âú∞ÂèòÈáè
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±æµÿ∫Ø ˝…Í√˜
+*                                           Êú¨Âú∞ÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
 
@@ -51,82 +53,137 @@
 *********************************************************************************************************
 *                                         INITIAL LCD MODULE
 *
-* ∫Ø ˝Àµ√˜: ≥ı ºªØLCDƒ£øÈ
+* ÂáΩÊï∞ËØ¥Êòé: ÂàùÂßãÂåñLCDÊ®°Âùó
 *
-* »Îø⁄≤Œ ˝: LCD_InitStruct     LCD≥ı ºªØΩ·ππÃÂ÷∏’Î£¨÷˜“™∞¸∫¨5∏ˆ≤Œ ˝: 
-*                              1) LCD_Bias       : LCD∆´—π«˝∂Ø
+* ÂÖ•Âè£ÂèÇÊï∞: LCD_InitStruct     LCDÂàùÂßãÂåñÁªìÊûÑ‰ΩìÊåáÈíàÔºå‰∏ªË¶ÅÂåÖÂê´5‰∏™ÂèÇÊï∞:
+*                              1) LCD_Bias       : LCDÂÅèÂéãÈ©±Âä®
 *                              2) LCD_Com        : LCDCom Number
-*                              3) LCD_CLK        : LCD…®√Ë∆µ¬  
-*                              4) LCD_ChargeMode : LCD≥‰µÁƒ£ Ω        
-*                              5) LCD_Vrsel[3..0]: LCD∂‘±»∂»£¨ ˝÷µ‘Ω–°£¨∂‘±»∂»‘Ω∏ﬂ                      
+*                              3) LCD_CLK        : LCDÊâ´ÊèèÈ¢ëÁéá
+*                              4) LCD_ChargeMode : LCDÂÖÖÁîµÊ®°Âºè
+*                              5) LCD_Vrsel[3..0]: LCDÂØπÊØîÂ∫¶ÔºåÊï∞ÂÄºË∂äÂ∞èÔºåÂØπÊØîÂ∫¶Ë∂äÈ´ò
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: ”√ªß‘⁄≈‰÷√LCDºƒ¥Ê∆˜«∞”¶œ» πƒ‹LCDƒ£øÈ£¨æﬂÃÂ≤Œº˚HT_CMU_ClkCtrl0Config()∫Ø ˝
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Áî®Êà∑Âú®ÈÖçÁΩÆLCDÂØÑÂ≠òÂô®ÂâçÂ∫îÂÖà‰ΩøËÉΩLCDÊ®°ÂùóÔºåÂÖ∑‰ΩìÂèÇËßÅHT_CMU_ClkCtrl0Config()ÂáΩÊï∞
 *********************************************************************************************************
 */
 void HT_LCD_Init(LCD_InitTypeDef* LCD_InitStruct)
 {
     /*  assert_param  */
-    
     uint32_t tempreg;
 
-    tempreg  = LCD_InitStruct->LCD_Bias;                   /*!< LCD∆´—π«˝∂Ø              */
+    tempreg  = LCD_InitStruct->LCD_Bias;                   /*!< LCDÂÅèÂéãÈ©±Âä®              */
     tempreg |= LCD_InitStruct->LCD_Com;                    /*!< LCDCom Number            */
-    tempreg |= LCD_InitStruct->LCD_CLK;                    /*!< LCD…®√Ë∆µ¬               */
+    tempreg |= LCD_InitStruct->LCD_CLK;                    /*!< LCDÊâ´ÊèèÈ¢ëÁéá              */
 
-    HT_LCD->LCDCLK = tempreg;                              /*!< ≈‰÷√LCDCLKºƒ¥Ê∆˜         */
+    HT_LCD->LCDCLK = tempreg;                              /*!< ÈÖçÁΩÆLCDCLKÂØÑÂ≠òÂô®         */
 
-    tempreg  = (uint32_t)LCD_InitStruct->LCD_ChargeMode;   /*!< LCD≥‰µÁƒ£ Ω…Ë÷√          */
+    tempreg  = (uint32_t)LCD_InitStruct->LCD_ChargeMode;   /*!< LCDÂÖÖÁîµÊ®°ÂºèËÆæÁΩÆ          */
     tempreg |= (LCD_InitStruct->LCD_Vrsel & LCD_LCDCON_VRSEL);
-                                                           /*!< LCD∂‘±»∂»…Ë÷√            */
-    HT_LCD->LCDCON = tempreg;                              /*!< ≈‰÷√LCDCONºƒ¥Ê∆˜         */ 
-} 
+                                                           /*!< LCDÂØπÊØîÂ∫¶ËÆæÁΩÆ            */
+    HT_LCD->LCDCON = tempreg;                              /*!< ÈÖçÁΩÆLCDCONÂØÑÂ≠òÂô®         */
+}
+
+#if  defined  HT502x  ||  defined  HT6x3x
+/*
+*********************************************************************************************************
+*                                         ENABLE/DISABLE LCD MODULE
+*
+* ÂáΩÊï∞ËØ¥Êòé: LCDËæìÂá∫ÊéßÂà∂
+*
+* ÂÖ•Âè£ÂèÇÊï∞: NewState            = ENABLEÔºö ‰ΩøËÉΩÁõ∏Â∫îÊ®°Âùó
+*                               = DISABLEÔºöÂÖ≥Èó≠Áõ∏Â∫îÊ®°Âùó
+*
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: ËæìÂá∫LCDÊ®°ÂùóÂâçÔºåÂª∫ËÆÆÂÖàÂØπLCDËøõË°åÁõ∏ÂÖ≥ÁöÑÈÖçÁΩÆHT_LCD_Init()ÊàñHT_LCD_ChgPump_Init()(for HT6x3x)
+*********************************************************************************************************
+*/
+void HT_LCD_OutConfig(FunctionalState NewState)
+{
+    /*  assert_param  */
+    if (NewState == ENABLE)
+    {
+        HT_LCD->LCDOUT |= LCD_LCDOUT_ENABLE;
+    }
+    else
+    {
+        HT_LCD->LCDOUT &= (~LCD_LCDOUT_ENABLE);
+    }
+}
+#endif
+
+#if  defined  HT6x3x
+/*
+*********************************************************************************************************
+*                                         INITIAL LCD CHARGEPUMP MODULE
+*
+* ÂáΩÊï∞ËØ¥Êòé: ÂàùÂßãÂåñLCD chargepumpÊ®°Âùó
+*
+* ÂÖ•Âè£ÂèÇÊï∞: LCD_InitStruct     LCDÂàùÂßãÂåñÁªìÊûÑ‰ΩìÊåáÈíàÔºå‰∏ªË¶ÅÂåÖÂê´5‰∏™ÂèÇÊï∞:
+*                              1) LCD_ChargePumpClk : LCD chargepump Êó∂ÈíüÈÄâÊã©
+*                              2) LCD_DriverMode    : LCD È©±Âä®Ê®°ÂºèÈÄâÊã©
+*                              3) LCD_Vcsel[4..0]   : LCD chargepump ÂØπÊØîÂ∫¶ÔºåÊï∞ÂÄºË∂äÂ∞èÔºåÂØπÊØîÂ∫¶Ë∂äÈ´ò
+*
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Ëã•ÈÄâÊã©charge pumpÈ©±Âä®Ê®°ÂºèÔºåËØ∑ÂÖàÂÖ≥Èó≠LCDËæìÂá∫ÔºåÂÜçÊâìÂºÄlcdÊó∂ÈíüÔºàCLKCTRL0Ôºâ,Á≠âÂæÖÂøÖË¶ÅÁöÑÊó∂Èó¥ÂêéÔºåÂÜçÊâìÂºÄLCDËæìÂá∫
+*********************************************************************************************************
+*/
+void HT_LCD_CP_Init(LCD_CPInitTypeDef* LCD_CPInitStruct)
+{
+    /*  assert_param  */
+    uint32_t tempreg;
+
+    tempreg  = LCD_CPInitStruct->LCD_ChargePumpClk & LCD_LCDCPC_CCLKSEL; /*!< LCD ChargePumpÊó∂ÈíüÈÄâÊã©   */
+    tempreg |= (LCD_CPInitStruct->LCD_DriverMode & LCD_LCDCPC_MODSET);   /*!< LCD È©±Âä®Ê®°ÂºèÈÄâÊã©         */
+    tempreg |= (LCD_CPInitStruct->LCD_Vcsel & LCD_LCDCPC_VCSEL);         /*!< LCD ChargePumpÊòæÁ§∫ÂØπÊØîÂ∫¶ */
+
+    HT_LCD->LCDCPC = tempreg;                                            /*!< ÈÖçÁΩÆLCDCPCÂØÑÂ≠òÂô®         */
+}
+#endif
 
 /*
 *********************************************************************************************************
 *                                         WRITE LCD SEGMENT
 *
-* ∫Ø ˝Àµ√˜: –¥
+* ÂáΩÊï∞ËØ¥Êòé: ÂÜô
 *
-* »Îø⁄≤Œ ˝: SegNum     ±ª–¥µƒ“ª∏ˆSegment,÷ªƒ‹‘⁄0-36÷Æº‰
-* 
-*           SegValue   Õ˘Segment–¥µƒ÷µ                   
+* ÂÖ•Âè£ÂèÇÊï∞: SegNum     Ë¢´ÂÜôÁöÑ‰∏Ä‰∏™Segment,Âè™ËÉΩÂú®0-36‰πãÈó¥
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: Œﬁ
+*           SegValue   ÂæÄSegmentÂÜôÁöÑÂÄº
+*
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Êó†
 *********************************************************************************************************
 */
 void HT_LCD_Write(uint8_t SegNum, uint8_t SegValue)
 {
     /*  assert_param  */
-    
-    
     if(SegNum>MaxSegNum)
         return;
     HT_LCD->LCDBUF[SegNum] = SegValue;
-} 
+}
 
 /*
 *********************************************************************************************************
 *                                         WRITE LCD SEGMENT
 *
-* ∫Ø ˝Àµ√˜: –¥
+* ÂáΩÊï∞ËØ¥Êòé: ÂÜô
 *
-* »Îø⁄≤Œ ˝: SegNum     ±ª–¥µƒ“ª∏ˆSegment,÷ªƒ‹‘⁄0-36÷Æº‰
-* 
-*           SegValue   Õ˘Segment–¥µƒ÷µ                   
+* ÂÖ•Âè£ÂèÇÊï∞: SegNum     Ë¢´ÂÜôÁöÑ‰∏Ä‰∏™Segment,Âè™ËÉΩÂú®0-36‰πãÈó¥
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: Œﬁ
+*           SegValue   ÂæÄSegmentÂÜôÁöÑÂÄº
+*
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Êó†
 *********************************************************************************************************
 */
 uint8_t HT_LCD_Read(uint8_t SegNum)
 {
     /*  assert_param  */
-        
     return (uint8_t)HT_LCD->LCDBUF[SegNum];
-} 
+}
 

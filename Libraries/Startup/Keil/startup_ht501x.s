@@ -10,8 +10,8 @@
 ;* Project      : HT6xxx
 ;* File         : startup_ht501x.s
 ;* By           : SocTeam
-;* Version      : CurrentVersion1_5_20160407
-;* Description  : 
+;* Version      : CurrentVersion1_6_20171108
+;* Description  :
 ;*********************************************************************************************************
 ;*/
 
@@ -218,13 +218,13 @@ Reserved_IRQHandler
 ; User Initial Stack & Heap
 
                 IF      :DEF:__MICROLIB
-                
+
                 EXPORT  __initial_sp
                 EXPORT  __heap_base
                 EXPORT  __heap_limit
-                
+
                 ELSE
-                
+
                 IMPORT  __use_two_region_memory
                 EXPORT  __user_initial_stackheap
 __user_initial_stackheap

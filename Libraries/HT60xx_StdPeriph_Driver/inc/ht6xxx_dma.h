@@ -1,17 +1,17 @@
 /*
-**********************************************************************************************************
+*********************************************************************************************************
 *                                              HT6XXX
 *                                          Library Function
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_dma.h
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : Only support HT6x2x, HT501x and HT502x
+* Version      : V1.0.2
+* Description  : Only support HT6x2x, HT6x3x, HT501x and HT502x
 **********************************************************************************************************
 */
 
@@ -20,80 +20,80 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
-    
+#endif
+
 #include "ht6xxx.h"
 
-#if defined HT6x2x  ||  defined  HT501x  ||  defined  HT502x             /* This File Only support HT6x2x, HT501x and HT502x */
-    
+#if defined HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x  ||  defined  HT502x             /* This File Only support HT6x2x, HT6x3x, HT501x and HT502x */
+
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Í/Ω·ππÃÂ
+*                                           ÂÖ®Â±ÄÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
-  
-/* 
-* @brief  DMAƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+
+/*
+* @brief  DMAÊ®°ÂùóÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
   uint32_t DMA_Request;
-  uint32_t DMA_SourceAddr;                  
-  uint32_t DMA_DestinationAddr;  
-  uint32_t DMA_TransferNum;    
-  uint32_t DMA_BulkSize;                    
-  uint32_t DMA_SourceAddrInc;                                         
-  uint32_t DMA_DestinationAddrInc;                                                       
-  uint32_t DMA_MemoryDataSize;                                            
-  uint32_t DMA_TransferMode;                                                      
-  uint32_t DMA_CycleMode;                  
+  uint32_t DMA_SourceAddr;
+  uint32_t DMA_DestinationAddr;
+  uint32_t DMA_TransferNum;
+  uint32_t DMA_BulkSize;
+  uint32_t DMA_SourceAddrInc;
+  uint32_t DMA_DestinationAddrInc;
+  uint32_t DMA_MemoryDataSize;
+  uint32_t DMA_TransferMode;
+  uint32_t DMA_CycleMode;
 }DMA_InitTypeDef;                                /*!< end of group TMR_InitTypeDef   */
 
 
 
-/* 
-* @brief  DMA_SourceAddrInc◊‘‘ˆ…Ë÷√
+/*
+* @brief  DMA_SourceAddrIncËá™Â¢ûËÆæÁΩÆ
 */
 #define DMA_SourceAddrInc_NoIncrease                ((uint32_t)0x00000000)
 #define DMA_SourceAddrInc_AutoIncrease              ((uint32_t)0x00000020)
 #define DMA_SourceAddrInc_BulkInternalIncrease      ((uint32_t)0x00000040)
 
-/* 
-* @brief  DMA_DestinationAddrInc◊‘‘ˆ…Ë÷√
+/*
+* @brief  DMA_DestinationAddrIncËá™Â¢ûËÆæÁΩÆ
 */
 #define DMA_DestinationAddrInc_NoIncrease           ((uint32_t)0x00000000)
 #define DMA_DestinationAddrInc_AutoIncrease         ((uint32_t)0x00000080)
 #define DMA_DestinationAddrInc_BulkInternalIncrease ((uint32_t)0x00000100)
 
-/* 
-* @brief  DMA_MemoryDataSize¥Û–°…Ë÷√
+/*
+* @brief  DMA_MemoryDataSizeÂ§ßÂ∞èËÆæÁΩÆ
 */
 
 #define DMA_MemoryDataSize_Byte                     ((uint32_t)0x00000000)
 #define DMA_MemoryDataSize_HalfWord                 ((uint32_t)0x00000002)
-#define DMA_MemoryDataSize_Word                     ((uint32_t)0x00000004)  
+#define DMA_MemoryDataSize_Word                     ((uint32_t)0x00000004)
 
-/* 
-* @brief  DMA_TransferMode¿‡–Õ…Ë÷√
+/*
+* @brief  DMA_TransferModeÁ±ªÂûãËÆæÁΩÆ
 */
 
 #define DMA_TransferMode_SingleTransfer             ((uint32_t)0x00000000)
 #define DMA_TransferMode_BulkTransfer               ((uint32_t)0x00000008)
 
-/* 
-* @brief  DMA_CycleMode¿‡–Õ…Ë÷√
+/*
+* @brief  DMA_CycleModeÁ±ªÂûãËÆæÁΩÆ
 */
 #define DMA_CycleMode_NoCycleTransfer               ((uint32_t)0x00000000)
 #define DMA_CycleMode_CycleTransfer                 ((uint32_t)0x00000010)
 
-/* 
-* @brief  DMA_Channel_EnÕ®µ¿ πƒ‹…Ë÷√
+/*
+* @brief  DMA_Channel_EnÈÄöÈÅì‰ΩøËÉΩËÆæÁΩÆ
 */
 #define DMA_Channel_Enable                          ((uint32_t)0x00000001)
 #define DMA_Channel_Disable                         ((uint32_t)0xFFFFFFFE)
 
-/* 
-* @brief  DMA_Request…Ë÷√
+/*
+* @brief  DMA_RequestËÆæÁΩÆ
 */
 #define DMA_Request_Software                         ((uint32_t)0x00000000 << 9)
 #define DMA_Request_UART0_TX                         ((uint32_t)0x00000001 << 9)
@@ -133,14 +133,14 @@ typedef struct
 
 /*
 *********************************************************************************************************
-*                                             »´æ÷±‰¡ø
+*                                             ÂÖ®Â±ÄÂèòÈáè
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Ø ˝…Í√˜
+*                                           ÂÖ®Â±ÄÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
 
@@ -151,8 +151,7 @@ ITStatus HT_DMA_ITFlagStatusGet(uint8_t ITFlag);
 void HT_DMA_ClearITPendingBit(uint8_t ITFlag);
 
 
-
-#endif                                        /* This File Only support HT6x2x and HT501x */
+#endif                                      /* This File Only support HT6x2x, HT6x3x, HT501x and HT502x */
 
 #ifdef __cplusplus
 }

@@ -10,8 +10,8 @@
 ;* Project      : HT6xxx
 ;* File         : startup_ht6x2x.s
 ;* By           : SocTeam
-;* Version      : CurrentVersion1_5_20160407
-;* Description  : 
+;* Version      : CurrentVersion1_7_20171108
+;* Description  :
 ;*********************************************************************************************************
 ;*/
 
@@ -19,7 +19,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x00001000
+Stack_Size      EQU     0x00002000
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -89,7 +89,7 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     I2C_IRQHandler            ; 16+21: I2C
                 DCD     SPI0_IRQHandler           ; 16+22: SPI0
                 DCD     SPI1_IRQHandler           ; 16+23: SPI1
-                DCD     SelfTestF_IRQHandler      ; 16+24: FreqTest
+                DCD     SelfTestFreq_IRQHandler   ; 16+24: FreqTest
                 DCD     TIMER_4_IRQHandler        ; 16+25: Timer4
                 DCD     TIMER_5_IRQHandler        ; 16+26: Timer5
                 DCD     UART6_IRQHandler          ; 16+27: UART6
@@ -101,7 +101,7 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
 
                 IF      :LNOT::DEF:NO_CRP
                 AREA    |.ARM.__at_0x0FC0|, CODE, READONLY
-CRP_Key         DCD     0xF7FFFFA2
+CRP_Key         DCD     0xFFFFFFA2
                 ENDIF
 
 
@@ -123,7 +123,7 @@ Reset_Handler   PROC
 
 ; Dummy Exception Handlers (infinite loops which can be modified)
 
-; now, under COMMON NMI.c and NMI.h, a real NMI handler is created if NMI is enabled 
+; now, under COMMON NMI.c and NMI.h, a real NMI handler is created if NMI is enabled
 ; for particular peripheral.
 NMI_Handler     PROC
                 EXPORT  NMI_Handler               [WEAK]
@@ -175,7 +175,7 @@ Default_Handler PROC
                 EXPORT  I2C_IRQHandler            [WEAK]
                 EXPORT  SPI0_IRQHandler           [WEAK]
                 EXPORT  SPI1_IRQHandler           [WEAK]
-                EXPORT  SelfTestF_IRQHandler      [WEAK]
+                EXPORT  SelfTestFreq_IRQHandler   [WEAK]
                 EXPORT  TIMER_4_IRQHandler        [WEAK]
                 EXPORT  TIMER_5_IRQHandler        [WEAK]
                 EXPORT  UART6_IRQHandler          [WEAK]
@@ -210,7 +210,7 @@ RTC_IRQHandler
 I2C_IRQHandler
 SPI0_IRQHandler
 SPI1_IRQHandler
-SelfTestF_IRQHandler
+SelfTestFreq_IRQHandler
 TIMER_4_IRQHandler
 TIMER_5_IRQHandler
 UART6_IRQHandler
@@ -229,7 +229,7 @@ DMA_IRQHandler
 ; User Initial Stack & Heap
 
                 IF      :DEF:__MICROLIB
-                
+
                 EXPORT  __initial_sp
                 EXPORT  __heap_base
                 EXPORT  __heap_limit

@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_reset.c
 * By           : Hitrendtech_SocTeam
 * Version      : V1.0.0
-* Description  : 
+* Description  :
 *********************************************************************************************************
 */
 
@@ -19,11 +19,10 @@
 
 #include "ht6xxx_reset.h"
 #include "ht6xxx_cmu.h"
-#include "ht6xxx_gpio.h"
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æž„ä½“
 *********************************************************************************************************
 */
 
@@ -31,14 +30,14 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊýÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜Ž
 *********************************************************************************************************
 */
 
@@ -47,284 +46,280 @@
 *********************************************************************************************************
 *                               GET SPECIFIED WAKE FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦»½ÐÑ×´Ì¬±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”å”¤é†’çŠ¶æ€æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: STAFlag    ÏëÒª¼ì²éµÄÄ³¸ö»½ÐÑ±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
-*                       @arg PMU_WAKEIF_PMUWKIF      
-*                       @arg PMU_WAKEIF_INT0WKIF     
-*                       @arg PMU_WAKEIF_INT1WKIF     
-*                       @arg PMU_WAKEIF_INT2WKIF     
-*                       @arg PMU_WAKEIF_INT3WKIF     
-*                       @arg PMU_WAKEIF_INT4WKIF     
-*                       @arg PMU_WAKEIF_INT5WKIF     
-*                       @arg PMU_WAKEIF_INT6WKIF     
-*                       @arg PMU_WAKEIF_RX0WKIF      
-*                       @arg PMU_WAKEIF_RX1WKIF      
-*                       @arg PMU_WAKEIF_RX2WKIF      
-*                       @arg PMU_WAKEIF_RX3WKIF      
-*                       @arg PMU_WAKEIF_RX4WKIF      
-*                       @arg PMU_WAKEIF_RX5WKIF      
-*                       @arg PMU_WAKEIF_TBSWKIF      
-*                       @arg PMU_WAKEIF_RTCWKIF      
-*                       @arg PMU_WAKEIF_WDTWKIF
-*                       @arg PMU_WAKEIF_AREGWKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR0WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR1WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR2WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR3WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR4WKIF    (Only for HT6x2x)
-*                       @arg PMU_WAKEIF_TMR5WKIF    (Only for HT6x2x)
-*                       @arg PMU_WAKEIF_IICWKIF     (Only for HT502x)
-*                       @arg PMU_WAKEIF_SPIWKIF     (Only for HT502x)
-*                       @arg PMU_WAKEIF_EMUWKIF     (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_DMAWKIF     (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_KEYWKIF     (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_RX6WKIF     (Only for HT6x2x)
-*                       @arg PMU_WAKEIF_INT7WKIF    (Only for HT6x2x, HT502x)
-*                       @arg PMU_WAKEIF_INT8WKIF    (Only for HT6x2x, HT502x)
-*                       @arg PMU_WAKEIF_INT9WKIF    (Only for HT6x2x, HT502x)
-*                       @arg PMU_WAKEIF_NMIWKIF     (Only for HT502x)
+* å…¥å£å‚æ•°: STAFlag    æƒ³è¦æ£€æŸ¥çš„æŸä¸ªå”¤é†’æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
+*                       @arg PMU_WAKEIF_PMUWKIF
+*                       @arg PMU_WAKEIF_INT0WKIF
+*                       @arg PMU_WAKEIF_INT1WKIF
+*                       @arg PMU_WAKEIF_INT2WKIF
+*                       @arg PMU_WAKEIF_INT3WKIF
+*                       @arg PMU_WAKEIF_INT4WKIF
+*                       @arg PMU_WAKEIF_INT5WKIF
+*                       @arg PMU_WAKEIF_INT6WKIF
+*                       @arg PMU_WAKEIF_RX0WKIF
+*                       @arg PMU_WAKEIF_RX1WKIF
+*                       @arg PMU_WAKEIF_RX2WKIF
+*                       @arg PMU_WAKEIF_RX3WKIF
+*                       @arg PMU_WAKEIF_RX4WKIF
+*                       @arg PMU_WAKEIF_RX5WKIF
+*                       @arg PMU_WAKEIF_TBSWKIF
+*                       @arg PMU_WAKEIF_RTCWKIF
+*                       @arg PMU_WAKEIF_WDTWKIF     (for HT6x1x, HT501x)
+*                       @arg PMU_WAKEIF_AREGWKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR0WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR1WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR2WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR3WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR4WKIF    (for HT6x2x, HT6x3x)
+*                       @arg PMU_WAKEIF_TMR5WKIF    (for HT6x2x, HT6x3x)
+*                       @arg PMU_WAKEIF_IICWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_SPIWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_SELFTESTWKIF(for HT502x)
+*                       @arg PMU_WAKEIF_EMUWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_DMAWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_KEYWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_RX6WKIF     (for HT6x2x, HT6x3x)
+*                       @arg PMU_WAKEIF_INT7WKIF    (for HT6x2x, HT6x3x, HT502x)
+*                       @arg PMU_WAKEIF_INT8WKIF    (for HT6x2x, HT6x3x, HT502x)
+*                       @arg PMU_WAKEIF_INT9WKIF    (for HT6x2x, HT6x3x, HT502x)
+*                       @arg PMU_WAKEIF_NMIWKIF     (for HT502x)
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  »½ÐÑ±êÖ¾ÖÃÆð
-*                       = RESET£º»½ÐÑ±êÖ¾Î´ÖÃÆð
-* 
-* ÌØÊâËµÃ÷: HoldºÍSleep»½ÐÑ¶¼»áµ¼ÖÂÏàÓ¦»½ÐÑ±êÖ¾ÖÃÎ»£¬ÓÃ»§Èç¹ûÏë½øÒ»²½Çø·ÖÊÇHold»½ÐÑ»¹ÊÇSleep»½ÐÑ£¬¿ÉÒÔ²é¿´
-*           RSTSTA¼Ä´æÆ÷ÖÐPMU_RSTSTA_SleepFlagºÍPMU_RSTSTA_HoldFlag±êÖ¾Î»À´Çø·Ö
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  å”¤é†’æ ‡å¿—ç½®èµ·
+*                       = RESETï¼šå”¤é†’æ ‡å¿—æœªç½®èµ·
+*
+* ç‰¹æ®Šè¯´æ˜Ž: Holdå’ŒSleepå”¤é†’éƒ½ä¼šå¯¼è‡´ç›¸åº”å”¤é†’æ ‡å¿—ç½®ä½ï¼Œç”¨æˆ·å¦‚æžœæƒ³è¿›ä¸€æ­¥åŒºåˆ†æ˜¯Holdå”¤é†’è¿˜æ˜¯Sleepå”¤é†’ï¼Œå¯ä»¥æŸ¥çœ‹
+*           RSTSTAå¯„å­˜å™¨ä¸­PMU_RSTSTA_SleepFlagå’ŒPMU_RSTSTA_HoldFlagæ ‡å¿—ä½æ¥åŒºåˆ†
 *********************************************************************************************************
 */
 FlagStatus HT_WakeFlagStatusGet(uint32_t STAFlag)
 {
     /*  assert_param  */
-    
     if (HT_PMU->WAKEIF & STAFlag)
-    {       
-        return SET;                        /*!< ²úÉúÏàÓ¦»½ÐÑ±êÖ¾          */
+    {
+        return SET;                        /*!< äº§ç”Ÿç›¸åº”å”¤é†’æ ‡å¿—          */
     }
     else
     {
-        return RESET;                      /*!< Î´²úÉúÏàÓ¦»½ÐÑ±êÖ¾        */
-    } 
+        return RESET;                      /*!< æœªäº§ç”Ÿç›¸åº”å”¤é†’æ ‡å¿—        */
+    }
 }
 
 /*
 *********************************************************************************************************
 *                               CLEAR SPECIFIED WAKE FLAG STATUS
 *
-* º¯ÊýËµÃ÷: Çå³ýÏàÓ¦»½ÐÑ±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: æ¸…é™¤ç›¸åº”å”¤é†’æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: STAFlag    ÏëÒªÇå³ýµÄÄ³¸ö»½ÐÑ±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
-*                       @arg PMU_WAKEIF           ´ËÏîÇå³ýËùÓÐ±êÖ¾
-*                       @arg PMU_WAKEIF_PMUWKIF      
-*                       @arg PMU_WAKEIF_INT0WKIF     
-*                       @arg PMU_WAKEIF_INT1WKIF     
-*                       @arg PMU_WAKEIF_INT2WKIF     
-*                       @arg PMU_WAKEIF_INT3WKIF     
-*                       @arg PMU_WAKEIF_INT4WKIF     
-*                       @arg PMU_WAKEIF_INT5WKIF     
-*                       @arg PMU_WAKEIF_INT6WKIF     
-*                       @arg PMU_WAKEIF_RX0WKIF      
-*                       @arg PMU_WAKEIF_RX1WKIF      
-*                       @arg PMU_WAKEIF_RX2WKIF      
-*                       @arg PMU_WAKEIF_RX3WKIF      
-*                       @arg PMU_WAKEIF_RX4WKIF      
-*                       @arg PMU_WAKEIF_RX5WKIF      
-*                       @arg PMU_WAKEIF_TBSWKIF      
-*                       @arg PMU_WAKEIF_RTCWKIF      
-*                       @arg PMU_WAKEIF_WDTWKIF
-*                       @arg PMU_WAKEIF_AREGWKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR0WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR1WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR2WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR3WKIF    (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_TMR4WKIF    (Only for HT6x2x)
-*                       @arg PMU_WAKEIF_TMR5WKIF    (Only for HT6x2x)
-*                       @arg PMU_WAKEIF_IICWKIF     (Only for HT502x)
-*                       @arg PMU_WAKEIF_SPIWKIF     (Only for HT502x)
-*                       @arg PMU_WAKEIF_EMUWKIF     (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_DMAWKIF     (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_KEYWKIF     (Only for HT501x, HT502x)
-*                       @arg PMU_WAKEIF_RX6WKIF     (Only for HT6x2x)
-*                       @arg PMU_WAKEIF_INT7WKIF    (Only for HT6x2x, HT502x)
-*                       @arg PMU_WAKEIF_INT8WKIF    (Only for HT6x2x, HT502x)
-*                       @arg PMU_WAKEIF_INT9WKIF    (Only for HT6x2x, HT502x)
-*                       @arg PMU_WAKEIF_NMIWKIF     (Only for HT502x)
+* å…¥å£å‚æ•°: STAFlag    æƒ³è¦æ¸…é™¤çš„æŸä¸ªå”¤é†’æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
+*                       @arg PMU_WAKEIF           æ­¤é¡¹æ¸…é™¤æ‰€æœ‰æ ‡å¿—
+*                       @arg PMU_WAKEIF_PMUWKIF
+*                       @arg PMU_WAKEIF_INT0WKIF
+*                       @arg PMU_WAKEIF_INT1WKIF
+*                       @arg PMU_WAKEIF_INT2WKIF
+*                       @arg PMU_WAKEIF_INT3WKIF
+*                       @arg PMU_WAKEIF_INT4WKIF
+*                       @arg PMU_WAKEIF_INT5WKIF
+*                       @arg PMU_WAKEIF_INT6WKIF
+*                       @arg PMU_WAKEIF_RX0WKIF
+*                       @arg PMU_WAKEIF_RX1WKIF
+*                       @arg PMU_WAKEIF_RX2WKIF
+*                       @arg PMU_WAKEIF_RX3WKIF
+*                       @arg PMU_WAKEIF_RX4WKIF
+*                       @arg PMU_WAKEIF_RX5WKIF
+*                       @arg PMU_WAKEIF_TBSWKIF
+*                       @arg PMU_WAKEIF_RTCWKIF
+*                       @arg PMU_WAKEIF_WDTWKIF     (for HT6x1x, HT501x)
+*                       @arg PMU_WAKEIF_AREGWKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR0WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR1WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR2WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR3WKIF    (for HT501x, HT502x)
+*                       @arg PMU_WAKEIF_TMR4WKIF    (for HT6x2x, HT6x3x)
+*                       @arg PMU_WAKEIF_TMR5WKIF    (for HT6x2x, HT6x3x)
+*                       @arg PMU_WAKEIF_IICWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_SPIWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_SELFTESTWKIF(for HT502x)
+*                       @arg PMU_WAKEIF_EMUWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_DMAWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_KEYWKIF     (for HT502x)
+*                       @arg PMU_WAKEIF_RX6WKIF     (for HT6x2x, HT6x3x)
+*                       @arg PMU_WAKEIF_INT7WKIF    (for HT6x2x, HT6x3x, HT502x)
+*                       @arg PMU_WAKEIF_INT8WKIF    (for HT6x2x, HT6x3x, HT502x)
+*                       @arg PMU_WAKEIF_INT9WKIF    (for HT6x2x, HT6x3x, HT502x)
+*                       @arg PMU_WAKEIF_NMIWKIF     (for HT502x)
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_WakeFlagClear(uint32_t STAFlag)
 {
     /*  assert_param  */
-    
-    HT_PMU->WAKEIF &= ~STAFlag;                 /*!< Çå³ýÏàÓ¦»½ÐÑ±êÖ¾          */
+    HT_PMU->WAKEIF &= ~STAFlag;                 /*!< æ¸…é™¤ç›¸åº”å”¤é†’æ ‡å¿—          */
 }
 
 /*
 *********************************************************************************************************
 *                               GET SPECIFIED RESET FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦ÏµÍ³¸´Î»±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”ç³»ç»Ÿå¤ä½æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: STAFlag    ÏëÒª¼ì²éµÄÄ³¸ö¸´Î»±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
-*                       @arg PMU_RSTSTA_PORRST                                   
-*                       @arg PMU_RSTSTA_LBORRST                                  
-*                       @arg PMU_RSTSTA_WDTRST                                   
-*                       @arg PMU_RSTSTA_WakeupRST                                
-*                       @arg PMU_RSTSTA_ExtRST                                   
-*                       @arg PMU_RSTSTA_SoftRST                                  
-*                       @arg PMU_RSTSTA_DebugRST                                 
-*                       @arg PMU_RSTSTA_BORRST                                   
-*                       @arg PMU_RSTSTA_SleepFlag                                
-*                       @arg PMU_RSTSTA_HoldFlag   
+* å…¥å£å‚æ•°: STAFlag    æƒ³è¦æ£€æŸ¥çš„æŸä¸ªå¤ä½æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
+*                       @arg PMU_RSTSTA_PORRST
+*                       @arg PMU_RSTSTA_LBORRST
+*                       @arg PMU_RSTSTA_WDTRST
+*                       @arg PMU_RSTSTA_WakeupRST
+*                       @arg PMU_RSTSTA_ExtRST
+*                       @arg PMU_RSTSTA_SoftRST
+*                       @arg PMU_RSTSTA_DebugRST
+*                       @arg PMU_RSTSTA_BORRST
+*                       @arg PMU_RSTSTA_SleepFlag
+*                       @arg PMU_RSTSTA_HoldFlag
 
-     
+
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  ¸´Î»±êÖ¾ÖÃÆð
-*                       = RESET  ¸´Î»±êÖ¾Î´ÖÃÆð
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  å¤ä½æ ‡å¿—ç½®èµ·
+*                       = RESET  å¤ä½æ ‡å¿—æœªç½®èµ·
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 FlagStatus HT_ResetFlagStatusGet(uint32_t STAFlag)
 {
     /*  assert_param  */
-    
     if (HT_PMU->RSTSTA & STAFlag)
-    {       
-        return SET;                        /*!< ²úÉúÏàÓ¦»½ÐÑ±êÖ¾          */
+    {
+        return SET;                        /*!< äº§ç”Ÿç›¸åº”å”¤é†’æ ‡å¿—          */
     }
     else
     {
-        return RESET;                      /*!< Î´²úÉúÏàÓ¦»½ÐÑ±êÖ¾        */
-    } 
-} 
+        return RESET;                      /*!< æœªäº§ç”Ÿç›¸åº”å”¤é†’æ ‡å¿—        */
+    }
+}
 
 /*
 *********************************************************************************************************
 *                               CLEAR SPECIFIED RESET FLAG STATUS
 *
-* º¯ÊýËµÃ÷: Çå³ýÏàÓ¦¸´Î»±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: æ¸…é™¤ç›¸åº”å¤ä½æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: STAFlag    ÏëÒªÇå³ýµÄÄ³¸ö¸´Î»±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
-*                       @arg PMU_RSTSTA           ´ËÏîÇå³ýËùÓÐ±êÖ¾
-*                       @arg PMU_RSTSTA_PORRST                                   
-*                       @arg PMU_RSTSTA_LBORRST                                  
-*                       @arg PMU_RSTSTA_WDTRST                                   
-*                       @arg PMU_RSTSTA_WakeupRST                                
-*                       @arg PMU_RSTSTA_ExtRST                                   
-*                       @arg PMU_RSTSTA_SoftRST                                  
-*                       @arg PMU_RSTSTA_DebugRST                                 
-*                       @arg PMU_RSTSTA_BORRST                                   
-*                       @arg PMU_RSTSTA_SleepFlag                                
-*                       @arg PMU_RSTSTA_HoldFlag        
+* å…¥å£å‚æ•°: STAFlag    æƒ³è¦æ¸…é™¤çš„æŸä¸ªå¤ä½æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
+*                       @arg PMU_RSTSTA           æ­¤é¡¹æ¸…é™¤æ‰€æœ‰æ ‡å¿—
+*                       @arg PMU_RSTSTA_PORRST
+*                       @arg PMU_RSTSTA_LBORRST
+*                       @arg PMU_RSTSTA_WDTRST
+*                       @arg PMU_RSTSTA_WakeupRST
+*                       @arg PMU_RSTSTA_ExtRST
+*                       @arg PMU_RSTSTA_SoftRST
+*                       @arg PMU_RSTSTA_DebugRST
+*                       @arg PMU_RSTSTA_BORRST
+*                       @arg PMU_RSTSTA_SleepFlag
+*                       @arg PMU_RSTSTA_HoldFlag
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_ResetFlagClear(uint32_t STAFlag)
 {
     /*  assert_param  */
-    
-    HT_PMU->RSTSTA &= ~STAFlag;                     /*!< Çå³ýÏàÓ¦¸´Î»±êÖ¾          */
+    HT_PMU->RSTSTA &= ~STAFlag;                     /*!< æ¸…é™¤ç›¸åº”å¤ä½æ ‡å¿—          */
 }
 
 /*
 *********************************************************************************************************
-*                                     ENTER HOLD MODE 
+*                                     ENTER HOLD MODE
 *
-* º¯ÊýËµÃ÷: ÅäÖÃ¼Ä´æÆ÷£¬Ê¹Ð¾Æ¬½øÈëHoldµÍ¹¦ºÄÄ£Ê½
+* å‡½æ•°è¯´æ˜Ž: é…ç½®å¯„å­˜å™¨ï¼Œä½¿èŠ¯ç‰‡è¿›å…¥Holdä½ŽåŠŸè€—æ¨¡å¼
 *
-* Èë¿Ú²ÎÊý: ÎÞ     
-*                                               
-* ·µ»Ø²ÎÊý: ÎÞ                                 
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* å…¥å£å‚æ•°: æ— 
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_EnterHold(void)
 {
-    SCB->SCR = 0x0000;    
+    SCB->SCR = 0x0000;
     __WFI();
 }
 
 /*
 *********************************************************************************************************
-*                                     ENTER SLEEP MODE 
+*                                     ENTER SLEEP MODE
 *
-* º¯ÊýËµÃ÷: ÅäÖÃ¼Ä´æÆ÷£¬Ê¹Ð¾Æ¬½øÈëSleepµÍ¹¦ºÄÄ£Ê½
+* å‡½æ•°è¯´æ˜Ž: é…ç½®å¯„å­˜å™¨ï¼Œä½¿èŠ¯ç‰‡è¿›å…¥Sleepä½ŽåŠŸè€—æ¨¡å¼
 *
-* Èë¿Ú²ÎÊý: ÎÞ     
-*                                               
-* ·µ»Ø²ÎÊý: ÎÞ                                 
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* å…¥å£å‚æ•°: æ— 
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_EnterSleep(void)
 {
     SCB->SCR = 0x0004;
-    __WFI();    
+    __WFI();
 }
 
 /*
 *********************************************************************************************************
-*                                         FREE DOG 
+*                                         FREE DOG
 *
-* º¯ÊýËµÃ÷: Î¹¹·
+* å‡½æ•°è¯´æ˜Ž: å–‚ç‹—
 *
-* Èë¿Ú²ÎÊý: ÎÞ     
-*                                               
-* ·µ»Ø²ÎÊý: ÎÞ                                 
-* 
-* ÌØÊâËµÃ÷: ÕâÀïÉèÖÃÁËWatchDogÒç³öÊ±¼äÎªÔ¼4s£¬ÓÃ»§¿ÉÒÔ¸ù¾ÝÊµ¼ÊÐèÇó¸Ä±ä£¬WatchDogÒç³öÊ±¼ä¼ÆËã¹«Ê½ÈçÏÂ£º
+* å…¥å£å‚æ•°: æ— 
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: è¿™é‡Œè®¾ç½®äº†WatchDogæº¢å‡ºæ—¶é—´ä¸ºçº¦4sï¼Œç”¨æˆ·å¯ä»¥æ ¹æ®å®žé™…éœ€æ±‚æ”¹å˜ï¼ŒWatchDogæº¢å‡ºæ—¶é—´è®¡ç®—å…¬å¼å¦‚ä¸‹ï¼š
 *           64ms * (1+WDTCLR[7:0])
 *********************************************************************************************************
 */
 void HT_FreeDog(void)
 {
-#if defined HT6x1x   
+#if defined HT6x1x
     HT_WDT->WDTCFG = 0x0;
 #endif
-    HT_WDT->WDTCLR = 0xAA40;                                        /*!< ¿´ÃÅ¹·Î¹¹·                   */
- //   HT_GPIO_BitsToggle(HT_GPIOE,GPIO_Pin_0);
+    HT_WDT->WDTCLR = 0xAA40;                                        /*!< çœ‹é—¨ç‹—å–‚ç‹—                   */
 }
 
 /*
 *********************************************************************************************************
-*                                    WATCHDOG CONFIGURE ON SLEEP/HOLD MODE 
+*                                    WATCHDOG CONFIGURE ON SLEEP/HOLD MODE
 *
-* º¯ÊýËµÃ÷: Sleep/HoldÄ£Ê½ÏÂWatchDogÅäÖÃ
+* å‡½æ•°è¯´æ˜Ž: Sleep/Holdæ¨¡å¼ä¸‹WatchDogé…ç½®
 *
-* Èë¿Ú²ÎÊý: NewState   = ENABLE£º Sleep/HoldÄ£Ê½ÏÂWatchDogÊ¹ÄÜ
-*                      = DISABLE£ºSleep/HoldÄ£Ê½ÏÂWatchDog¹Ø±Õ 
-*                                               
-* ·µ»Ø²ÎÊý: ÎÞ                                 
-* 
-* ÌØÊâËµÃ÷: ×¢Òâ£º´Ëº¯ÊýÉæ¼°µ½ClkCtrl0¼Ä´æÆ÷ÅäÖÃ£¬ÓÃ»§Ó¦±£Ö¤µ÷ÓÃÍê´Ëº¯Êýºó£¬Èç¹û»¹ÐèÒªÅäÖÃClkCtrl0¼Ä´æÆ÷£¬
-            Ó¦±£Ö¤²»»áÐÞ¸ÄCMU_CLKCTRL0_WDTEN¿ØÖÆÎ»
+* å…¥å£å‚æ•°: NewState   = ENABLEï¼š Sleep/Holdæ¨¡å¼ä¸‹WatchDogä½¿èƒ½
+*                      = DISABLEï¼šSleep/Holdæ¨¡å¼ä¸‹WatchDogå…³é—­
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ³¨æ„ï¼šæ­¤å‡½æ•°æ¶‰åŠåˆ°ClkCtrl0å¯„å­˜å™¨é…ç½®ï¼Œç”¨æˆ·åº”ä¿è¯è°ƒç”¨å®Œæ­¤å‡½æ•°åŽï¼Œå¦‚æžœè¿˜éœ€è¦é…ç½®ClkCtrl0å¯„å­˜å™¨ï¼Œ
+*           åº”ä¿è¯ä¸ä¼šä¿®æ”¹CMU_CLKCTRL0_WDTENæŽ§åˆ¶ä½
 *********************************************************************************************************
 */
 void HT_SHModeDogConfigure(FunctionalState NewState)
 {
-
     if (NewState != DISABLE)
-    {       
-//        HT_RTC->CTRLBYFLASH  = 0x00;                               /*!< Hold/SleepÄ£Ê½ÏÂÊ¹ÄÜLRC      */
-#if  defined  HT6x1x                                                /*!< HT6x1x               */        
-        HT_CMU_ClkCtrl0Config(CMU_CLKCTRL0_WDTEN, ENABLE);           /*!< Hold/SleepÄ£Ê½ÏÂÊ¹ÄÜWatchDog */
+    {
+//        HT_RTC->CTRLBYFLASH  = 0x00;                               /*!< Hold/Sleepæ¨¡å¼ä¸‹ä½¿èƒ½LRC      */
+#if  defined  HT6x1x                                                 /*!< HT6x1x               */
+        HT_CMU_ClkCtrl0Config(CMU_CLKCTRL0_WDTEN, ENABLE);           /*!< Hold/Sleepæ¨¡å¼ä¸‹ä½¿èƒ½WatchDog */
 #endif
     }
     else
     {
-//        HT_RTC->CTRLBYFLASH  = 0x02;                                /*!< Hold/SleepÄ£Ê½ÏÂ¹Ø±ÕLRC      */
-#if  defined  HT6x1x                                                /*!< HT6x1x               */         
-        HT_CMU_ClkCtrl0Config(CMU_CLKCTRL0_WDTEN, DISABLE);         /*!< Hold/SleepÄ£Ê½ÏÂ¹Ø±ÕWatchDog */  
-#endif        
-    } 
+//        HT_RTC->CTRLBYFLASH  = 0x02;                               /*!< Hold/Sleepæ¨¡å¼ä¸‹å…³é—­LRC      */
+#if  defined  HT6x1x                                                 /*!< HT6x1x               */
+        HT_CMU_ClkCtrl0Config(CMU_CLKCTRL0_WDTEN, DISABLE);          /*!< Hold/Sleepæ¨¡å¼ä¸‹å…³é—­WatchDog */
+#endif
+    }
 }
 
 

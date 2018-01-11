@@ -1,6 +1,6 @@
 ;/*
 ;*********************************************************************************************************
-;*                                             HT502X
+;*                                             HT6X3X
 ;*                                         Library Function
 ;*
 ;*                                  Copyright 2013, Hi-Trend Tech, Corp.
@@ -8,9 +8,9 @@
 ;*
 ;*
 ;* Project      : HT6xxx
-;* File         : startup_ht502x.s
+;* File         : startup_ht6x3x.s
 ;* By           : SocTeam
-;* Version      : CurrentVersion1_4_20171108
+;* Version      : CurrentVersion1_2_20171108
 ;* Description  :
 ;*********************************************************************************************************
 ;*/
@@ -19,7 +19,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x00002000
+Stack_Size      EQU     0x00004000
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -88,20 +88,20 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     RTC_IRQHandler            ; 16+20: RTC
                 DCD     I2C_IRQHandler            ; 16+21: I2C
                 DCD     SPI0_IRQHandler           ; 16+22: SPI0
-                DCD     Reserved_IRQHandler       ; 16+23: Reserved
+                DCD     SPI1_IRQHandler           ; 16+23: SPI1
                 DCD     SelfTestFreq_IRQHandler   ; 16+24: FreqTest
-                DCD     EMU_IRQHandler            ; 16+25: EMU
-                DCD     DMA_IRQHandler            ; 16+26: DMA
-                DCD     KEY_IRQHandler            ; 16+27: KEY
-                DCD     EXTI7_IRQHandler          ; 16+28: EXTI7
-                DCD     EXTI8_IRQHandler          ; 16+29: EXTI8
-                DCD     EXTI9_IRQHandler          ; 16+30: EXTI9
-                DCD     Reserved_IRQHandler       ; 16+31: Reserved
+                DCD     TIMER_4_IRQHandler        ; 16+25: Timer4
+                DCD     TIMER_5_IRQHandler        ; 16+26: Timer5
+                DCD     UART6_IRQHandler          ; 16+27: UART6
+                DCD     EXTI7_IRQHandler          ; 16+28: EXTI7、EXTI8、EXTI9
+                DCD     Reserved_IRQHandler       ; 16+29: Reserved
+                DCD     SPI2_IRQHandler           ; 16+30: SPI2
+                DCD     DMA_IRQHandler            ; 16+31: DMA
 
 
                 IF      :LNOT::DEF:NO_CRP
                 AREA    |.ARM.__at_0x0FC0|, CODE, READONLY
-CRP_Key         DCD     0xFFFFFFF2
+CRP_Key         DCD     0xE7FFFFA2
                 ENDIF
 
 
@@ -174,13 +174,16 @@ Default_Handler PROC
                 EXPORT  RTC_IRQHandler            [WEAK]
                 EXPORT  I2C_IRQHandler            [WEAK]
                 EXPORT  SPI0_IRQHandler           [WEAK]
+                EXPORT  SPI1_IRQHandler           [WEAK]
                 EXPORT  SelfTestFreq_IRQHandler   [WEAK]
-                EXPORT  EMU_IRQHandler            [WEAK]
-                EXPORT  DMA_IRQHandler            [WEAK]
-                EXPORT  KEY_IRQHandler            [WEAK]
+                EXPORT  TIMER_4_IRQHandler        [WEAK]
+                EXPORT  TIMER_5_IRQHandler        [WEAK]
+                EXPORT  UART6_IRQHandler          [WEAK]
                 EXPORT  EXTI7_IRQHandler          [WEAK]
-                EXPORT  EXTI8_IRQHandler          [WEAK]
-                EXPORT  EXTI9_IRQHandler          [WEAK]
+                EXPORT  SPI2_IRQHandler           [WEAK]
+                EXPORT  DMA_IRQHandler            [WEAK]
+                EXPORT  Reserved_IRQHandler       [WEAK]
+
 
 
 PMU_IRQHandler
@@ -206,13 +209,14 @@ TBS_IRQHandler
 RTC_IRQHandler
 I2C_IRQHandler
 SPI0_IRQHandler
+SPI1_IRQHandler
 SelfTestFreq_IRQHandler
-EMU_IRQHandler
-DMA_IRQHandler
-KEY_IRQHandler
+TIMER_4_IRQHandler
+TIMER_5_IRQHandler
+UART6_IRQHandler
 EXTI7_IRQHandler
-EXTI8_IRQHandler
-EXTI9_IRQHandler
+SPI2_IRQHandler
+DMA_IRQHandler
 Reserved_IRQHandler
                 B       .
 

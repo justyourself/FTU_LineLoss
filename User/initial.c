@@ -55,11 +55,10 @@ void fnTarget_Init(void)
 {
   CMU_InitTypeDef  CMU_InitStruct;
   __disable_irq();
-  HT_FreeDog();
   Flag.Power &= ~F_PwrUp;
-  HT_CMU_Prefetch_Set( DISABLE ); 	//关闭指令预取功能，降低功耗		//17.02.07
-  CMU_InitStruct.SysClkSel = SysPLL;
-  CMU_InitStruct.CPUDiv = CPUDiv16;
+  //HT_CMU_Prefetch_Set( DISABLE ); 	//关闭指令预取功能，降低功耗		//17.02.07
+  CMU_InitStruct.SysClkSel = SysPLL;//SysHRCDiv1;//SysPLL;
+  CMU_InitStruct.CPUDiv = CPUDiv1;
   HT_CMU_Init(&CMU_InitStruct);	
   SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
   if(SysTick_Config(0x5400))		// 15.6ms	//T=ticks*(1/f)
@@ -67,17 +66,16 @@ void fnTarget_Init(void)
     while(1);
   }		
   SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;	//使能SysTick滴答定时器
-  HT_GPIOA->PTUP |= (GPIOE_LVDIN0);
-  HT_GPIOA->PTDIR &= ~(uint32_t)(GPIOE_LVDIN0);//在上电初始时刻，PE7作为输入引脚检测电源
-
+  HT_GPIOE->PTUP |= (GPIOE_LVDIN0);
+  HT_GPIOE->PTDIR &= ~(uint32_t)(GPIOE_LVDIN0);//在上电初始时刻，PE7作为输入引脚检测电源
+#if 0
   /*!< GPIOC配置信息*/    		   
-  
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
   GPIO_InitStructure.GPIO_Pin = GPIOC_EE_SCL|GPIOC_EE_SDA|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_5;
   GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
   GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
   HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
-  
+#endif  
 
   HT_RTC->RTCTMR1 = 0x00000000;		//(X+1)*1S
   HT_RTC->RTCCON |= RTC_RTCCON_RTC1EN;
@@ -85,6 +83,12 @@ void fnTarget_Init(void)
   HT_RTC->RTCIF = 0x00000000;
   NVIC_EnableIRQ(RTC_IRQn);		//使能中断
   __enable_irq();
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
+  GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+  HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
+  HT_GPIOB->PTSET |=  GPIO_Pin_5;
 }
 void PwrOnInit(void)
 {
@@ -93,7 +97,7 @@ void PwrOnInit(void)
   HT_CMU_Prefetch_Set( ENABLE );		//打开指令预取功能，增强抗静电干扰能力		//17.02.07
  
     /***** 以下代码用于配置CMU时钟及分频 *****/
-  CMU_InitStructure.SysClkSel = SysPLL;
+  CMU_InitStructure.SysClkSel = SysPLL;//SysHRCDiv1;//SysPLL;
   CMU_InitStructure.CPUDiv = CPUDiv1;
   HT_CMU_Init(&CMU_InitStructure);//配置时钟为PLL输出22.020096Mhz
 
@@ -119,6 +123,13 @@ void PwrOnInit(void)
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);  
     HT_GPIO_BitsSet(HT_GPIOB,GPIO_Pin_10);
+    
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
+  GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+  HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
+  HT_GPIOB->PTSET |=  GPIO_Pin_5;
 
     /*!< GPIOC配置信息*/    		   
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
@@ -136,7 +147,7 @@ void PwrOnInit(void)
     
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_3|GPIO_Pin_9|GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_3|GPIO_Pin_9|GPIO_Pin_10|FSI|FSCLK;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
     HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
@@ -160,18 +171,20 @@ void PwrOnInit(void)
 	
     /*!< GPIOE配置信息*/        		   
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|FCS1;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
     HT_GPIO_Init(HT_GPIOE, &GPIO_InitStructure);
-
+    HT_GPIOE->PTSET = GPIO_Pin_0;
+#if 0
 	HT_GPIOE->PTDIR |= GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_6;
 	HT_GPIOE->PTOD  |= GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_6;
 	HT_GPIOE->PTCLR |= GPIO_Pin_1;
 	HT_GPIOE->PTSET |= GPIO_Pin_6|GPIO_Pin_2|GPIO_Pin_3;
+#endif        
         
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|FSO;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOE, &GPIO_InitStructure);
@@ -492,7 +505,7 @@ void ExitHold(void)
   HT_CMU->SYSCLKCFG = (CMU_SYSCLKCFG_CLKSEL_PLL | CMU_SYSCLKCFG_WCLKEN);       //配置系统为PLL时钟 // 	
   HT_CMU->WPREG = 0x0000;		//WPREG 写非0xA55A，则开启写保护功能
 #else
-  CMU_InitStructure.SysClkSel = SysPLL;
+  CMU_InitStructure.SysClkSel = SysHRCDiv1;
   CMU_InitStructure.CPUDiv = CPUDiv1;
   HT_CMU_Init(&CMU_InitStructure);//配置时钟为PLL输出22.020096Mhz
 #endif

@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : HT6xxx_cmu.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.1
-* Description  : 
+* Version      : V1.0.4
+* Description  :
 *********************************************************************************************************
 */
 
@@ -21,528 +21,714 @@
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æž„ä½“
 *********************************************************************************************************
 */
-
+#define Wait2mS         (WaitPllLock)
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
-
 static const uint32_t RegisterWriteProtect[]={CMU_WPREG_Protected, CMU_WPREG_UnProtected};
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊýÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜Ž
 *********************************************************************************************************
 */
-
+static void WaitPllLock(void);
 static void Wait2mS(void);
 
 /*
 *********************************************************************************************************
 *                                         INITIAL CMU MODULE
 *
-* º¯ÊýËµÃ÷: ³õÊ¼»¯Ê±ÖÓÅäÖÃÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: åˆå§‹åŒ–æ—¶é’Ÿé…ç½®æ¨¡å—
 *
-* Èë¿Ú²ÎÊý: CMU_InitStruct     CMUÄ£¿é³õÊ¼»¯½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬3¸ö²ÎÊý: 
-*                              1) SysClkSel   : ÏµÍ³Ê±ÖÓ£¨Fsys£©Ô´Ñ¡Ôñ£¬¿ÉÎªÒÔÏÂÒ»¸ö²ÎÊý£º
-*                                               a) SysFLRC    LRC--->Fsys
-*                                               b) SysFLF     LF---->Fsys
-*                                               c) SysFHRC    HRC--->Fsys
-*                                               d) SysFPLL    PLL--->Fsys
-*                                               e) SysFMEMS   Mems-->Fsys                                               
-*                              2) HRCDiv      : ¸ßÆµRC·ÖÆµ£¬Èç¹û SysClkSel = FHRC£¬ÔòFsys = HRC/HRCDiv
-*                              3) CPUDiv      : CPUÊ±ÖÓ·ÖÆµÉèÖÃ  Fcpu = Fsys/CPUDiv                            
+* å…¥å£å‚æ•°: CMU_InitStruct     CMUæ¨¡å—åˆå§‹åŒ–ç»“æž„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«3ä¸ªå‚æ•°:
+*                              1) SysClkSel   : ç³»ç»Ÿæ—¶é’Ÿï¼ˆFsysï¼‰æºé€‰æ‹©ï¼Œå¯ä¸ºä»¥ä¸‹ä¸€ä¸ªå‚æ•°ï¼š
+*                                               a) SysLRC        LRC--->Fsys
+*                                               b) SysLF         LF---->Fsys
+*                                               c) SysHRCDiv1    HRCdiv1--->Fsys
+*                                               d) SysHRCDiv2    HRCdiv2--->Fsys
+*                                               e) SysHRCDiv4    HRCdiv4--->Fsys
+*                                               f) SysHRCDiv8    HRCdiv8--->Fsys
+*                                               g) SysPLL        PLL--->Fsys
+*                                               h) SysMEMS       Mems-->Fsys (for HT6x1x)
+*                                               i) SysPLLX2      PLL--->Fsys (for HT5x1x, HT5x2x, HT6x2x, HT6x3x)
+*                              2) CPUDiv      : CPUæ—¶é’Ÿåˆ†é¢‘è®¾ç½®  Fcpu = Fsys/CPUDiv
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦±£Ö¤´Ëº¯ÊýÖ´ÐÐ¹ý³ÌÖÐ¼Ä´æÆ÷Ð´±£»¤×´Ì¬²»±»ÐÞ¸Ä
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”ä¿è¯æ­¤å‡½æ•°æ‰§è¡Œè¿‡ç¨‹ä¸­å¯„å­˜å™¨å†™ä¿æŠ¤çŠ¶æ€ä¸è¢«ä¿®æ”¹
 *********************************************************************************************************
 */
 void HT_CMU_Init(CMU_InitTypeDef* CMU_InitStruct)
 {
     /*  assert_param  */
-      
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-#if  defined  HT501x  || HT6x2x  ||  HT502x   
-        if((CMU_InitStruct->SysClkSel & CMU_SYSCLKDIV_SEL40M)==0)          /*!< Ñ¡ÔñPLLÊ±ÖÓ20M         */ 
-        {
-            CMU_InitStruct->CPUDiv &= ~CMU_SYSCLKDIV_SEL40M;
-        }
-        else                                                               /*!< ·ñÔòÑ¡ÔñPLLÊ±ÖÓX2 40M  */
-        {
-            CMU_InitStruct->CPUDiv |= CMU_SYSCLKDIV_SEL40M;
-        }
-#endif	
-		HT_CMU->SYSCLKDIV = CMU_InitStruct->CPUDiv;                            /*!< CPUÊ±ÖÓ·ÖÆµÉèÖÃ        */
-    
+
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+#if  defined  HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x  ||  defined  HT502x
+    if((CMU_InitStruct->SysClkSel & CMU_SYSCLKDIV_SEL40M)==0)              /*!< é€‰æ‹©PLLæ—¶é’Ÿ20M         */
+    {
+        CMU_InitStruct->CPUDiv &= ~CMU_SYSCLKDIV_SEL40M;
+    }
+    else                                                                   /*!< å¦åˆ™é€‰æ‹©PLLæ—¶é’ŸX2 40M  */
+    {
+        CMU_InitStruct->CPUDiv |= CMU_SYSCLKDIV_SEL40M;
+    }
+#endif
+    HT_CMU->SYSCLKDIV = CMU_InitStruct->CPUDiv;                            /*!< CPUæ—¶é’Ÿåˆ†é¢‘è®¾ç½®        */
+
     if((CMU_InitStruct->SysClkSel & CMU_SYSCLKCFG_CLKSEL) == SysPLL)       /*!< Fpll ---> Fsys         */
     {
-        HT_CMU->CLKCTRL0 |= CMU_CLKCTRL0_PLLEN;                            /*!< PLLÊ¹ÄÜ                */
-        Wait2mS();                                                         /*!< µÈ´ý2ms                */
+#if  defined  HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x  ||  defined  HT502x
+        if (CMU_InitStruct->SysClkSel & CMU_SYSCLKDIV_SEL40M)
+        {
+    #if  defined  HT6x2x
+            HT_CMU->PREFETCH |= CMU_PREFETCH_ENABLE;                       /*!< ä½¿èƒ½prefetch    */
+    #elif  defined  HT6x3x
+            HT_CMU->PREFETCH |= CMU_PREFETCH_CACHE_EN;                     /*!< ä½¿èƒ½cache       */
+    #elif  defined  HT501x  ||  defined  HT502x
+            HT_CMU->FLASHDLY |= CMU_FLASHDLY_ENABLE;                       /*!< ä½¿èƒ½flash delay */
+    #endif
+        }
+        else
+        {
+    #if  defined  HT6x2x
+            HT_CMU->PREFETCH &= (~CMU_PREFETCH_ENABLE);                    /*!< å…³é—­prefetch    */
+    #elif  defined  HT6x3x
+            HT_CMU->PREFETCH &= (~CMU_PREFETCH_CACHE_EN);                  /*!< å…³é—­cache       */
+    #elif  defined  HT501x  ||  defined  HT502x
+            HT_CMU->FLASHDLY &= (~CMU_FLASHDLY_ENABLE);                    /*!< å…³é—­flash delay */
+    #endif
+        }
+#endif
+#if  defined  HT501x  ||  defined  HT502x  ||  defined  HT602x  ||  defined  HT6x3
+        HT_CMU->CLKCTRL0 &= (~CMU_CLKCTRL0_PLLLOCKEN);                     /*!< PLL LOCK å…³é—­          */
+#endif
+        HT_CMU->CLKCTRL0 |= CMU_CLKCTRL0_PLLEN;                            /*!< PLLä½¿èƒ½                */
+		WaitPllLock();                                                     /*!< ç­‰å¾…ä¸€å®šæ—¶é—´           */
+#if  defined  HT501x  ||  defined  HT502x  ||  defined  HT602x  ||  defined  HT6x3x
+        while (!(HT_CMU->CLKSTA & CMU_CLKSTA_PLLLOCK));
+#endif
+        HT_CMU->CLKCTRL0 |= CMU_CLKCTRL0_PLLDETEN;                         /*!< PLLåœæŒ¯æ£€æµ‹ä½¿èƒ½        */
         HT_CMU->SYSCLKCFG = (CMU_SYSCLKCFG_CLKSEL_PLL | CMU_SYSCLKCFG_WCLKEN);
-                                                                           /*!< ÅäÖÃÏµÍ³ÎªPLLÊ±ÖÓ      */  
+                                                                           /*!< é…ç½®ç³»ç»Ÿä¸ºPLLæ—¶é’Ÿ      */
     }
-    else if((CMU_InitStruct->SysClkSel & CMU_SYSCLKCFG_CLKSEL) == CMU_SYSCLKCFG_CLKSEL_HRC)                       
+    else if((CMU_InitStruct->SysClkSel & CMU_SYSCLKCFG_CLKSEL) == CMU_SYSCLKCFG_CLKSEL_HRC)
     {                                                                      /*!< Fhrc ---> Fsys         */
-        HT_CMU->CLKCTRL0 |= CMU_CLKCTRL0_HRCEN;                            /*!< HRCÊ¹ÄÜ                */
-        HT_CMU->HRCDIV    = CMU_InitStruct->SysClkSel>>4;                  /*!< HRCÊ±ÖÓ·ÖÆµÉèÖÃ        */  
-        Wait2mS();                                                         /*!< µÈ´ý2ms                */
-        HT_CMU->SYSCLKCFG = (CMU_SYSCLKCFG_CLKSEL_HRC | CMU_SYSCLKCFG_WCLKEN);   
-                                                                           /*!< ÅäÖÃÏµÍ³ÎªHRCÊ±ÖÓ      */      
+        HT_CMU->CLKCTRL0 |= CMU_CLKCTRL0_HRCEN;                            /*!< HRCä½¿èƒ½                */
+        HT_CMU->HRCDIV    = CMU_InitStruct->SysClkSel>>4;                  /*!< HRCæ—¶é’Ÿåˆ†é¢‘è®¾ç½®        */
+        WaitPllLock();                                                     /*!< ç­‰å¾…ä¸€å®šæ—¶é—´           */
+        HT_CMU->CLKCTRL0 |= CMU_CLKCTRL0_HRCDETEN;                         /*!< HRCåœæŒ¯æ£€æµ‹ä½¿èƒ½        */
+        HT_CMU->SYSCLKCFG = (CMU_SYSCLKCFG_CLKSEL_HRC | CMU_SYSCLKCFG_WCLKEN);
+                                                                           /*!< é…ç½®ç³»ç»Ÿä¸ºHRCæ—¶é’Ÿ      */
     }
     else                                                                   /*!< Fsys = FLrc/FLf/Fmems  */
     {
-        HT_CMU->SYSCLKCFG = (CMU_InitStruct->SysClkSel | CMU_SYSCLKCFG_WCLKEN);   
-                                                                           /*!< ÅäÖÃÏµÍ³ÎªÉè¶¨Ê±ÖÓ     */
+        HT_CMU->CLKCTRL0 |= CMU_CLKCTRL0_LFDETEN;                          /*!< LFåœæŒ¯æ£€æµ‹ä½¿èƒ½        */
+        HT_CMU->SYSCLKCFG = (CMU_InitStruct->SysClkSel | CMU_SYSCLKCFG_WCLKEN);
+                                                                           /*!< é…ç½®ç³»ç»Ÿä¸ºè®¾å®šæ—¶é’Ÿ     */
     }
-      
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */
-} 
+
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
+}
 
 /*
 *********************************************************************************************************
 *                                     GET FSYS CLOCK FREQUENCY
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏµÍ³Ê±ÖÓÆµÂÊ£¨¼´Fsys£¬·ÇFcpu£©£¬·µ»ØÒÔHzÎªµ¥Î»µÄÆµÂÊÖµ
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç³»ç»Ÿæ—¶é’Ÿé¢‘çŽ‡ï¼ˆå³Fsysï¼ŒéžFcpuï¼‰ï¼Œè¿”å›žä»¥Hzä¸ºå•ä½çš„é¢‘çŽ‡å€¼
 *
-* Èë¿Ú²ÎÊý: ÎÞ                         
+* å…¥å£å‚æ•°: æ— 
 *
-* ·µ»Ø²ÎÊý: sysclk   ÏµÍ³Ê±ÖÓ£¨Fsys£©ÆµÂÊ£¬32Î»ÎÞ·ûºÅÊý£¬ÒÔHzÎªµ¥Î»                                   
-* 
-* ÌØÊâËµÃ÷: Èç¹ûÏµÍ³Ê±ÖÓÔ´ÊÇ¸ßÆµRC»òÕßµÍÆµRC£¬·µ»ØµÄÊ±ÖÓÆµÂÊ½«²»»áÍêÈ«×¼È·£¬¶Ô¸ßÆµRC£¬»áÓÐ2%×óÓÒµÄÎó²î£¬
-*           ¶ÔµÍÆµRC£¬»áÓÐ³¬¹ý10%µÄÎó²î¡£
+* è¿”å›žå‚æ•°: sysclk   ç³»ç»Ÿæ—¶é’Ÿï¼ˆFsysï¼‰é¢‘çŽ‡ï¼Œ32ä½æ— ç¬¦å·æ•°ï¼Œä»¥Hzä¸ºå•ä½
+*
+* ç‰¹æ®Šè¯´æ˜Ž: å¦‚æžœç³»ç»Ÿæ—¶é’Ÿæºæ˜¯é«˜é¢‘RCæˆ–è€…ä½Žé¢‘RCï¼Œè¿”å›žçš„æ—¶é’Ÿé¢‘çŽ‡å°†ä¸ä¼šå®Œå…¨å‡†ç¡®ï¼Œå¯¹é«˜é¢‘RCï¼Œä¼šæœ‰2%å·¦å³çš„è¯¯å·®ï¼Œ
+*           å¯¹ä½Žé¢‘RCï¼Œä¼šæœ‰è¶…è¿‡10%çš„è¯¯å·®ã€‚
 *********************************************************************************************************
 */
 uint32_t HT_CMU_SysClkGet(void)
 {
     /*  assert_param  */
-      
-    uint32_t sysclk, clksel;       
-    
+
+    uint32_t sysclk, clksel;
+
     clksel = HT_CMU->SYSCLKCFG & CMU_SYSCLKCFG_CLKSEL;
-    
+
     switch(clksel)
     {
-        case CMU_SYSCLKCFG_CLKSEL_LRC:               /*!< ÏµÍ³Ê±ÖÓÔ´ÎªLRC     */
-        case CMU_SYSCLKCFG_CLKSEL_LF:                /*!< ÏµÍ³Ê±ÖÓÔ´ÎªLF      */
+        case CMU_SYSCLKCFG_CLKSEL_LRC:               /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºLRC     */
+        case CMU_SYSCLKCFG_CLKSEL_LF:                /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºLF      */
              sysclk = 32768;
         break;
-        
-        case CMU_SYSCLKCFG_CLKSEL_HRC:               /*!< ÏµÍ³Ê±ÖÓÔ´ÎªHRC     */
+
+        case CMU_SYSCLKCFG_CLKSEL_HRC:               /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºHRC     */
 #if defined  HT6x1x
-				sysclk = 8000000>>(HT_CMU->HRCDIV & CMU_HRCDIV );
-#elif defined  HT6x2x
-				sysclk = 11010048>>(HT_CMU->HRCDIV & CMU_HRCDIV );
+        sysclk = 8000000>>(HT_CMU->HRCDIV & CMU_HRCDIV );
+#elif defined  HT6x2x  ||  defined  HT6x3x
+        sysclk = 11010048>>(HT_CMU->HRCDIV & CMU_HRCDIV );
 #elif defined  HT501x
-				sysclk = 14000000;
+        sysclk = 14000000;
 #elif defined  HT502x
-				sysclk = 8800000;
+        sysclk = 8800000;
 #endif
         break;
-        
-        case CMU_SYSCLKCFG_CLKSEL_PLL:               /*!< ÏµÍ³Ê±ÖÓÔ´ÎªPLL     */
-#if  defined  HT501x || HT502x
+
+        case CMU_SYSCLKCFG_CLKSEL_PLL:               /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºPLL     */
+#if  defined  HT501x  ||  defined  HT502x
              if((HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV_SEL40M))
              {
-                 sysclk =  32768*600*2;  
+                 sysclk =  32768*600*2;
              }
              else
              {
                  sysclk =  32768*600;
              }
-#elif defined HT6x2x
+#elif defined HT6x2x  ||  defined  HT6x3x
              if((HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV_SEL40M))
              {
-                 sysclk =  32768*672*2;  
+#if  defined  HT6x3x
+                switch (HT_CMU->C_PLL & 0x0007)
+                {
+                    case CMU_C_PLL_39M:
+                        sysclk =  32768*304*4;
+                        break;
+                    case CMU_C_PLL_40M:
+                        sysclk =  32768*312*4;
+                        break;
+                    case CMU_C_PLL_41M:
+                        sysclk =  32768*320*4;
+                        break;
+                    case CMU_C_PLL_42M:
+                        sysclk =  32768*328*4;
+                        break;
+                    case CMU_C_PLL_44M:
+                        sysclk =  32768*336*4;
+                        break;
+                    case CMU_C_PLL_45M:
+                        sysclk =  32768*344*4;
+                        break;
+                    case CMU_C_PLL_46M:
+                        sysclk =  32768*352*4;
+                        break;
+                    case CMU_C_PLL_47M:
+                        sysclk =  32768*360*4;
+                        break;
+                    default: /* CMU_C_PLL_44M */
+                        sysclk =  32768*336*4;
+                        break;
+                }
+#else
+                 sysclk =  32768*672*2;
+#endif
              }
              else
              {
                  sysclk =  32768*672;
              }
-#else        
+#else
              sysclk = 32768*672;
-#endif        
+#endif
         break;
-        
-        default:                                     /*!< ÏµÍ³Ê±ÖÓÔ´ÎªMems    */
-             sysclk = 524288;                        /*!< HT501x ²»ÊÊÓÃ       */
+
+        default:
+#if defined  HT6x1x
+            sysclk = 524288;                         /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºMems    */
+#else
+            sysclk = 0;                              /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºå¼‚å¸¸    */
+#endif
         break;
     }
-    
-    return sysclk;                                   /*!< ·µ»ØÏµÍ³Ê±ÖÓÆµÂÊ    */
-} 
+
+    return sysclk;                                   /*!< è¿”å›žç³»ç»Ÿæ—¶é’Ÿé¢‘çŽ‡    */
+}
 
 /*
 *********************************************************************************************************
 *                                     GET CPU CLOCK FREQUENCY
 *
-* º¯ÊýËµÃ÷: »ñÈ¡CPUÊ±ÖÓÆµÂÊ£¬·µ»ØÒÔHzÎªµ¥Î»µÄÆµÂÊÖµ
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–CPUæ—¶é’Ÿé¢‘çŽ‡ï¼Œè¿”å›žä»¥Hzä¸ºå•ä½çš„é¢‘çŽ‡å€¼
 *
-* Èë¿Ú²ÎÊý: ÎÞ                         
+* å…¥å£å‚æ•°: æ— 
 *
-* ·µ»Ø²ÎÊý: cpuclk   CPUÊ±ÖÓ£¨Fcpu£©ÆµÂÊ£¬32Î»ÎÞ·ûºÅÊý£¬ÒÔHzÎªµ¥Î»                                   
-* 
-* ÌØÊâËµÃ÷: Èç¹ûÏµÍ³Ê±ÖÓÔ´ÊÇ¸ßÆµRC»òÕßµÍÆµRC£¬·µ»ØµÄÊ±ÖÓÆµÂÊ½«²»»áÍêÈ«×¼È·£¬¶Ô¸ßÆµRC£¬»áÓÐ2%×óÓÒµÄÎó²î£¬
-*           ¶ÔµÍÆµRC£¬»áÓÐ³¬¹ý10%µÄÎó²î¡£
+* è¿”å›žå‚æ•°: cpuclk   CPUæ—¶é’Ÿï¼ˆFcpuï¼‰é¢‘çŽ‡ï¼Œ32ä½æ— ç¬¦å·æ•°ï¼Œä»¥Hzä¸ºå•ä½
+*
+* ç‰¹æ®Šè¯´æ˜Ž: å¦‚æžœç³»ç»Ÿæ—¶é’Ÿæºæ˜¯é«˜é¢‘RCæˆ–è€…ä½Žé¢‘RCï¼Œè¿”å›žçš„æ—¶é’Ÿé¢‘çŽ‡å°†ä¸ä¼šå®Œå…¨å‡†ç¡®ï¼Œå¯¹é«˜é¢‘RCï¼Œä¼šæœ‰2%å·¦å³çš„è¯¯å·®ï¼Œ
+*           å¯¹ä½Žé¢‘RCï¼Œä¼šæœ‰è¶…è¿‡10%çš„è¯¯å·®ã€‚
 *********************************************************************************************************
 */
 uint32_t HT_CMU_CPUClkGet(void)
 {
     /*  assert_param  */
-      
-    uint32_t cpuclk, clksel, cpuclkdiv;       
-    
+
+    uint32_t cpuclk, clksel, cpuclkdiv;
+
     clksel = HT_CMU->SYSCLKCFG & CMU_SYSCLKCFG_CLKSEL;
-	  cpuclkdiv = HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV;          /*!< »ñÈ¡CPUÊ±ÖÓ·ÖÆµ    */
-    
+    cpuclkdiv = HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV;          /*!< èŽ·å–CPUæ—¶é’Ÿåˆ†é¢‘    */
+
     switch(clksel)
     {
-        case CMU_SYSCLKCFG_CLKSEL_LRC:               /*!< ÏµÍ³Ê±ÖÓÔ´ÎªLRC     */
-        case CMU_SYSCLKCFG_CLKSEL_LF:                /*!< ÏµÍ³Ê±ÖÓÔ´ÎªLF      */
-             cpuclk = 32768;
+        case CMU_SYSCLKCFG_CLKSEL_LRC:               /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºLRC     */
+        case CMU_SYSCLKCFG_CLKSEL_LF:                /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºLF      */
+            cpuclk = 32768;
         break;
-        
-        case CMU_SYSCLKCFG_CLKSEL_HRC:               /*!< ÏµÍ³Ê±ÖÓÔ´ÎªHRC     */
+
+        case CMU_SYSCLKCFG_CLKSEL_HRC:               /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºHRC     */
 #if defined  HT6x1x
-				cpuclk = 8000000>>(HT_CMU->HRCDIV & CMU_HRCDIV );
-#elif defined  HT6x2x
-				cpuclk = 11010048>>(HT_CMU->HRCDIV & CMU_HRCDIV );
+            cpuclk = 8000000>>(HT_CMU->HRCDIV & CMU_HRCDIV );
+#elif defined  HT6x2x  ||  defined  HT6x3x
+            cpuclk = 11010048>>(HT_CMU->HRCDIV & CMU_HRCDIV );
 #elif defined  HT501x
-				cpuclk = 14000000;
+            cpuclk = 14000000;
 #elif defined  HT502x
-				cpuclk = 8800000;
+            cpuclk = 8800000;
 #endif
         break;
-        
-        case CMU_SYSCLKCFG_CLKSEL_PLL:               /*!< ÏµÍ³Ê±ÖÓÔ´ÎªPLL     */
-#if  defined  HT501x  ||  HT502x 
-             if((HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV_SEL40M))
-             {
-                 cpuclk =  32768*600*2;  
-             }
-             else
-             {
-                 cpuclk =  32768*600;
-             }
-#elif defined HT6x2x
-             if((HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV_SEL40M))
-             {
-                 cpuclk =  32768*672*2;  
-             }
-             else
-             {
-                 cpuclk =  32768*672;
-             }
-#else        
-             cpuclk = 32768*672;
+
+        case CMU_SYSCLKCFG_CLKSEL_PLL:               /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºPLL     */
+#if  defined  HT501x  ||  defined  HT502x
+            if((HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV_SEL40M))
+            {
+                cpuclk =  32768*600*2;
+            }
+            else
+            {
+                cpuclk =  32768*600;
+            }
+#elif defined HT6x2x  ||  defined  HT6x3x
+            if((HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV_SEL40M))
+            {
+    #if  defined  HT6x3x
+                switch (HT_CMU->C_PLL & 0x0007)
+                {
+                    case CMU_C_PLL_39M:
+                        cpuclk =  32768*304*4;
+                        break;
+                    case CMU_C_PLL_40M:
+                        cpuclk =  32768*312*4;
+                        break;
+                    case CMU_C_PLL_41M:
+                        cpuclk =  32768*320*4;
+                        break;
+                    case CMU_C_PLL_42M:
+                        cpuclk =  32768*328*4;
+                        break;
+                    case CMU_C_PLL_44M:
+                        cpuclk =  32768*336*4;
+                        break;
+                    case CMU_C_PLL_45M:
+                        cpuclk =  32768*344*4;
+                        break;
+                    case CMU_C_PLL_46M:
+                        cpuclk =  32768*352*4;
+                        break;
+                    case CMU_C_PLL_47M:
+                        cpuclk =  32768*360*4;
+                        break;
+                    default: /* CMU_C_PLL_44M */
+                        cpuclk =  32768*336*4;
+                        break;
+                }
+    #else
+                cpuclk =  32768*672*2;
+    #endif
+            }
+            else
+            {
+                cpuclk =  32768*672;
+            }
+#else
+            cpuclk = 32768*672;
 #endif
         break;
-        
-        default:                                     /*!< ÏµÍ³Ê±ÖÓÔ´ÎªMems    */
-             cpuclk = 524288;         							 /*!< HT501x ²»ÊÊÓÃ       */
+
+        default:
+#if defined  HT6x1x
+            cpuclk = 524288;                         /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºMems    */
+#else
+            cpuclk = 0;                              /*!< ç³»ç»Ÿæ—¶é’Ÿæºä¸ºå¼‚å¸¸    */
+#endif
         break;
     }
-    cpuclk = cpuclk >> cpuclkdiv;         					/*!< ´úÈëCPUÊ±ÖÓ·ÖÆµ    */
-    return cpuclk;                                   /*!< ·µ»ØÏµÍ³Ê±ÖÓÆµÂÊ    */
-} 
+    cpuclk >>= cpuclkdiv;                            /*!< ä»£å…¥CPUæ—¶é’Ÿåˆ†é¢‘    */
+    return cpuclk;                                   /*!< è¿”å›žç³»ç»Ÿæ—¶é’Ÿé¢‘çŽ‡    */
+}
 
 /*
 *********************************************************************************************************
-*                                  SET CLKOUT TO SPECIFIC FREQUENCY 
+*                                  SET CLKOUT TO SPECIFIC FREQUENCY
 *
-* º¯ÊýËµÃ÷: ÉèÖÃClkoutÊä³öÆµÂÊ
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®Clkoutè¾“å‡ºé¢‘çŽ‡
 *
-* Èë¿Ú²ÎÊý: Clkout_InitTypeDef ClkoutÄ£¿é³õÊ¼»¯½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬2¸ö²ÎÊý: 
-*                              1) ClkoutSel     ClkoutÊ±ÖÓÔ´Ñ¡Ôñ£¬¿ÉÎªÒÔÏÂÒ»¸ö²ÎÊý£º
-*                                               a) CMU_CLKOUTSEL_LRC    LRC--->Clkout
-*                                               b) CMU_CLKOUTSEL_LF     LF---->Clkout
-*                                               c) CMU_CLKOUTSEL_HRC    HRC--->Clkout
-*                                               d) CMU_CLKOUTSEL_SYS    SYS--->Clkout
-*                                               e) CMU_CLKOUTSEL_MEMS   Mems-->Clkout                                               
-*                              2) ClkoutDiv     ClkoutÊä³öÊ±ÖÓ·ÖÆµÉèÖÃ£¬·ÖÆµÏµÊýÎª£º2*(ClkoutDiv[3..0]+1)
-*                                               
-* ·µ»Ø²ÎÊý: ÎÞ                                 
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦±£Ö¤´Ëº¯ÊýÖ´ÐÐ¹ý³ÌÖÐ¼Ä´æÆ÷Ð´±£»¤×´Ì¬²»±»ÐÞ¸Ä
+* å…¥å£å‚æ•°: Clkout_InitTypeDef Clkoutæ¨¡å—åˆå§‹åŒ–ç»“æž„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«2ä¸ªå‚æ•°:
+*                              1) ClkoutSel     Clkoutæ—¶é’Ÿæºé€‰æ‹©ï¼Œå¯ä¸ºä»¥ä¸‹ä¸€ä¸ªå‚æ•°ï¼š
+*                                               a) ClkoutFLRC    LRC--->Clkout
+*                                               b) ClkoutFLF     LF---->Clkout
+*                                               c) ClkoutFHRC    HRC--->Clkout
+*                                               d) ClkoutFSys    SYS--->Clkout
+*                                               e) ClkoutFMEMS   Mems-->Clkout (for HT6x1x, HT6x2x)
+*                                               f) ClkoutFPLL    PLL -->Clkout (for HT6x2x verH, HT6x3x)
+*                              2) ClkoutDiv     Clkoutè¾“å‡ºæ—¶é’Ÿåˆ†é¢‘è®¾ç½®ï¼Œåˆ†é¢‘ç³»æ•°ä¸ºï¼š2*(ClkoutDiv[3..0]+1)
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”ä¿è¯æ­¤å‡½æ•°æ‰§è¡Œè¿‡ç¨‹ä¸­å¯„å­˜å™¨å†™ä¿æŠ¤çŠ¶æ€ä¸è¢«ä¿®æ”¹
 *********************************************************************************************************
 */
 void HT_CMU_ClkoutSet(Clkout_InitTypeDef* Clkout_InitStruct)
 {
     /*  assert_param  */
-      
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-    
-    HT_CMU->CLKOUTSEL = Clkout_InitStruct->ClkoutSel;                      /*!< ÉèÖÃClkoutÊä³öÊ±ÖÓÔ´   */
-    
-    HT_CMU->CLKOUTDIV = Clkout_InitStruct->ClkoutDiv & CMU_CLKOUTDIV;      /*!< ClkoutÊä³öÊ±ÖÓ·ÖÆµÉèÖÃ */
-    
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */
-} 
+
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
+    HT_CMU->CLKOUTSEL = Clkout_InitStruct->ClkoutSel;                      /*!< è®¾ç½®Clkoutè¾“å‡ºæ—¶é’Ÿæº   */
+
+    HT_CMU->CLKOUTDIV = Clkout_InitStruct->ClkoutDiv & CMU_CLKOUTDIV;      /*!< Clkoutè¾“å‡ºæ—¶é’Ÿåˆ†é¢‘è®¾ç½® */
+
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
+}
 
 /*
 *********************************************************************************************************
-*                                  CONFIGUE CLKCTRL0 REGISTER 
+*                                  SET PLL FREQUENCY
 *
-* º¯ÊýËµÃ÷: ÅäÖÃClkCtrl0¼Ä´æÆ÷£¬Ê¹ÄÜ»òÕß¹Ø±Õ
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®PLLæ—¶é’Ÿ
 *
-* Èë¿Ú²ÎÊý: ClkCtrl0Module     ClkCtrl0¼Ä´æÆ÷Ä£¿é¿ØÖÆÎ»£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ: 
-*                               @arg  CMU_CLKCTRL0         ÅäÖÃËùÓÐ¿ØÖÆÎ»
-*                               @arg  CMU_CLKCTRL0_LCDEN     
-*                               @arg  CMU_CLKCTRL0_SPIEN     
-*                               @arg  CMU_CLKCTRL0_I2CEN     
-*                               @arg  CMU_CLKCTRL0_PLLEN     
-*                               @arg  CMU_CLKCTRL0_HRCEN     
-*                               @arg  CMU_CLKCTRL0_PLLLOCKEN 
-*                               @arg  CMU_CLKCTRL0_LFDETEN   
-*                               @arg  CMU_CLKCTRL0_PLLDETEN  
-*                               @arg  CMU_CLKCTRL0_HRCDETEN  
-*                               @arg  CMU_CLKCTRL0_WDTEN     
-*                               @arg  CMU_CLKCTRL0_CLKOUTEN  
-*                               @arg  CMU_CLKCTRL0_1P5LBOREN 
-*                               @arg  CMU_CLKCTRL0_3DESRADEN (Only for HT6x1x)
-*                               @arg  CMU_CLKCTRL0_ADESRADEN (Only for HT501x, HT6x2x, HT502x)
-*                               @arg  CMU_CLKCTRL0_CRCEN     (Only for HT6x2x)
-*                               @arg  CMU_CLKCTRL0_EMUEN     (Only for HT501x, HT502x)
-*                               @arg  CMU_CLKCTRL0_ECCEN     (Only for HT502x)
+* å…¥å£å‚æ•°: CPLL_ValTypeDef C_PLLæ¨¡å—åˆå§‹åŒ–ç»“æž„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«1ä¸ªå‚æ•°:
+*                           pllVal   PLLæ—¶é’Ÿè®¾ç½®ï¼Œå¯ä¸ºä»¥ä¸‹ä¸€ä¸ªå‚æ•°ï¼š
+*                                    a) CPLL39M
+*                                    b) CPLL40M
+*                                    c) CPLL41M
+*                                    d) CPLL42M
+*                                    e) CPLL44M
+*                                    f) CPLL45M
+*                                    g) CPLL46M
+*                                    h) CPLL47M
 *
-*           NewState           = ENABLE£º Ê¹ÄÜÏàÓ¦Ä£¿é
-*                              = DISABLE£º¹Ø±ÕÏàÓ¦Ä£¿é        
-*                                               
-* ·µ»Ø²ÎÊý: ÎÞ                                 
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦±£Ö¤´Ëº¯ÊýÖ´ÐÐ¹ý³ÌÖÐ¼Ä´æÆ÷Ð´±£»¤×´Ì¬²»±»ÐÞ¸Ä
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž:
+*********************************************************************************************************
+*/
+#if  defined  HT6x3x
+void HT_CMU_CPllSet(CPLL_ValTypeDef pllVal)
+{
+    /*  assert_param  */
+    HT_CMU->C_PLL = ((pllVal | CMU_C_PLL_WRPEG) & 0xFF07);                 /*!< è®¾ç½®C_PLLå€¼            */
+}
+#endif
+
+/*
+*********************************************************************************************************
+*                                  CONFIGUE CLKCTRL0 REGISTER
+*
+* å‡½æ•°è¯´æ˜Ž: é…ç½®ClkCtrl0å¯„å­˜å™¨ï¼Œä½¿èƒ½æˆ–è€…å…³é—­
+*
+* å…¥å£å‚æ•°: ClkCtrl0Module     ClkCtrl0å¯„å­˜å™¨æ¨¡å—æŽ§åˆ¶ä½ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
+*                               @arg  CMU_CLKCTRL0         é…ç½®æ‰€æœ‰æŽ§åˆ¶ä½
+*                               @arg  CMU_CLKCTRL0_LCDEN
+*                               @arg  CMU_CLKCTRL0_SPIEN
+*                               @arg  CMU_CLKCTRL0_I2CEN
+*                               @arg  CMU_CLKCTRL0_PLLEN
+*                               @arg  CMU_CLKCTRL0_HRCEN
+*                               @arg  CMU_CLKCTRL0_PLLLOCKEN     (for HT6x2x, HT6x3x, HT501x, HT502x)
+*                               @arg  CMU_CLKCTRL0_LFDETEN
+*                               @arg  CMU_CLKCTRL0_PLLDETEN
+*                               @arg  CMU_CLKCTRL0_HRCDETEN
+*                               @arg  CMU_CLKCTRL0_OSC_SLP
+*                               @arg  CMU_CLKCTRL0_WDTEN         (for HT6x1x)
+*                               @arg  CMU_CLKCTRL0_KEYEN         (for HT501x, HT502x)
+*                               @arg  CMU_CLKCTRL0_CLKOUTEN
+*                               @arg  CMU_CLKCTRL0_1P5LBOREN
+*                               @arg  CMU_CLKCTRL0_3DESRADEN     (for HT6x1x)
+*                               @arg  CMU_CLKCTRL0_ADESRADEN     (for HT6x2x, HT6x3x, HT501x, HT502x)
+*                               @arg  CMU_CLKCTRL0_ARGEN         (for HT6x3x)
+*                               @arg  CMU_CLKCTRL0_CRCEN         (for HT6x2x, HT6x3x)
+*                               @arg  CMU_CLKCTRL0_EMUEN         (for HT501x, HT502x)
+*                               @arg  CMU_CLKCTRL0_ECCEN         (for HT502x)
+*                               @arg  CMU_CLKCTRL0_SEL_PLLN_HRC  (for HT6x3x)
+*
+*           NewState           = ENABLEï¼š ä½¿èƒ½ç›¸åº”æ¨¡å—
+*                              = DISABLEï¼šå…³é—­ç›¸åº”æ¨¡å—
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”ä¿è¯æ­¤å‡½æ•°æ‰§è¡Œè¿‡ç¨‹ä¸­å¯„å­˜å™¨å†™ä¿æŠ¤çŠ¶æ€ä¸è¢«ä¿®æ”¹
 *********************************************************************************************************
 */
 void HT_CMU_ClkCtrl0Config(uint32_t ClkCtrl0Module, FunctionalState NewState)
 {
     /*  assert_param  */
-      
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-    
+
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
     ClkCtrl0Module &= CMU_CLKCTRL0;
-    
+
     if (NewState != DISABLE)
-    {       
-        HT_CMU->CLKCTRL0 |= ClkCtrl0Module;                                /*!< Ê¹ÄÜCtrl0ÄÚÏàÓ¦Ä£¿é    */ 
+    {
+        HT_CMU->CLKCTRL0 |= ClkCtrl0Module;                                /*!< ä½¿èƒ½Ctrl0å†…ç›¸åº”æ¨¡å—    */
     }
     else
     {
-#if defined HT6x1x	
-        ClkCtrl0Module &= ~CMU_CLKCTRL0_Reserved;                          /*!< Bit6 ±£ÁôÎª1           */
+#if defined HT6x1x
+        ClkCtrl0Module &= ~CMU_CLKCTRL0_Reserved;                          /*!< Bit6 ä¿ç•™ä¸º1           */
 #endif
-        HT_CMU->CLKCTRL0 &= ~ClkCtrl0Module;                               /*!< ¹Ø±ÕCtrl0ÄÚÏàÓ¦Ä£¿é    */ 
-    }     
-     
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */
-} 
+#if  defined  HT502x  ||  defined  HT601x  ||  defined  HT602x  ||  defined  HT6x3x
+        ClkCtrl0Module &= (~(CMU_CLKCTRL0_1P5LBOREN | CMU_CLKCTRL0_OSC_SLP_LOWPOWER));
+                                                                           /*!< bit13å’Œbit10 å¼ºåˆ¶ä¸º1   */
+#endif
+        if (ClkCtrl0Module & CMU_CLKCTRL0_PLLEN)                           /*!< å…³é—­PLLå¹¶å…³é—­PLLåœæŒ¯   */
+        {
+            ClkCtrl0Module |= CMU_CLKCTRL0_PLLDETEN;
+#if  defined  HT6x3x
+            HT_TBS->TBSCON &= (~TBS_TBSCON_TBSCLKSEL);                     /*!< å¼ºåˆ¶åˆ‡æ¢TBSæ—¶é’Ÿä¸ºOSC   */
+#endif
+        }
+        HT_CMU->CLKCTRL0 &= ~ClkCtrl0Module;                               /*!< å…³é—­Ctrl0å†…ç›¸åº”æ¨¡å—    */
+    }
+
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
+}
 
 /*
 *********************************************************************************************************
-*                                  CONFIGUE CLKCTRL0 REGISTER 
+*                                  CONFIGUE CLKCTRL0 REGISTER
 *
-* º¯ÊýËµÃ÷: ÅäÖÃClkCtrl1¼Ä´æÆ÷£¬Ê¹ÄÜ»òÕß¹Ø±Õ
+* å‡½æ•°è¯´æ˜Ž: é…ç½®ClkCtrl1å¯„å­˜å™¨ï¼Œä½¿èƒ½æˆ–è€…å…³é—­
 *
-* Èë¿Ú²ÎÊý: ClkCtrl1Module     ClkCtrl1¼Ä´æÆ÷Ä£¿é¿ØÖÆÎ»£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ:
-*                               @arg  CMU_CLKCTRL1            ÅäÖÃËùÓÐ¿ØÖÆÎ»
-*                               @arg  CMU_CLKCTRL1_TMR0EN      
-*                               @arg  CMU_CLKCTRL1_TMR1EN      
-*                               @arg  CMU_CLKCTRL1_TMR2EN      
-*                               @arg  CMU_CLKCTRL1_TMR3EN      
-*                               @arg  CMU_CLKCTRL1_UART0EN     
-*                               @arg  CMU_CLKCTRL1_UART1EN     
-*                               @arg  CMU_CLKCTRL1_UART2EN     
-*                               @arg  CMU_CLKCTRL1_UART37816EN 
-*                               @arg  CMU_CLKCTRL1_UART47816EN 
-*                               @arg  CMU_CLKCTRL1_UART5EN  
-*                               @arg  CMU_CLKCTRL1_TMR4EN         (Only for HT6x2x)
-*                               @arg  CMU_CLKCTRL1_TMR5EN         (Only for HT6x2x)
-*                               @arg  CMU_CLKCTRL1_UART6EN        (Only for HT6x2x)
-*                               @arg  CMU_CLKCTRL1_SPI1EN         (Only for HT6x2x)
-*                               @arg  CMU_CLKCTRL1_SOFTWDTEN      (Only for HT6x2x)
-*                               @arg  CMU_CLKCTRL1_LRCRTCEN       (Only for HT6x2x)
-*                               @arg  CMU_CLKCTRL1_LRCTFREQEN     (Only for HT501x, HT502x)
-*                               @arg  CMU_CLKCTRL1_LRCRTCEN       (Only for HT501x, HT502x)
-*                               @arg  CMU_CLKCTRL1_AUTORCCAL_EN   (Only for HT6x2x)
+* å…¥å£å‚æ•°: ClkCtrl1Module     ClkCtrl1å¯„å­˜å™¨æ¨¡å—æŽ§åˆ¶ä½ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
+*                               @arg  CMU_CLKCTRL1            é…ç½®æ‰€æœ‰æŽ§åˆ¶ä½
+*                               @arg  CMU_CLKCTRL1_TMR0EN
+*                               @arg  CMU_CLKCTRL1_TMR1EN
+*                               @arg  CMU_CLKCTRL1_TMR2EN
+*                               @arg  CMU_CLKCTRL1_TMR3EN
+*                               @arg  CMU_CLKCTRL1_UART0EN
+*                               @arg  CMU_CLKCTRL1_UART1EN
+*                               @arg  CMU_CLKCTRL1_UART2EN
+*                               @arg  CMU_CLKCTRL1_UART37816EN
+*                               @arg  CMU_CLKCTRL1_UART47816EN
+*                               @arg  CMU_CLKCTRL1_UART5EN
+*                               @arg  CMU_CLKCTRL1_TMR4EN         (for HT6x2x, HT6x3x)
+*                               @arg  CMU_CLKCTRL1_TMR5EN         (for HT6x2x, HT6x3x)
+*                               @arg  CMU_CLKCTRL1_UART6EN        (for HT6x2x, HT6x3x)
+*                               @arg  CMU_CLKCTRL1_SPI1EN         (for HT6x2x, HT6x3x)
+*                               @arg  CMU_CLKCTRL1_SOFTWDTEN      (for HT6x2x, HT6x3x)
+*                               @arg  CMU_CLKCTRL1_LRCRTC2EN      (for HT6x2x, HT6x3x)
+*                               @arg  CMU_CLKCTRL1_LRCTFREQEN     (for HT501x, HT502x)
+*                               @arg  CMU_CLKCTRL1_LRCRTCEN       (for HT501x, HT502x)
+*                               @arg  CMU_CLKCTRL1_AUTORCCAL_EN   (for HT6x2x)
+*                               @arg  CMU_CLKCTRL1_RCADJEN        (for HT6x3x)
+*                               @arg  CMU_CLKCTRL1_ECCEN          (for HT6x3x)
+*                               @arg  CMU_CLKCTRL1_EMUEN          (for HT6x3x)
+*                               @arg  CMU_CLKCTRL1_SPI2EN         (for HT6x3x)
 *
-*           NewState           = ENABLE£º Ê¹ÄÜÏàÓ¦Ä£¿é
-*                              = DISABLE£º¹Ø±ÕÏàÓ¦Ä£¿é        
-*                                               
-* ·µ»Ø²ÎÊý: ÎÞ                                 
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦±£Ö¤´Ëº¯ÊýÖ´ÐÐ¹ý³ÌÖÐ¼Ä´æÆ÷Ð´±£»¤×´Ì¬²»±»ÐÞ¸Ä
+*           NewState           = ENABLEï¼š ä½¿èƒ½ç›¸åº”æ¨¡å—
+*                              = DISABLEï¼šå…³é—­ç›¸åº”æ¨¡å—
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”ä¿è¯æ­¤å‡½æ•°æ‰§è¡Œè¿‡ç¨‹ä¸­å¯„å­˜å™¨å†™ä¿æŠ¤çŠ¶æ€ä¸è¢«ä¿®æ”¹
 *********************************************************************************************************
 */
 void HT_CMU_ClkCtrl1Config(uint32_t ClkCtrl1Module, FunctionalState NewState)
 {
     /*  assert_param  */
-      
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-      
+
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
     ClkCtrl1Module &= CMU_CLKCTRL1;
-    
+
     if (NewState != DISABLE)
-    {       
-        HT_CMU->CLKCTRL1 |= ClkCtrl1Module;                                /*!< Ê¹ÄÜCtrl1ÄÚÏàÓ¦Ä£¿é    */ 
+    {
+        HT_CMU->CLKCTRL1 |= ClkCtrl1Module;                                /*!< ä½¿èƒ½Ctrl1å†…ç›¸åº”æ¨¡å—    */
     }
     else
     {
-        HT_CMU->CLKCTRL1 &= ~ClkCtrl1Module;                               /*!< ¹Ø±ÕCtrl1ÄÚÏàÓ¦Ä£¿é    */ 
-    }     
-     
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */
-} 
+        HT_CMU->CLKCTRL1 &= ~ClkCtrl1Module;                               /*!< å…³é—­Ctrl1å†…ç›¸åº”æ¨¡å—    */
+    }
+
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
+}
 
 /*
 *********************************************************************************************************
 *                                      GET JTAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡JTAG×´Ì¬
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–JTAGçŠ¶æ€
 *
-* Èë¿Ú²ÎÊý: ÎÞ
+* å…¥å£å‚æ•°: æ— 
 *
-* ·µ»Ø²ÎÊý: Bool    = TRUE£º Ð¾Æ¬´¦ÓÚµ÷ÊÔ×´Ì¬
-*                   = FALSE£ºÐ¾Æ¬´¦ÓÚÕý³£×´Ì¬
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: Bool    = TRUEï¼š èŠ¯ç‰‡å¤„äºŽè°ƒè¯•çŠ¶æ€
+*                   = FALSEï¼šèŠ¯ç‰‡å¤„äºŽæ­£å¸¸çŠ¶æ€
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
-Bool HT_CMU_JTAGStatusGet()
+Bool HT_CMU_JTAGStatusGet(void)
 {
     /*  assert_param  */
-    
     return (HT_CMU->JTAGSTA ? TRUE : FALSE);
- 
 }
+
+/*
+*********************************************************************************************************
+*                                      GET CHIP ID
+*
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–èŠ¯ç‰‡ID
+*
+* å…¥å£å‚æ•°: æ— 
+*
+* è¿”å›žå‚æ•°: uint16_t = èŠ¯ç‰‡IDå·
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
+*********************************************************************************************************
+*/
+uint16_t HT_CMU_ChipIDGet(void)
+{
+    /*  assert_param  */
+#if  defined  HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x  ||  defined  HT502x
+    return (uint16_t)HT_CMU->CHIPID;
+#elif  defined  HT6x1x
+    return  0x0000;
+#endif
+}
+
 
 /*
 *********************************************************************************************************
 *                            GET SPECIFIED CLOCK STOP FLAG
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦Ê±ÖÓÍ£Õñ±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”æ—¶é’ŸåœæŒ¯æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: STAFlag     ÏëÒª¼ì²éµÄÄ³¸öÊ±ÖÓÍ£Õñ±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
+* å…¥å£å‚æ•°: STAFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªæ—¶é’ŸåœæŒ¯æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg CMU_CLKSTA_LFFLAG
 *                        @arg CMU_CLKSTA_HRCFLAG
 *                        @arg CMU_CLKSTA_PLLFLAG
-*						 @arg CMU_CLKSTA_PLLLOCK
 *
-* ·µ»Ø²ÎÊý: FlagStatus  = SET£º  ÏàÓ¦Ê±ÖÓ·¢ÉúÍ£Õñ
-*                       = RESET£ºÏàÓ¦Ê±ÖÓÎ´Í£Õñ
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§Ó¦´ò¿ªÊ±ÖÓÍ£Õñ¼ì²âÊ¹ÄÜÎ»²ÅÄÜµÃµ½ÓÐÐ§µÄ±êÖ¾£¬²Î¼ûHT_CMU_ClkCtrl0Config()
+* è¿”å›žå‚æ•°: FlagStatus  = SETï¼š  ç›¸åº”æ—¶é’Ÿå‘ç”ŸåœæŒ¯
+*                       = RESETï¼šç›¸åº”æ—¶é’ŸæœªåœæŒ¯
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åº”æ‰“å¼€æ—¶é’ŸåœæŒ¯æ£€æµ‹ä½¿èƒ½ä½æ‰èƒ½å¾—åˆ°æœ‰æ•ˆçš„æ ‡å¿—ï¼Œå‚è§HT_CMU_ClkCtrl0Config()
 *********************************************************************************************************
 */
 FlagStatus HT_CMU_StopFlagGet(uint8_t STAFlag)
 {
     /*  assert_param  */
-    
+
     if (HT_CMU->CLKSTA & STAFlag)
-    {       
+    {
         return SET;                        /*!< Clock Stop Flag is set   */
     }
     else
     {
         return RESET;                      /*!< Clock Stop Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                            Flash delay set
 *
-* º¯ÊýËµÃ÷: ÉèÖÃflash_dly
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®flash_dly
 *
-* Èë¿Ú²ÎÊý: STAFlag     ÏëÒª¼ì²éµÄÄ³¸öÊ±ÖÓÍ£Õñ±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
-*          NewState           = ENABLE£º Ê¹ÄÜÏàÓ¦Ä£¿é
-*                             = DISABLE£º¹Ø±ÕÏàÓ¦Ä£¿é  
+* å…¥å£å‚æ•°: STAFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªæ—¶é’ŸåœæŒ¯æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
+*          NewState           = ENABLEï¼š ä½¿èƒ½ç›¸åº”æ¨¡å—
+*                             = DISABLEï¼šå…³é—­ç›¸åº”æ¨¡å—
 *********************************************************************************************************
 */
-
-void	HT_CMU_FlashDly_Set(FunctionalState NewState)
+#if  defined  HT501x  ||  HT502x
+void  HT_CMU_FlashDly_Set(FunctionalState NewState)
 {
-#if  defined  HT501x	||  HT502x
-		uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-    
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
     if (NewState != DISABLE)
-    {       
-        HT_CMU->FLASHDLY = CMU_FLASHDLY_ENABLE;                           /*!< Ê¹ÄÜFLASH_DLY          */ 
+    {
+        HT_CMU->FLASHDLY |= CMU_FLASHDLY_ENABLE;                           /*!< ä½¿èƒ½FLASH_DLY          */
     }
     else
     {
-        HT_CMU->FLASHDLY = CMU_FLASHDLY_DISABLE;                          /*!< ¹Ø±ÕCtrl1ÄÚÏàÓ¦Ä£¿é    */ 
-    }  
+        HT_CMU->FLASHDLY &= (~CMU_FLASHDLY_ENABLE);                        /*!< å…³é—­Ctrl1å†…ç›¸åº”æ¨¡å—    */
+    }
 
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */
-#endif
+    HT_CMU->WPREG = writeProtect;                                          /*!< æ¢å¤ä¹‹å‰å†™ä¿æŠ¤è®¾ç½®     */
 }
+#endif
+
 /*
 *********************************************************************************************************
 *                            Flash prefetch set
 *
-* º¯ÊýËµÃ÷: ÉèÖÃprefetch
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®prefetch
 *
-* Èë¿Ú²ÎÊý: STAFlag     ÏëÒª¼ì²éµÄÄ³¸öÊ±ÖÓÍ£Õñ±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
-*          NewState           = ENABLE£º Ê¹ÄÜÏàÓ¦Ä£¿é
-*                             = DISABLE£º¹Ø±ÕÏàÓ¦Ä£¿é  
+* å…¥å£å‚æ•°: STAFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªæ—¶é’ŸåœæŒ¯æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
+*          NewState           = ENABLEï¼š ä½¿èƒ½ç›¸åº”æ¨¡å—
+*                             = DISABLEï¼šå…³é—­ç›¸åº”æ¨¡å—
 *********************************************************************************************************
 */
-void	HT_CMU_Prefetch_Set(FunctionalState NewState)
+#if  defined  HT6x2x  ||  defined  HT6x3x
+void  HT_CMU_Prefetch_Set(FunctionalState NewState)
 {
-#if  defined  HT6x2x	
-		uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ±£´æµ±Ç°Ð´±£»¤×´Ì¬     */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< ¹Ø±ÕÐ´±£»¤¹¦ÄÜ         */
-    
+
+    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01];    /*!< ä¿å­˜å½“å‰å†™ä¿æŠ¤çŠ¶æ€     */
+
+    HT_CMU->WPREG = CMU_WPREG_UnProtected;                                 /*!< å…³é—­å†™ä¿æŠ¤åŠŸèƒ½         */
+
     if (NewState != DISABLE)
-    {       
-        HT_CMU->PREFETCH = CMU_PREFETCH_ENABLE;                           /*!< Ê¹ÄÜprefetch         */ 
+    {
+    #if  defined  HT6x2x
+        HT_CMU->PREFETCH |= CMU_PREFETCH_ENABLE;                           /*!< ä½¿èƒ½prefetch         */
+    #elif  defined  HT6x3x
+        HT_CMU->PREFETCH |= CMU_PREFETCH_CACHE_EN|CMU_PREFETCH_CTRL_2T;    /*!< ä½¿èƒ½cache         */
+
+	#endif
     }
     else
     {
-        HT_CMU->PREFETCH = CMU_PREFETCH_DISABLE;                          /*!< ¹Ø±Õprefetch    */ 
-    }  
-
-    HT_CMU->WPREG = writeProtect;                                          /*!< »Ö¸´Ö®Ç°Ð´±£»¤ÉèÖÃ     */
-#endif
+    #if  defined  HT6x2x
+        HT_CMU->PREFETCH &= (~CMU_PREFETCH_ENABLE);                        /*!< å…³é—­prefetch    */
+    #elif  defined  HT6x3x
+        HT_CMU->PREFETCH &= (~(CMU_PREFETCH_CACHE_EN|CMU_PREFETCH_CTRL_2T));                      /*!< å…³é—­cache    */
+    #endif
+    }
 }
+#endif
+
 /*
 *********************************************************************************************************
-*                                     Wait For 2 MILLISECOND
+*                                     Wait For PLL
 *
-* º¯ÊýËµÃ÷: µÈ´ý2msµÄÑÓ³Ù£¬Ä£¿éÄÚ²¿º¯Êý£¬
+* å‡½æ•°è¯´æ˜Ž: ç­‰å¾…PLLç¨³å®šçš„å»¶è¿Ÿï¼Œæ¨¡å—å†…éƒ¨å‡½æ•°ï¼Œ
 *
-* Èë¿Ú²ÎÊý: ÎÞ                         
+* å…¥å£å‚æ•°: æ— 
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                   
-* 
-* ÌØÊâËµÃ÷: ÑÓ³ÙÊ±¼äÖ»ÊÇ´ó¸ÅÕýÈ·£¨×¢£ºÄ¿Ç°Ã»ÓÐµ÷ÊÔ£¬ÑÓ³ÙÊ±¼ä»¹Î´È·¶¨£©
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: å»¶è¿Ÿæ—¶é—´ä¸ºç²—ç•¥æ—¶é—´ï¼Œä¸èƒ½ç”¨ä½œæ ‡å‡†2ms
 *********************************************************************************************************
 */
-void Wait2mS(void)
+static void WaitPllLock(void)
 {
-    
     uint32_t delay;
-    
-    delay = HT_CMU_SysClkGet();                             /*!< »ñÈ¡µ±Ç°ÏµÍ³Ê±ÖÓFsys     */
-    delay = delay>>(HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV );    /*!< »ñÈ¡µ±Ç°CPUÊ±ÖÓFcpu      */
-    
+
+    delay = HT_CMU_SysClkGet();                             /*!< èŽ·å–å½“å‰ç³»ç»Ÿæ—¶é’ŸFsys     */
+    delay = delay>>(HT_CMU->SYSCLKDIV & CMU_SYSCLKDIV);     /*!< èŽ·å–å½“å‰CPUæ—¶é’ŸFcpu      */
     delay = delay>>10;                                      /*!< 500 X 2                  */
-    
-    while(delay--);                                         /*!< µÈ´ý2ms                  */       
+
+    while(delay--);                                         /*!< ç­‰å¾…2ms                  */
 }
+
 

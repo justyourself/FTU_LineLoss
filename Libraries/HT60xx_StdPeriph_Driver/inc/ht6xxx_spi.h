@@ -1,17 +1,17 @@
 /*
-**********************************************************************************************************
+*********************************************************************************************************
 *                                              HT6XXX
 *                                          Library Function
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_spi.h
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.0
-* Description  : 
+* Version      : V1.0.1
+* Description  :
 **********************************************************************************************************
 */
 
@@ -20,39 +20,39 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
-    
+#endif
+
 #include "ht6xxx.h"
-    
+
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Í/Ω·ππÃÂ
+*                                           ÂÖ®Â±ÄÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
 
-/* 
-* @brief  SPI ±÷”œ‡Œª∂®“Â
+/*
+* @brief  SPIÊó∂ÈíüÁõ∏‰ΩçÂÆö‰πâ
 */
 typedef enum
-{ 
-    SPI_CPHA_1Edge = 0x00,                      /*!< µ⁄“ª∏ˆ∂ØÃ¨—ÿ÷Æ«∞∞Î÷‹∆⁄ ˝æ›±ª∑¢ÀÕ  */
-    SPI_CPHA_2Edge = 0x08,                      /*!< ∂ØÃ¨—ÿÕ®π˝∫Û ˝æ›±ª∑¢ÀÕ            */
-}SPICPHA_TypeDef;                               /*!< end of group SPICPHA_TypeDef      */   
+{
+    SPI_CPHA_1Edge = 0x00,                      /*!< Á¨¨‰∏Ä‰∏™Âä®ÊÄÅÊ≤ø‰πãÂâçÂçäÂë®ÊúüÊï∞ÊçÆË¢´ÂèëÈÄÅ  */
+    SPI_CPHA_2Edge = SPI_SPICON_SSDIS,          /*!< Âä®ÊÄÅÊ≤øÈÄöËøáÂêéÊï∞ÊçÆË¢´ÂèëÈÄÅ            */
+}SPICPHA_TypeDef;                               /*!< end of group SPICPHA_TypeDef      */
 
-/* 
-* @brief  SPI ±÷”º´–‘∂®“Â
+/*
+* @brief  SPIÊó∂ÈíüÊûÅÊÄßÂÆö‰πâ
 */
 typedef enum
-{ 
-    SPI_CPOL_Low = 0x00,                        /*!< ø’œ–◊¥Ã¨SCK±ª÷√Œ™µÕµÁ∆Ω           */
-    SPI_CPOL_high = 0x04,                       /*!< ø’œ–◊¥Ã¨SCK±ª÷√Œ™∏ﬂµÁ∆Ω           */
-}SPICPOL_TypeDef;                               /*!< end of group SPICPOL_TypeDef      */ 
+{
+    SPI_CPOL_Low  = 0x00,                       /*!< Á©∫Èó≤Áä∂ÊÄÅSCKË¢´ÁΩÆ‰∏∫‰ΩéÁîµÂπ≥           */
+    SPI_CPOL_high = SPI_SPICON_CPOL,            /*!< Á©∫Èó≤Áä∂ÊÄÅSCKË¢´ÁΩÆ‰∏∫È´òÁîµÂπ≥           */
+}SPICPOL_TypeDef;                               /*!< end of group SPICPOL_TypeDef      */
 
-/* 
-* @brief  SPI ±÷”∆µ¬ ∂®“Â
+/*
+* @brief  SPIÊó∂ÈíüÈ¢ëÁéáÂÆö‰πâ
 */
 typedef enum
-{ 
+{
     SPI_BaudRatePrescaler_2   = 0x00,           /*!< Fspi = Fsys/2                     */
     SPI_BaudRatePrescaler_4   = 0x10,           /*!< Fspi = Fsys/4                     */
     SPI_BaudRatePrescaler_8   = 0x20,           /*!< Fspi = Fsys/8                     */
@@ -60,43 +60,63 @@ typedef enum
     SPI_BaudRatePrescaler_32  = 0x40,           /*!< Fspi = Fsys/32                    */
     SPI_BaudRatePrescaler_64  = 0x50,           /*!< Fspi = Fsys/64                    */
     SPI_BaudRatePrescaler_128 = 0x60,           /*!< Fspi = Fsys/128                   */
-    SPI_CLK_None              = 0x70,           /*!< ≤ª≤˙…˙÷˜ ±÷”                      */
-}SPIBaudrate_TypeDef;                           /*!< end of group SPIBaudrate_TypeDef  */ 
+    SPI_CLK_None              = 0x70,           /*!< ‰∏ç‰∫ßÁîü‰∏ªÊó∂Èíü                      */
+#if  defined  HT6x3x
+    SPI_BaudRatePrescaler_3   = 0x01,           /*!< Fspi = Fsys/3                     */
+    SPI_BaudRatePrescaler_5   = 0x05,           /*!< Fspi = Fsys/5                     */
+    SPI_BaudRatePrescaler_6   = 0x06,           /*!< Fspi = Fsys/6                     */
+    SPI_BaudRatePrescaler_7   = 0x07,           /*!< Fspi = Fsys/7                     */
+    SPI_BaudRatePrescaler_9   = 0x09,           /*!< Fspi = Fsys/9                     */
+#endif
+}SPIBaudrate_TypeDef;                           /*!< end of group SPIBaudrate_TypeDef  */
 
-/* 
-* @brief  SPIMode∂®“Â
+/*
+* @brief  SPIModeÂÆö‰πâ
 */
 typedef enum
-{ 
-    SPI_Master = 0x02,                          /*!< SPI÷˜ª˙ƒ£ Ω                       */
-    SPI_Slave  = 0x00,                          /*!< SPI¥”ª˙ƒ£ Ω                       */
-}SPIMode_TypeDef;                               /*!< end of group SPIMode_TypeDef      */ 
+{
+    SPI_Slave  = 0x00,                          /*!< SPI‰ªéÊú∫Ê®°Âºè                       */
+    SPI_Master = SPI_SPICON_MSTR,               /*!< SPI‰∏ªÊú∫Ê®°Âºè                       */
+}SPIMode_TypeDef;                               /*!< end of group SPIMode_TypeDef      */
 
+#if  defined  HT6x3x
+/*
+* @brief  SPI Êó∂ÈíüÊ∫êÈÄâÊã©ÂÆö‰πâÔºàÁõÆÂâç‰ªÖÈôêSPI2Ôºâ
+*/
+typedef enum
+{
+    SPI_CLKSEL_OSC  = 0x00,                     /*!< OSCÊô∂ÊåØ                           */
+    SPI_CLKSEL_LRC  = 0x10,                     /*!< LRCÊô∂ÊåØ                           */
+    SPI_CLKSEL_HRC  = 0x20,                     /*!< HRCÊô∂ÊåØ                           */
+    SPI_CLKSEL_PLL  = 0x30,                     /*!< PLLÊô∂ÊåØ                           */
+}SPIClkSel_TypeDef;                             /*!< end of group SPIClkSel_TypeDef    */
+#endif
 
-/* 
-* @brief  SPIƒ£øÈ≥ı ºªØΩ·ππ∂®“Â
+/*
+* @brief  SPIÊ®°ÂùóÊâ©Â±ïÂàùÂßãÂåñÁªìÊûÑÂÆö‰πâ
 */
 typedef struct
 {
-    FunctionalState SPI_CSInCtrol;              /*!< ◊ˆ¥”ª˙ ±£¨ «∑Ò¥Úø™SPI_CS ‰»Îøÿ÷∆  */
-    SPIBaudrate_TypeDef SPI_Baudrate;           /*!< SPI ±÷”…Ë÷√                       */
-    SPICPHA_TypeDef SPI_CPHA;                   /*!<  ±÷”œ‡Œª…Ë÷√                      */
-    SPICPOL_TypeDef SPI_CPOL;                   /*!<  ±÷”º´–‘…Ë÷√                      */
-    SPIMode_TypeDef SPI_Mode;                   /*!< SPI_Mode…Ë÷√                      */
-
+    FunctionalState SPI_CSInCtrol;              /*!< ÂÅö‰ªéÊú∫Êó∂ÔºåÊòØÂê¶ÊâìÂºÄSPI_CSËæìÂÖ•ÊéßÂà∂  */
+    SPIBaudrate_TypeDef SPI_Baudrate;           /*!< SPIÊó∂ÈíüËÆæÁΩÆ                       */
+    SPICPHA_TypeDef SPI_CPHA;                   /*!< Êó∂ÈíüÁõ∏‰ΩçËÆæÁΩÆ                      */
+    SPICPOL_TypeDef SPI_CPOL;                   /*!< Êó∂ÈíüÊûÅÊÄßËÆæÁΩÆ                      */
+    SPIMode_TypeDef SPI_Mode;                   /*!< SPI_ModeËÆæÁΩÆ                      */
+#if  defined  HT6x3x
+    SPIClkSel_TypeDef SPI_CLK;                  /*!< SPIÊó∂ÈíüÊ∫êËÆæÁΩÆ(‰ªÖÈôêSPI2ÔºåÊó†Êâ©Â±ï)   */
+#endif
 }SPI_InitTypeDef;                               /*!< end of group SPI_InitTypeDef      */
-
 
 /*
 *********************************************************************************************************
-*                                             »´æ÷±‰¡ø
+*                                             ÂÖ®Â±ÄÂèòÈáè
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           »´æ÷∫Ø ˝…Í√˜
+*                                           ÂÖ®Â±ÄÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
 
@@ -108,10 +128,8 @@ void HT_SPI_CSHigh(HT_SPI_TypeDef* SPIx);
 void HT_SPI_CSLow(HT_SPI_TypeDef* SPIx);
 
 
-
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __HT6XXX_SPI_H__ */ 
+#endif /* __HT6XXX_SPI_H__ */

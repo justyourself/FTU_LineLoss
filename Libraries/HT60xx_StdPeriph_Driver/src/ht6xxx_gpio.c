@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_gpio.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.0
-* Description  : 
+* Version      : V1.0.1
+* Description  :
 *********************************************************************************************************
 */
 
@@ -21,22 +21,21 @@
 
 /*
 *********************************************************************************************************
-*                                           ±æµÿ∫Í/Ω·ππÃÂ
+*                                           Êú¨Âú∞ÂÆè/ÁªìÊûÑ‰Ωì
 *********************************************************************************************************
 */
-
-#define  GPIO_Mode_AFx            0x10                      /*!< GPIO∏¥”√π¶ƒ‹±ª π”√             */
+#define  GPIO_Mode_AFx            0x10                      /*!< GPIOÂ§çÁî®ÂäüËÉΩË¢´‰ΩøÁî®             */
 
 /*
 *********************************************************************************************************
-*                                             ±æµÿ±‰¡ø
+*                                             Êú¨Âú∞ÂèòÈáè
 *********************************************************************************************************
 */
 
-static const uint32_t RegisterWriteProtect[]={CMU_WPREG_Protected, CMU_WPREG_UnProtected};
+
 /*
 *********************************************************************************************************
-*                                           ±æµÿ∫Ø ˝…Í√˜
+*                                           Êú¨Âú∞ÂáΩÊï∞Áî≥Êòé
 *********************************************************************************************************
 */
 
@@ -45,288 +44,282 @@ static const uint32_t RegisterWriteProtect[]={CMU_WPREG_Protected, CMU_WPREG_UnP
 *********************************************************************************************************
 *                                         INITIAL THE GPIO
 *
-* ∫Ø ˝Àµ√˜: ≈‰÷√GPIO£¨ø…“ª¥Œ≥ı ºªØÕ¨“ª◊ÈGPIO÷–∂‡∏ˆPin£¨µ´∆‰GPIO_Mode±ÿ–Î“ª÷¬
+* ÂáΩÊï∞ËØ¥Êòé: ÈÖçÁΩÆGPIOÔºåÂèØ‰∏ÄÊ¨°ÂàùÂßãÂåñÂêå‰∏ÄÁªÑGPIO‰∏≠Â§ö‰∏™PinÔºå‰ΩÜÂÖ∂GPIO_ModeÂøÖÈ°ª‰∏ÄËá¥
 *
-* »Îø⁄≤Œ ˝: GPIOx              ÷ªƒ‹ «HT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE÷–µƒ“ª∏ˆ
+* ÂÖ•Âè£ÂèÇÊï∞: GPIOx              Âè™ËÉΩÊòØHT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE‰∏≠ÁöÑ‰∏Ä‰∏™
 *
-*           GPIO_InitStruct    GPIOπ‹Ω≈≥ı ºªØΩ·ππÃÂ÷∏’Î£¨÷˜“™∞¸∫¨4∏ˆ≤Œ ˝: 
-*                              1) GPIO_Pin         : ±ª≥ı ºªØπ‹Ω≈:  GPIO_Pin_0 ~ GPIO_Pin_15
-*                              2) GPIO_Mode        : GPIOƒ£ Ω£¨Œ™“‘œ¬Àƒ÷÷ƒ£ Ω÷Æ“ª£∫
-*                                                    GPIO_Mode_IOIN   IO ‰»Î
-*                                                    GPIO_Mode_IOOUT  IO ‰≥ˆ
-*                                                    GPIO_Mode_AF1    ∏¥”√π¶ƒ‹1
-*                                                    GPIO_Mode_AF2    ∏¥”√π¶ƒ‹2
-*                              3) GPIO_InputStruct :  ˝◊÷ ‰»Î ±…œ¿≠π¶ƒ‹≈‰÷√ 
-*                              4) GPIO_OutputStruct:  ˝◊÷ ‰≥ˆ ±ø™¬©π¶ƒ‹≈‰÷√
+*           GPIO_InitStruct    GPIOÁÆ°ËÑöÂàùÂßãÂåñÁªìÊûÑ‰ΩìÊåáÈíàÔºå‰∏ªË¶ÅÂåÖÂê´4‰∏™ÂèÇÊï∞:
+*                              1) GPIO_Pin         : Ë¢´ÂàùÂßãÂåñÁÆ°ËÑö:  GPIO_Pin_0 ~ GPIO_Pin_15
+*                              2) GPIO_Mode        : GPIOÊ®°ÂºèÔºå‰∏∫‰ª•‰∏ãÂõõÁßçÊ®°Âºè‰πã‰∏ÄÔºö
+*                                                    GPIO_Mode_IOIN   IOËæìÂÖ•
+*                                                    GPIO_Mode_IOOUT  IOËæìÂá∫
+*                                                    GPIO_Mode_AF1    Â§çÁî®ÂäüËÉΩ1
+*                                                    GPIO_Mode_AF2    Â§çÁî®ÂäüËÉΩ2
+*                              3) GPIO_InputStruct : Êï∞Â≠óËæìÂÖ•Êó∂‰∏äÊãâÂäüËÉΩÈÖçÁΩÆ
+*                              4) GPIO_OutputStruct: Êï∞Â≠óËæìÂá∫Êó∂ÂºÄÊºèÂäüËÉΩÈÖçÁΩÆ
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: 1)≤ø∑÷ƒ£ƒ‚π¶ƒ‹±»»ÁADCIN/Segment/Com£¨µ±π‹Ω≈≈‰÷√Œ™’‚–©π¶ƒ‹ ±£¨≈‰÷√ ‰»Î…œ¿≠“‘º∞ ‰≥ˆø™¬©π¶ƒ‹Œﬁ
-*             “‚“Â
-*           2)”√ªß”¶±£÷§‘⁄∫Ø ˝÷¥––π˝≥Ã÷–ºƒ¥Ê∆˜–¥±£ª§◊¥Ã¨≤ª“™±ª∏ƒ±‰          
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: 1)ÈÉ®ÂàÜÊ®°ÊãüÂäüËÉΩÊØîÂ¶ÇADCIN/Segment/ComÔºåÂΩìÁÆ°ËÑöÈÖçÁΩÆ‰∏∫Ëøô‰∫õÂäüËÉΩÊó∂ÔºåÈÖçÁΩÆËæìÂÖ•‰∏äÊãâ‰ª•ÂèäËæìÂá∫ÂºÄÊºèÂäüËÉΩÊó†
+*             ÊÑè‰πâ
+*           2)Áî®Êà∑Â∫î‰øùËØÅÂú®ÂáΩÊï∞ÊâßË°åËøáÁ®ã‰∏≠ÂØÑÂ≠òÂô®ÂÜô‰øùÊä§Áä∂ÊÄÅ‰∏çË¶ÅË¢´ÊîπÂèò
 *********************************************************************************************************
 */
 void HT_GPIO_Init(HT_GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)
 {
     /*  assert_param  */
-    
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01]; /*!< ±£¥Êµ±«∞–¥±£ª§◊¥Ã¨        */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                              /*!< πÿ±’–¥±£ª§π¶ƒ‹            */
-    
-    if(GPIO_InitStruct->GPIO_Mode & GPIO_Mode_AFx)                      /*!< ≈–∂œGPIO «∑Ò∏¥”√Œ™π¶ƒ‹Pin */  
+    if(GPIO_InitStruct->GPIO_Mode & GPIO_Mode_AFx)                      /*!< Âà§Êñ≠GPIOÊòØÂê¶Â§çÁî®‰∏∫ÂäüËÉΩPin */
     {
-        GPIOx->IOCFG |= GPIO_InitStruct->GPIO_Pin;                      /*!< ≈‰÷√GPIOŒ™∏¥”√π¶ƒ‹Pin     */ 
-        
-        if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_AF1)                 /*!< ≈–∂œ «∑ÒŒ™µ⁄“ª∏¥”√π¶ƒ‹    */ 
+        GPIOx->IOCFG |= GPIO_InitStruct->GPIO_Pin;                      /*!< ÈÖçÁΩÆGPIO‰∏∫Â§çÁî®ÂäüËÉΩPin     */
+        if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_AF1)                 /*!< Âà§Êñ≠ÊòØÂê¶‰∏∫Á¨¨‰∏ÄÂ§çÁî®ÂäüËÉΩ    */
         {
-            GPIOx->AFCFG &= ~((uint32_t)GPIO_InitStruct->GPIO_Pin);     /*!< ≈‰÷√Œ™µ⁄“ª∏¥”√π¶ƒ‹        */ 
+            GPIOx->AFCFG &= ~((uint32_t)GPIO_InitStruct->GPIO_Pin);     /*!< ÈÖçÁΩÆ‰∏∫Á¨¨‰∏ÄÂ§çÁî®ÂäüËÉΩ        */
         }
         else
         {
-            GPIOx->AFCFG |= (uint32_t)GPIO_InitStruct->GPIO_Pin;        /*!< ≈‰÷√Œ™µ⁄∂˛∏¥”√π¶ƒ‹        */
+            GPIOx->AFCFG |= (uint32_t)GPIO_InitStruct->GPIO_Pin;        /*!< ÈÖçÁΩÆ‰∏∫Á¨¨‰∫åÂ§çÁî®ÂäüËÉΩ        */
         }
     }
-    else                                                                 
+    else
     {
-        GPIOx->IOCFG &= ~((uint32_t)GPIO_InitStruct->GPIO_Pin);         /*!< ≈‰÷√GPIOŒ™IO              */ 
-        
-        if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_IOIN)                /*!< ≈–∂œ «∑ÒŒ™GPIO ‰»Î        */
+        GPIOx->IOCFG &= ~((uint32_t)GPIO_InitStruct->GPIO_Pin);         /*!< ÈÖçÁΩÆGPIO‰∏∫IO              */
+        if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_IOIN)                /*!< Âà§Êñ≠ÊòØÂê¶‰∏∫GPIOËæìÂÖ•        */
         {
-            GPIOx->PTDIR &= ~((uint32_t)GPIO_InitStruct->GPIO_Pin);     /*!< ≈‰÷√Œ™IO ‰»Î              */ 
+            GPIOx->PTDIR &= ~((uint32_t)GPIO_InitStruct->GPIO_Pin);     /*!< ÈÖçÁΩÆ‰∏∫IOËæìÂÖ•              */
         }
         else
         {
-            GPIOx->PTDIR |= (uint32_t)GPIO_InitStruct->GPIO_Pin;        /*!< ≈‰÷√Œ™IO ‰≥ˆ              */
+            GPIOx->PTDIR |= (uint32_t)GPIO_InitStruct->GPIO_Pin;        /*!< ÈÖçÁΩÆ‰∏∫IOËæìÂá∫              */
         }
     }
-    
-    
-    if(GPIO_InitStruct->GPIO_InputStruct == GPIO_Input_Up)              /*!< ≈–∂œ «∑Ò πƒ‹ ˝◊÷ ‰»Î…œ¿≠  */
+
+    if(GPIO_InitStruct->GPIO_InputStruct == GPIO_Input_Up)              /*!< Âà§Êñ≠ÊòØÂê¶‰ΩøËÉΩÊï∞Â≠óËæìÂÖ•‰∏äÊãâ  */
     {
-        GPIOx->PTUP &=  ~((uint32_t)GPIO_InitStruct->GPIO_Pin);         /*!< ≈‰÷√ ‰»Î…œ¿≠π¶ƒ‹          */
+        GPIOx->PTUP &=  ~((uint32_t)GPIO_InitStruct->GPIO_Pin);         /*!< ÈÖçÁΩÆËæìÂÖ•‰∏äÊãâÂäüËÉΩ          */
     }
     else
     {
-        GPIOx->PTUP |=  (uint32_t)GPIO_InitStruct->GPIO_Pin;            /*!< πÿ±’ ‰»Î…œ¿≠π¶ƒ‹          */
+        GPIOx->PTUP |=  (uint32_t)GPIO_InitStruct->GPIO_Pin;            /*!< ÂÖ≥Èó≠ËæìÂÖ•‰∏äÊãâÂäüËÉΩ          */
     }
-    
-    if(GPIO_InitStruct->GPIO_OutputStruct == GPIO_Output_OD)            /*!< ≈–∂œ «∑Ò πƒ‹ø™¬© ‰≥ˆπ¶ƒ‹  */
+
+    if(GPIO_InitStruct->GPIO_OutputStruct == GPIO_Output_OD)            /*!< Âà§Êñ≠ÊòØÂê¶‰ΩøËÉΩÂºÄÊºèËæìÂá∫ÂäüËÉΩ  */
     {
-        GPIOx->PTOD &=  ~((uint32_t)GPIO_InitStruct->GPIO_Pin);         /*!< ≈‰÷√ø™¬© ‰≥ˆ              */
+        GPIOx->PTOD &=  ~((uint32_t)GPIO_InitStruct->GPIO_Pin);         /*!< ÈÖçÁΩÆÂºÄÊºèËæìÂá∫              */
     }
     else
     {
-        GPIOx->PTOD |=  (uint32_t)GPIO_InitStruct->GPIO_Pin;            /*!< ≈‰÷√Õ∆ÕÏ ‰≥ˆ              */
-    }  
+        GPIOx->PTOD |=  (uint32_t)GPIO_InitStruct->GPIO_Pin;            /*!< ÈÖçÁΩÆÊé®ÊåΩËæìÂá∫              */
+    }
 
-    HT_CMU->WPREG = writeProtect;                                       /*!< ª÷∏¥÷Æ«∞–¥±£ª§…Ë÷√        */    
-} 
-
+#if  defined  HT6x3x
+    if (GPIO_InitStruct->GPIO_InputFilter == DISABLE)                   /*!< Âà§Êñ≠ÊòØÂê¶‰ΩøËÉΩËæìÂÖ•Êª§Ê≥¢ÂäüËÉΩ  */
+    {
+        GPIOx->FILT &=  ~((uint32_t)GPIO_InitStruct->GPIO_Pin);         /*!< ÂÖ≥Èó≠ËæìÂÖ•Êª§Ê≥¢              */
+    }
+    else
+    {
+        GPIOx->FILT |=  (uint32_t)GPIO_InitStruct->GPIO_Pin;            /*!< ÊâìÂºÄËæìÂÖ•Êª§Ê≥¢              */
+    }
+#endif
+}
 
 /*
 *********************************************************************************************************
 *                         INITIAL GPIO TO SPECIFIC ALTERNATE FUNCTION
 *
-* ∫Ø ˝Àµ√˜: ≈‰÷√GPIO£¨ø…“ª¥Œ≥ı ºªØÕ¨“ª◊ÈGPIO÷–∂‡∏ˆPin£¨√ø∏ˆPin GPIO_Modeø…“‘≤ª“ª÷¬
+* ÂáΩÊï∞ËØ¥Êòé: ÈÖçÁΩÆGPIOÔºåÂèØ‰∏ÄÊ¨°ÂàùÂßãÂåñÂêå‰∏ÄÁªÑGPIO‰∏≠Â§ö‰∏™PinÔºåÊØè‰∏™Pin GPIO_ModeÂèØ‰ª•‰∏ç‰∏ÄËá¥
 *
-* »Îø⁄≤Œ ˝: GPIOx              ÷ªƒ‹ «HT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE÷–µƒ“ª∏ˆ
+* ÂÖ•Âè£ÂèÇÊï∞: GPIOx              Âè™ËÉΩÊòØHT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE‰∏≠ÁöÑ‰∏Ä‰∏™
 *
-*           GPIO_InitAFStruct  GPIOπ‹Ω≈≥ı ºªØΩ·ππÃÂ÷∏’Î£¨÷˜“™∞¸∫¨4∏ˆ≤Œ ˝: 
-*                              1) GPIO_Pin         : ±ª≥ı ºªØπ‹Ω≈:  GPIO_Pin_0 ~ GPIO_Pin_15
-*                              2) GPIO_AFMode      : GPIOƒ£ Ω£®∏¥”√π¶ƒ‹£©£∫ø…Œ™“‘œ¬ƒ≥“ª◊È≤ªÕ¨Pinµƒ∏¥”√π¶ƒ‹◊È∫œ
-*                                                    ◊¢£∫’‚¿Ô÷ª¡–≥ˆ¡ÀGPIOA∫ÕGPIOE
-*                                                    GPIOB/GPIOC/GPIOD ∏¥”√π¶ƒ‹∂®“Â≤Œº˚ht60xx_gpio.h
-*                                                    PA0_SEG28           PE0_TMR0  
-*                                                    PA1_SEG29           PE1_TX4   
-*                                                    PA2_SEG30           PE1_TOUT2 
-*                                                    PA3_SEG31           PE2_RX4   
+*           GPIO_InitAFStruct  GPIOÁÆ°ËÑöÂàùÂßãÂåñÁªìÊûÑ‰ΩìÊåáÈíàÔºå‰∏ªË¶ÅÂåÖÂê´4‰∏™ÂèÇÊï∞:
+*                              1) GPIO_Pin         : Ë¢´ÂàùÂßãÂåñÁÆ°ËÑö:  GPIO_Pin_0 ~ GPIO_Pin_15
+*                              2) GPIO_AFMode      : GPIOÊ®°ÂºèÔºàÂ§çÁî®ÂäüËÉΩÔºâÔºöÂèØ‰∏∫‰ª•‰∏ãÊüê‰∏ÄÁªÑ‰∏çÂêåPinÁöÑÂ§çÁî®ÂäüËÉΩÁªÑÂêà
+*                                                    Ê≥®ÔºöËøôÈáåÂè™ÂàóÂá∫‰∫ÜGPIOAÂíåGPIOE
+*                                                    GPIOB/GPIOC/GPIOD Â§çÁî®ÂäüËÉΩÂÆö‰πâÂèÇËßÅht60xx_gpio.h
+*                                                    PA0_SEG28           PE0_TMR0
+*                                                    PA1_SEG29           PE1_TX4
+*                                                    PA2_SEG30           PE1_TOUT2
+*                                                    PA3_SEG31           PE2_RX4
 *                                                    PA4_SEG32           PE2_ESAMIO
 *                                                    PA5_INT0            PE3_CLKOUT
-*                                                    PA6_INT1            PE4_RX3   
+*                                                    PA6_INT1            PE4_RX3
 *                                                    PA7_INT2            PE4_CARDIO
-*                                                    PA7_SEG33           PE5_TX3   
-*                                                    PA8_INT3            PE6_TMR1  
-*                                                    PA8_SEG34           PE7_LVDIN 
-*                                                    PA9_INT4            PE8_POWIN 
-*                                                    PA10_INT5           PE9_TMR2  
-*                                                    PA11_INT6           PE10_TMR3 
-*                                                    PA12_SEG35          PE11_TX2  
-*                                                    PA12_ADCIN0         PE12_RX2  
-*                                                    PA13_SEG36          PE13_SCL  
-*                                                    PA13_ADCIN1         PE14_SDA    
+*                                                    PA7_SEG33           PE5_TX3
+*                                                    PA8_INT3            PE6_TMR1
+*                                                    PA8_SEG34           PE7_LVDIN
+*                                                    PA9_INT4            PE8_POWIN
+*                                                    PA10_INT5           PE9_TMR2
+*                                                    PA11_INT6           PE10_TMR3
+*                                                    PA12_SEG35          PE11_TX2
+*                                                    PA12_ADCIN0         PE12_RX2
+*                                                    PA13_SEG36          PE13_SCL
+*                                                    PA13_ADCIN1         PE14_SDA
 *
-*                              3) GPIO_InputStruct :  ˝◊÷ ‰»Î ±…œ¿≠π¶ƒ‹≈‰÷√ 
-*                              4) GPIO_OutputStruct:  ˝◊÷ ‰≥ˆ ±ø™¬©π¶ƒ‹≈‰÷√
+*                              3) GPIO_InputStruct : Êï∞Â≠óËæìÂÖ•Êó∂‰∏äÊãâÂäüËÉΩÈÖçÁΩÆ
+*                              4) GPIO_OutputStruct: Êï∞Â≠óËæìÂá∫Êó∂ÂºÄÊºèÂäüËÉΩÈÖçÁΩÆ
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: 1)À˘”–±ª≥ı ºªØµƒπ‹Ω≈∂ºΩ´±ª≥ı ºªØŒ™∏¥”√π¶ƒ‹Pin
-*           2)”√ªß”¶±£÷§GPIO_Pin”ÎGPIO_AFModeœ‡∂‘”¶£¨“‘GPIOx=HT_GPIOAŒ™¿˝£¨»Áπ˚GPIO_Pin∫¨”–GPIO_Pin_0£¨‘Ú
-              GPIO_AFMode÷–“≤”¶œ‡”¶∫¨”–PA0_SEG28≤≈∂‘
-*           3)≤ø∑÷ƒ£ƒ‚π¶ƒ‹±»»ÁADCIN/Segment/Com£¨µ±π‹Ω≈≈‰÷√Œ™’‚–©π¶ƒ‹ ±£¨≈‰÷√ ‰»Î…œ¿≠“‘º∞ ‰≥ˆø™¬©π¶ƒ‹Œﬁ
-*             “‚“Â
-*           4)”√ªß”¶±£÷§‘⁄∫Ø ˝÷¥––π˝≥Ã÷–ºƒ¥Ê∆˜–¥±£ª§◊¥Ã¨≤ª“™±ª∏ƒ±‰
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: 1)ÊâÄÊúâË¢´ÂàùÂßãÂåñÁöÑÁÆ°ËÑöÈÉΩÂ∞ÜË¢´ÂàùÂßãÂåñ‰∏∫Â§çÁî®ÂäüËÉΩPin
+*           2)Áî®Êà∑Â∫î‰øùËØÅGPIO_Pin‰∏éGPIO_AFModeÁõ∏ÂØπÂ∫îÔºå‰ª•GPIOx=HT_GPIOA‰∏∫‰æãÔºåÂ¶ÇÊûúGPIO_PinÂê´ÊúâGPIO_Pin_0ÔºåÂàô
+*             GPIO_AFMode‰∏≠‰πüÂ∫îÁõ∏Â∫îÂê´ÊúâPA0_SEG28ÊâçÂØπ
+*           3)ÈÉ®ÂàÜÊ®°ÊãüÂäüËÉΩÊØîÂ¶ÇADCIN/Segment/ComÔºåÂΩìÁÆ°ËÑöÈÖçÁΩÆ‰∏∫Ëøô‰∫õÂäüËÉΩÊó∂ÔºåÈÖçÁΩÆËæìÂÖ•‰∏äÊãâ‰ª•ÂèäËæìÂá∫ÂºÄÊºèÂäüËÉΩÊó†
+*             ÊÑè‰πâ
+*           4)Áî®Êà∑Â∫î‰øùËØÅÂú®ÂáΩÊï∞ÊâßË°åËøáÁ®ã‰∏≠ÂØÑÂ≠òÂô®ÂÜô‰øùÊä§Áä∂ÊÄÅ‰∏çË¶ÅË¢´ÊîπÂèò
 *********************************************************************************************************
 */
 void HT_GPIO_AFInit(HT_GPIO_TypeDef* GPIOx, GPIO_InitAFTypeDef* GPIO_InitAFStruct)
 {
     /*  assert_param  */
-    
     uint32_t AFState;
-    uint32_t writeProtect = RegisterWriteProtect[HT_CMU->WPREG & 0x01]; /*!< ±£¥Êµ±«∞–¥±£ª§◊¥Ã¨        */
-    
-    HT_CMU->WPREG = CMU_WPREG_UnProtected;                              /*!< πÿ±’–¥±£ª§π¶ƒ‹            */
-    
-    GPIOx->IOCFG |= GPIO_InitAFStruct->GPIO_Pin;                        /*!< ≈‰÷√Œ™∏¥”√π‹Ω≈            */
-    
-    AFState = GPIOx->AFCFG & (~(uint32_t)GPIO_InitAFStruct->GPIO_Pin);  /*!< ±£¥ÊŒ¥≈‰÷√π‹Ω≈∏¥”√◊¥Ã¨    */
-    
-    GPIOx->AFCFG = (uint32_t)GPIO_InitAFStruct->GPIO_AFMode | AFState;  /*!< ≈‰÷√œ‡”¶π‹Ω≈∏¥”√π¶ƒ‹      */
-    
-    if(GPIO_InitAFStruct->GPIO_InputStruct == GPIO_Input_Up)            /*!< ≈–∂œ «∑Ò πƒ‹ ˝◊÷ ‰»Î…œ¿≠  */
-    {
-        GPIOx->PTUP &=  ~((uint32_t)GPIO_InitAFStruct->GPIO_Pin);       /*!< ≈‰÷√ ‰»Î…œ¿≠π¶ƒ‹          */
-    }
-    else
-    {
-        GPIOx->PTUP |=  (uint32_t)GPIO_InitAFStruct->GPIO_Pin;          /*!< πÿ±’ ‰»Î…œ¿≠π¶ƒ‹          */
-    }
-    
-    if(GPIO_InitAFStruct->GPIO_OutputStruct == GPIO_Output_OD)          /*!< ≈–∂œ «∑Ò πƒ‹ø™¬© ‰≥ˆπ¶ƒ‹  */
-    {
-        GPIOx->PTOD &=  ~((uint32_t)GPIO_InitAFStruct->GPIO_Pin);       /*!< ≈‰÷√ø™¬© ‰≥ˆ              */
-    }
-    else
-    {
-        GPIOx->PTOD |=  (uint32_t)GPIO_InitAFStruct->GPIO_Pin;          /*!< ≈‰÷√Õ∆ÕÏ ‰≥ˆ              */
-    } 
+    GPIOx->IOCFG |= GPIO_InitAFStruct->GPIO_Pin;                        /*!< ÈÖçÁΩÆ‰∏∫Â§çÁî®ÁÆ°ËÑö            */
+    AFState = GPIOx->AFCFG & (~(uint32_t)GPIO_InitAFStruct->GPIO_Pin);  /*!< ‰øùÂ≠òÊú™ÈÖçÁΩÆÁÆ°ËÑöÂ§çÁî®Áä∂ÊÄÅ    */
+    GPIOx->AFCFG = (uint32_t)GPIO_InitAFStruct->GPIO_AFMode | AFState;  /*!< ÈÖçÁΩÆÁõ∏Â∫îÁÆ°ËÑöÂ§çÁî®ÂäüËÉΩ      */
 
-    HT_CMU->WPREG = writeProtect;                                       /*!< ª÷∏¥÷Æ«∞–¥±£ª§…Ë÷√        */    
-} 
+    if(GPIO_InitAFStruct->GPIO_InputStruct == GPIO_Input_Up)            /*!< Âà§Êñ≠ÊòØÂê¶‰ΩøËÉΩÊï∞Â≠óËæìÂÖ•‰∏äÊãâ  */
+    {
+        GPIOx->PTUP &=  ~((uint32_t)GPIO_InitAFStruct->GPIO_Pin);       /*!< ÈÖçÁΩÆËæìÂÖ•‰∏äÊãâÂäüËÉΩ          */
+    }
+    else
+    {
+        GPIOx->PTUP |=  (uint32_t)GPIO_InitAFStruct->GPIO_Pin;          /*!< ÂÖ≥Èó≠ËæìÂÖ•‰∏äÊãâÂäüËÉΩ          */
+    }
+
+    if(GPIO_InitAFStruct->GPIO_OutputStruct == GPIO_Output_OD)          /*!< Âà§Êñ≠ÊòØÂê¶‰ΩøËÉΩÂºÄÊºèËæìÂá∫ÂäüËÉΩ  */
+    {
+        GPIOx->PTOD &=  ~((uint32_t)GPIO_InitAFStruct->GPIO_Pin);       /*!< ÈÖçÁΩÆÂºÄÊºèËæìÂá∫              */
+    }
+    else
+    {
+        GPIOx->PTOD |=  (uint32_t)GPIO_InitAFStruct->GPIO_Pin;          /*!< ÈÖçÁΩÆÊé®ÊåΩËæìÂá∫              */
+    }
+
+#if  defined  HT6x3x
+    if (GPIO_InitAFStruct->GPIO_InputFilter == DISABLE)                 /*!< Âà§Êñ≠ÊòØÂê¶‰ΩøËÉΩËæìÂÖ•Êª§Ê≥¢ÂäüËÉΩ  */
+    {
+        GPIOx->FILT &=  ~((uint32_t)GPIO_InitAFStruct->GPIO_Pin);       /*!< ÂÖ≥Èó≠ËæìÂÖ•Êª§Ê≥¢              */
+    }
+    else
+    {
+        GPIOx->FILT |=  (uint32_t)GPIO_InitAFStruct->GPIO_Pin;          /*!< ÊâìÂºÄËæìÂÖ•Êª§Ê≥¢              */
+    }
+#endif
+}
 
 /*
 *********************************************************************************************************
 *                                          SET GPIO
 *
-* ∫Ø ˝Àµ√˜:  πIO ‰≥ˆπ‹Ω≈ ‰≥ˆ∏ﬂµÁ∆Ω£¨∂‘∏¥”√π¶ƒ‹Pin“‘º∞IO ‰»ÎŒﬁ–ß
+* ÂáΩÊï∞ËØ¥Êòé: ‰ΩøIOËæìÂá∫ÁÆ°ËÑöËæìÂá∫È´òÁîµÂπ≥ÔºåÂØπÂ§çÁî®ÂäüËÉΩPin‰ª•ÂèäIOËæìÂÖ•Êó†Êïà
 *
-* »Îø⁄≤Œ ˝: GPIOx       ÷ªƒ‹ «HT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE÷–µƒ“ª∏ˆ
+* ÂÖ•Âè£ÂèÇÊï∞: GPIOx       Âè™ËÉΩÊòØHT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE‰∏≠ÁöÑ‰∏Ä‰∏™
 *
-*           GPIO_Pin    GPIOπ‹Ω≈£∫GPIO_Pin_0 ~ GPIO_Pin_15
+*           GPIO_Pin    GPIOÁÆ°ËÑöÔºöGPIO_Pin_0 ~ GPIO_Pin_15
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: Œﬁ
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Êó†
 *********************************************************************************************************
 */
 void HT_GPIO_BitsSet(HT_GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
     /*  assert_param  */
-        
-    GPIOx->PTSET = (uint32_t)GPIO_Pin;                      /*!<  π∂‘”¶IO ‰≥ˆ∏ﬂ         */  
-} 
+    GPIOx->PTSET = (uint32_t)GPIO_Pin;                      /*!< ‰ΩøÂØπÂ∫îIOËæìÂá∫È´ò         */
+}
 
 /*
 *********************************************************************************************************
 *                                          RESET GPIO
 *
-* ∫Ø ˝Àµ√˜:  πIO ‰≥ˆπ‹Ω≈ ‰≥ˆµÕµÁ∆Ω£¨∂‘∏¥”√π¶ƒ‹Pin“‘º∞IO ‰»ÎŒﬁ–ß
+* ÂáΩÊï∞ËØ¥Êòé: ‰ΩøIOËæìÂá∫ÁÆ°ËÑöËæìÂá∫‰ΩéÁîµÂπ≥ÔºåÂØπÂ§çÁî®ÂäüËÉΩPin‰ª•ÂèäIOËæìÂÖ•Êó†Êïà
 *
-* »Îø⁄≤Œ ˝: GPIOx       ÷ªƒ‹ «HT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE÷–µƒ“ª∏ˆ
+* ÂÖ•Âè£ÂèÇÊï∞: GPIOx       Âè™ËÉΩÊòØHT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE‰∏≠ÁöÑ‰∏Ä‰∏™
 *
-*           GPIO_Pin    GPIOπ‹Ω≈£∫GPIO_Pin_0 ~ GPIO_Pin_15
+*           GPIO_Pin    GPIOÁÆ°ËÑöÔºöGPIO_Pin_0 ~ GPIO_Pin_15
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: Œﬁ
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Êó†
 *********************************************************************************************************
 */
 void HT_GPIO_BitsReset(HT_GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
     /*  assert_param  */
-        
-    GPIOx->PTCLR = (uint32_t)GPIO_Pin;                      /*!<  π∂‘”¶IO ‰≥ˆµÕ         */  
-} 
+    GPIOx->PTCLR = (uint32_t)GPIO_Pin;                      /*!< ‰ΩøÂØπÂ∫îIOËæìÂá∫‰Ωé         */
+}
 
 /*
 *********************************************************************************************************
 *                                         TOGGLE GPIO
 *
-* ∫Ø ˝Àµ√˜:  πIO ‰≥ˆπ‹Ω≈ ‰≥ˆµÁ∆Ω∑≠◊™£¨∂‘∏¥”√π¶ƒ‹Pin“‘º∞IO ‰»ÎŒﬁ–ß
+* ÂáΩÊï∞ËØ¥Êòé: ‰ΩøIOËæìÂá∫ÁÆ°ËÑöËæìÂá∫ÁîµÂπ≥ÁøªËΩ¨ÔºåÂØπÂ§çÁî®ÂäüËÉΩPin‰ª•ÂèäIOËæìÂÖ•Êó†Êïà
 *
-* »Îø⁄≤Œ ˝: GPIOx       ÷ªƒ‹ «HT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE÷–µƒ“ª∏ˆ
+* ÂÖ•Âè£ÂèÇÊï∞: GPIOx       Âè™ËÉΩÊòØHT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE/HT_GPIOF/HT_GPIOG/HT_GPIOH/HT_GPIOI‰∏≠ÁöÑ‰∏Ä‰∏™
 *
-*           GPIO_Pin    GPIOπ‹Ω≈£∫GPIO_Pin_0 ~ GPIO_Pin_15
+*           GPIO_Pin    GPIOÁÆ°ËÑöÔºöGPIO_Pin_0 ~ GPIO_Pin_15
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                      
-* 
-* Ãÿ ‚Àµ√˜: Œﬁ
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Êó†
 *********************************************************************************************************
 */
 void HT_GPIO_BitsToggle(HT_GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
     /*  assert_param  */
-        
-    GPIOx->PTTOG = (uint32_t)GPIO_Pin;                      /*!< ∑≠◊™∂‘”¶IOø⁄µÁ∆Ω       */  
-} 
+    GPIOx->PTTOG = (uint32_t)GPIO_Pin;                      /*!< ÁøªËΩ¨ÂØπÂ∫îIOÂè£ÁîµÂπ≥       */
+}
 
 /*
 *********************************************************************************************************
 *                                      READ GPIO BITS
 *
-* ∫Ø ˝Àµ√˜: ∂¡Ãÿ∂®∂Àø⁄µƒPinµƒ◊¥Ã¨
+* ÂáΩÊï∞ËØ¥Êòé: ËØªÁâπÂÆöÁ´ØÂè£ÁöÑPinÁöÑÁä∂ÊÄÅ
 *
-* »Îø⁄≤Œ ˝: GPIOx       ÷ªƒ‹ «HT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE÷–µƒ“ª∏ˆ
+* ÂÖ•Âè£ÂèÇÊï∞: GPIOx       Âè™ËÉΩÊòØHT_GPIOA/HT_GPIOB/HT_GPIOC/HT_GPIOD/HT_GPIOE/HT_GPIOF/HT_GPIOG/HT_GPIOH/HT_GPIOI‰∏≠ÁöÑ‰∏Ä‰∏™
 *
-*           GPIO_Pin    GPIOπ‹Ω≈£∫GPIO_Pin_0 ~ GPIO_Pin_15
-*                       µ±GPIO_Pin = GPIO_Pin_All  ±£¨Œ™∂¡’˚∏ˆ∂Àø⁄IO ‰»ÎPin÷µ
+*           GPIO_Pin    GPIOÁÆ°ËÑöÔºöGPIO_Pin_0 ~ GPIO_Pin_15
+*                       ÂΩìGPIO_Pin = GPIO_Pin_All Êó∂Ôºå‰∏∫ËØªÊï¥‰∏™Á´ØÂè£IOËæìÂÖ•PinÂÄº
 *
-* ∑µªÿ≤Œ ˝: ∂Àø⁄À˘∂¡Pinµƒ◊¥Ã¨                                      
-* 
-* Ãÿ ‚Àµ√˜: Œﬁ
+* ËøîÂõûÂèÇÊï∞: Á´ØÂè£ÊâÄËØªPinÁöÑÁä∂ÊÄÅ
+*
+* ÁâπÊÆäËØ¥Êòé: Êó†
 *********************************************************************************************************
 */
 uint16_t HT_GPIO_BitsRead(HT_GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
     /*  assert_param  */
-        
-    return (uint16_t)(GPIOx->PTDAT & GPIO_Pin);             /*!< ∂¡∂‘”¶IOø⁄µÁ∆Ω         */  
-} 
+    return (uint16_t)(GPIOx->PTDAT & GPIO_Pin);             /*!< ËØªÂØπÂ∫îIOÂè£ÁîµÂπ≥         */
+}
 
 /*
 *********************************************************************************************************
-*                                 SET GPIO ON HIGH CURRENT MODE 
+*                                 SET GPIO ON HIGH CURRENT MODE
 *
-* ∫Ø ˝Àµ√˜: …Ë÷√≤ø∑÷GPIO≥¨¥ÛµÁ¡˜ƒ£ Ω
+* ÂáΩÊï∞ËØ¥Êòé: ËÆæÁΩÆÈÉ®ÂàÜGPIOË∂ÖÂ§ßÁîµÊµÅÊ®°Âºè
 *
-* »Îø⁄≤Œ ˝: GPIO_Pin    ¥ÛµÁ¡˜ƒ£ Ω…Ë÷√Bit£¨ø…“‘Œ™“‘œ¬≤Œ ˝ªÚ∆‰◊È∫œ:
+* ÂÖ•Âè£ÂèÇÊï∞: GPIO_Pin    Â§ßÁîµÊµÅÊ®°ÂºèËÆæÁΩÆBitÔºåÂèØ‰ª•‰∏∫‰ª•‰∏ãÂèÇÊï∞ÊàñÂÖ∂ÁªÑÂêà:
 *                         @arg  GPIO_HDPORT_PC0
 *                         @arg  GPIO_HDPORT_PA6
 *                         @arg  GPIO_HDPORT_PA7
 *                         @arg  GPIO_HDPORT_PA8
 *
-*           NewState    = ENABLE£∫  πƒ‹¥ÛµÁ¡˜ƒ£ Ω
-*                       = DISABLE£∫∆’Õ®µÁ¡˜ƒ£ Ω
+*           NewState    = ENABLEÔºö ‰ΩøËÉΩÂ§ßÁîµÊµÅÊ®°Âºè
+*                       = DISABLEÔºöÊôÆÈÄöÁîµÊµÅÊ®°Âºè
 *
-* ∑µªÿ≤Œ ˝: Œﬁ                                     
-* 
-* Ãÿ ‚Àµ√˜: ÷ª”–PC0/PA6/PA7/PA8”––ß
+* ËøîÂõûÂèÇÊï∞: Êó†
+*
+* ÁâπÊÆäËØ¥Êòé: Âè™ÊúâPC0/PA6/PA7/PA8ÊúâÊïà
 *********************************************************************************************************
 */
 void HT_GPIO_HighCurrentSet(uint16_t GPIO_Pin, FunctionalState NewState)
 {
     /*  assert_param  */
-        
     if (NewState != DISABLE)
-    {       
-        HT_GPIOHDPORT |= (uint32_t)(GPIO_Pin & GPIO_HDPORT);    /*!<  πƒ‹GPIO¥ÛµÁ¡˜ƒ£ Ω     */ 
+    {
+        HT_GPIOHDPORT |= (uint32_t)(GPIO_Pin & GPIO_HDPORT);    /*!< ‰ΩøËÉΩGPIOÂ§ßÁîµÊµÅÊ®°Âºè     */
     }
     else
     {
-        HT_GPIOHDPORT &= ~(uint32_t)(GPIO_Pin & GPIO_HDPORT);  /*!< πÿ±’GPIO¥ÛµÁ¡˜ƒ£ Ω     */ 
-    }   
-    
-} 
-
-
+        HT_GPIOHDPORT &= ~(uint32_t)(GPIO_Pin & GPIO_HDPORT);  /*!< ÂÖ≥Èó≠GPIOÂ§ßÁîµÊµÅÊ®°Âºè     */
+    }
+}

@@ -23,8 +23,8 @@
 #define	PowerP1          0x0A
 #define	PowerQ1          0x0B
 #define	PowerS1          0x0C
-#define	EnergyP          0x0D
-#define	EnergyQ          0x0E
+//#define	EnergyP          0x0D
+//#define	EnergyQ          0x0E
 
 #define	PowerP2          0x10
 #define	PowerQ2          0x11

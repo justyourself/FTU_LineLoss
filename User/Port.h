@@ -554,8 +554,8 @@ GPIOC
 #define 	GPIOC_MODEM_TXD				GPIO_Pin_0//GPIO_Pin_11
 #define 	GPIOC_MODEM_RXD				GPIO_Pin_1//GPIO_Pin_12
 
-#define 	GPIOC_EE_SCL				GPIO_Pin_13
-#define 	GPIOC_EE_SDA				GPIO_Pin_14
+#define 	GPIOC_EE_SCL				GPIO_Pin_9
+#define 	GPIOC_EE_SDA				GPIO_Pin_3
 
 /****
 GPIOD
@@ -639,16 +639,14 @@ GPIOH
 #define 	P_CARDOUT	0x04
 
 
-//#define		DF_CS2		P7DIR
-#define		DF_CS		HT_GPIOB->PTDIR
-//#define		DF_RST		HT_GPIOB->PTDIR
-#define		DF_SCK		HT_GPIOB->PTDIR
-#define		DF_SDI		HT_GPIOB->PTDIR
-#define		DF_SDO		HT_GPIOB->PTDAT
-#define 	FCS1		GPIO_Pin_5
-#define 	FSO		GPIO_Pin_2
-#define 	FSI		GPIO_Pin_3
-#define 	FSCLK		GPIO_Pin_9
+#define		DF_CS		HT_GPIOE->PTDAT
+#define		DF_SCK		HT_GPIOC->PTDAT
+#define		DF_SDI		HT_GPIOC->PTDAT
+#define		DF_SDO		HT_GPIOE->PTDAT
+#define 	FCS1		GPIO_Pin_2
+#define 	FSO		GPIO_Pin_1
+#define 	FSI		GPIO_Pin_13
+#define 	FSCLK		GPIO_Pin_14
 
 
 #define		PIN_SETEN   HT_GPIOD->PTDAT

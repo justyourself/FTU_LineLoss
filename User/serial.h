@@ -19,7 +19,7 @@ struct S_Serial_
 };
 
 
-int8_t Serial_Open(uint8_t port,uint32_t baud,uint8_t bits,uint8_t check);
+int8_t Serial_Open(uint8_t port,uint32_t baud,uint8_t bits,UARTParity_TypeDef check);
 int16_t Serial_Write(uint8_t port,uint8_t *buf,uint16_t len);
 int16_t Serial_Read(uint8_t port,uint8_t *buf,uint16_t len);
 #endif

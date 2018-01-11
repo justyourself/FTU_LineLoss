@@ -1,5 +1,6 @@
 #include "TypeMeter.h"
-
+#ifndef __TYPERAM_H__
+#define __TYPERAM_H__
 // *******************************************************************
 // Data type define
 // *******************************************************************
@@ -1032,7 +1033,10 @@ typedef struct
   unsigned long	Qn; 					//反向无功
   unsigned long	Q2; 					//2象限
   unsigned long	Q3; 					//3象限
-  
+  unsigned long	Pa; 					//A相有功功率(4)	
+  unsigned long	Pb; 					//B相有功功率(4)	
+  unsigned long	Pc; 					//C相有功功率(4)	
+  unsigned long	Pt; 					//合相有功功率(4)
 }ENERGY;
 
 //	Clock Timer Variable
@@ -5047,4 +5051,4 @@ typedef struct
 	unsigned char 	OBIS_Name[9];     //例如：00 01（类：ID） 00 00 2A 00 00 FF （逻辑设备名：6个字节） 02（属性）
 	unsigned char	  State_Reserve1;	  //保留1字节空间..
 }CLIENT_TAB;
-
+#endif

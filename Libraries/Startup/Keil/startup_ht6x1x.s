@@ -5,13 +5,13 @@
 ;*
 ;*                                  Copyright 2013, Hi-Trend Tech, Corp.
 ;*                                       All Rights Reserved
-;* 
+;*
 ;*
 ;* Project      : HT6xxx
 ;* File         : startup_ht6x1x.s
 ;* By           : SocTeam
-;* Version      : CurrentVersion1_5_20160407
-;* Description  : 
+;* Version      : CurrentVersion1_6_20171108
+;* Description  :
 ;*********************************************************************************************************
 ;*/
 
@@ -123,7 +123,7 @@ Reset_Handler   PROC
 
 ; Dummy Exception Handlers (infinite loops which can be modified)
 
-; now, under COMMON NMI.c and NMI.h, a real NMI handler is created if NMI is enabled 
+; now, under COMMON NMI.c and NMI.h, a real NMI handler is created if NMI is enabled
 ; for particular peripheral.
 NMI_Handler     PROC
                 EXPORT  NMI_Handler               [WEAK]
@@ -214,7 +214,7 @@ Reserved_IRQHandler
 ; User Initial Stack & Heap
 
                 IF      :DEF:__MICROLIB
-                
+
                 EXPORT  __initial_sp
                 EXPORT  __heap_base
                 EXPORT  __heap_limit

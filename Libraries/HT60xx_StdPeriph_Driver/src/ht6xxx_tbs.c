@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_tbs.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.0
-* Description  : 
+* Version      : V1.0.3
+* Description  :
 *********************************************************************************************************
 */
 
@@ -21,7 +21,7 @@
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æž„ä½“
 *********************************************************************************************************
 */
 
@@ -29,14 +29,14 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊýÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜Ž
 *********************************************************************************************************
 */
 
@@ -45,321 +45,429 @@
 *********************************************************************************************************
 *                                     CONFIGUE TBS MODULE
 *
-* º¯ÊýËµÃ÷: ÅäÖÃTBS×ÓÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: é…ç½®TBSå­æ¨¡å—
 *
-* Èë¿Ú²ÎÊý: TBS_SubModule    TBSÄÚ¸÷¸ö×ÓÄ£¿é£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ 
-*                             @arg TBS_TBSCON_TMPEn      £ºÎÂ¶È²âÁ¿Ä£¿é
-*                             @arg TBS_TBSCON_VBATEn     £ºµç³ØµçÑ¹²âÁ¿Ä£¿é
-*                             @arg TBS_TBSCON_ADC0En     £ºADC0²âÁ¿Ä£¿é
-*                             @arg TBS_TBSCON_ADC1En     £ºADC1²âÁ¿Ä£¿é
-*                             @arg TBS_TBSCON_VCCEn      £ºµçÔ´µçÑ¹²âÁ¿Ä£¿é
-*                             @arg TBS_TBSCON_ADC2En     £ºADC2²âÁ¿Ä£¿é      (only for HT501x)
-*                             @arg TBS_TBSCON_VREFEn     £ºVref²âÁ¿Ä£¿é      (only for HT501x)
+* å…¥å£å‚æ•°: TBS_SubModule    TBSå†…å„ä¸ªå­æ¨¡å—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ
+*                             @arg TBS_TBSCON_TMPEn      ï¼šæ¸©åº¦æµ‹é‡æ¨¡å—
+*                             @arg TBS_TBSCON_VBATEn     ï¼šç”µæ± ç”µåŽ‹æµ‹é‡æ¨¡å—
+*                             @arg TBS_TBSCON_ADC0En     ï¼šADC0æµ‹é‡æ¨¡å—
+*                             @arg TBS_TBSCON_ADC1En     ï¼šADC1æµ‹é‡æ¨¡å—
+*                             @arg TBS_TBSCON_VCCEn      ï¼šç”µæºç”µåŽ‹æµ‹é‡æ¨¡å—
+*                             @arg TBS_TBSCON_ADC2En     ï¼šADC2æµ‹é‡æ¨¡å—      (for HT501x, HT502x)
+*                             @arg TBS_TBSCON_VREFEn     ï¼šVrefæµ‹é‡æ¨¡å—      (for HT501x, HT502x)
+*                             @arg TBS_TBSCON_FILTER     : é’ˆå¯¹æ¸©åº¦æµ‹é‡çš„Filterè¾“å‡ºé…ç½®  (for HT6x2x, HT6x3x, HT502x)
+*                             @arg TBS_TBSCON_ADC3En     : ADC3æµ‹é‡æ¨¡å—      (for HT6x2x, HT6x3x)
+*                             @arg TBS_TBSCON_ADC4En     : ADC4æµ‹é‡æ¨¡å—      (for HT6x2x, HT6x3x)
+*                             @arg TBS_TBSCON_ADC5En     : ADC5æµ‹é‡æ¨¡å—      (for HT6x2x, HT6x3x)
+*                             @arg TBS_TBSCON_TBSCLKSEL  : TBS å·¥ä½œæ—¶é’Ÿæºé€‰æ‹©æŽ§åˆ¶ä½  (for HT6x3x)
 *
-*           NewState         = ENABLE£º Ä£¿éÊ¹ÄÜ
-*                            = DISABLE£ºÄ£¿é¹Ø±Õ                      
+*           NewState         = ENABLEï¼š æ¨¡å—ä½¿èƒ½
+*                            = DISABLEï¼šæ¨¡å—å…³é—­
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: 1) ÓÉÓÚRTC²¹³¥Éæ¼°ÎÂ¶È´«¸ÐÆ÷£¬²»½¨Òé¹Ø±ÕÎÂ¶È´«¸ÐÆ÷Ä£¿é¡£
-*           2) ½¨ÒéÔÚÊ¹ÄÜµç³ØµçÑ¹±È½ÏÖ®Ç°£¬ÏÈµ÷ÓÃº¯ÊýHT_TBS_BatCmpThresholdSet() ÉèÖÃºÃµç³ØµçÑ¹±È½ÏãÐÖµ,
-*           3) µç³ØµçÑ¹±È½Ï¹¦ÄÜÈôÏëÕýÈ·Ö´ÐÐ£¬ÐèÊ¹ÄÜµç³ØµçÑ¹²âÁ¿Ä£¿é
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: 1) ç”±äºŽRTCè¡¥å¿æ¶‰åŠæ¸©åº¦ä¼ æ„Ÿå™¨ï¼Œä¸å»ºè®®å…³é—­æ¸©åº¦ä¼ æ„Ÿå™¨æ¨¡å—ã€‚
+*           2) å»ºè®®åœ¨ä½¿èƒ½ç”µæ± ç”µåŽ‹æ¯”è¾ƒä¹‹å‰ï¼Œå…ˆè°ƒç”¨å‡½æ•°HT_TBS_BatCmpThresholdSet() è®¾ç½®å¥½ç”µæ± ç”µåŽ‹æ¯”è¾ƒé˜ˆå€¼,
+*           3) ç”µæ± ç”µåŽ‹æ¯”è¾ƒåŠŸèƒ½è‹¥æƒ³æ­£ç¡®æ‰§è¡Œï¼Œéœ€ä½¿èƒ½ç”µæ± ç”µåŽ‹æµ‹é‡æ¨¡å—
 *********************************************************************************************************
 */
 void HT_TBSConfig(uint32_t TBS_SubModule, FunctionalState NewState)
 {
     /*  assert_param  */
-
     uint32_t tempreg;
 
-    tempreg = HT_TBS->TBSCON & TBS_TBSCON_xEn;  
+    tempreg = HT_TBS->TBSCON & TBS_TBSCON_xEn;
 
     if(HT_CMU->CLKSTA & CMU_CLKSTA_LFSEL)
     {
-        tempreg |= 0x6d60;                       /*!< MEMS TPS Ä¬ÈÏÅäÖÃ         */
-    }  
-    else
-    {
-#if defined HT501x
-        tempreg |= 0x100;
-#else
-        tempreg |= 0x6540;                       /*!< OSC TPS Ä¬ÈÏÅäÖÃ         */
-#endif
-    }  
-    
-    TBS_SubModule &= TBS_TBSCON_xEn;
-    if (NewState != DISABLE)
-    {       
-        tempreg |= (uint32_t)TBS_SubModule;      /*!< Ê¹ÄÜTBSÄ£¿é                 */
+        tempreg |= 0x6d60;                       /*!< MEMS TPS é»˜è®¤é…ç½®         */
     }
     else
     {
-        tempreg &= ~(uint32_t)TBS_SubModule;     /*!< ¹Ø±ÕTBSÄ£¿é                 */
-    } 
+#if defined HT501x
+        tempreg |= 0x0100;
+#elif  defined HT502x
+        tempreg |= 0x0101;
+#else
+        tempreg |= 0x6540;                       /*!< OSC TPS é»˜è®¤é…ç½®         */
+#endif
+    }
 
-    HT_TBS->TBSCON = tempreg;                    /*!< Ð´¼Ä´æÆ÷                    */
-  
-} 
+    TBS_SubModule &= TBS_TBSCON_xEn;
+    if (NewState != DISABLE)
+    {
+        tempreg |= (uint32_t)TBS_SubModule;      /*!< ä½¿èƒ½TBSæ¨¡å—                 */
+    }
+    else
+    {
+        tempreg &= ~(uint32_t)TBS_SubModule;     /*!< å…³é—­TBSæ¨¡å—                 */
+    }
+
+    HT_TBS->TBSCON = tempreg;                    /*!< å†™å¯„å­˜å™¨                    */
+}
 
 /*
 *********************************************************************************************************
 *                                 SET SubModule OPEN PERIOD
 *
-* º¯ÊýËµÃ÷: ÉèÖÃ×ÓÄ£¿é´ò¿ªÆµÂÊÖÜÆÚ
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®å­æ¨¡å—æ‰“å¼€é¢‘çŽ‡å‘¨æœŸ
 *
-* Èë¿Ú²ÎÊý: PRDModule    : ×ÓÄ£¿éÖÜÆÚ¿ØÖÆ£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý
-*                          @arg TMPPRD      £ºÎÂ¶È²âÁ¿ÖÜÆÚ
-*                          @arg VBATPRD     £ºµç³ØµçÑ¹²âÁ¿ÖÜÆÚ
-*                          @arg ADC0PRD     £ºADC0²âÁ¿ÖÜÆÚ
-*                          @arg ADC1PRD     £ºADC1²âÁ¿ÖÜÆÚ
-*                          @arg VCCPRD      £ºVCC²âÁ¿ÖÜÆÚ
-*                          @arg ADC2PRD     £ºADC2²âÁ¿ÖÜÆÚ    (only for HT501x)
-*                          @arg VREFPRD     £ºVREF²âÁ¿ÖÜÆÚ    (only for HT501x)
-*                          @arg ADC3PRD     £ºADC3²âÁ¿ÖÜÆÚ    (only for HT6x2x)
-*                          @arg ADC4PRD     £ºADC4²âÁ¿ÖÜÆÚ    (only for HT6x2x)
-*                          @arg ADC5PRD     £ºADC5²âÁ¿ÖÜÆÚ    (only for HT6x2x)
+* å…¥å£å‚æ•°: PRDModule    : å­æ¨¡å—å‘¨æœŸæŽ§åˆ¶ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°
+*                            @arg TMPPRD      ï¼šæ¸©åº¦æµ‹é‡å‘¨æœŸ
+*                            @arg VBATPRD     ï¼šç”µæ± ç”µåŽ‹æµ‹é‡å‘¨æœŸ
+*                            @arg ADC0PRD     ï¼šADC0æµ‹é‡å‘¨æœŸ
+*                            @arg ADC1PRD     ï¼šADC1æµ‹é‡å‘¨æœŸ
+*                            @arg VCCPRD      ï¼šVCCæµ‹é‡å‘¨æœŸ
+*                            @arg ADC2PRD     ï¼šADC2æµ‹é‡å‘¨æœŸ    (for HT501x, HT502x)
+*                            @arg VREFPRD     ï¼šVREFæµ‹é‡å‘¨æœŸ    (for HT501x, HT502x)
+*                            @arg ADC3PRD     ï¼šADC3æµ‹é‡å‘¨æœŸ    (for HT6x2x, HT6x3x)
+*                            @arg ADC4PRD     ï¼šADC4æµ‹é‡å‘¨æœŸ    (for HT6x2x, HT6x3x)
+*                            @arg ADC5PRD     ï¼šADC5æµ‹é‡å‘¨æœŸ    (for HT6x2x, HT6x3x)
 *
-*           Period       : ÖÜÆÚÉè¶¨£¬¸ù¾Ý²»Í¬Ð¾Æ¬£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý
-*                                   HT501x  HT502x                  HT6x1x  HT6x2x
-*                             TMPPRD:                           TMPPRD:
-*                        @arg TBS_TBSPRD_TMPPRD_1S              TBS_TBSPRD_TMPPRD_OSC0P5S_MEM8S    
-*                        @arg TBS_TBSPRD_TMPPRD_8S              TBS_TBSPRD_TMPPRD_OSC1S_MEM4S      
-*                        @arg TBS_TBSPRD_TMPPRD_32S             TBS_TBSPRD_TMPPRD_OSC2S_MEM2S      
-*                        @arg TBS_TBSPRD_TMPPRD_125mS           TBS_TBSPRD_TMPPRD_OSC4S_MEM1S      
-*                                                               TBS_TBSPRD_TMPPRD_OSC8S_MEM0P5S                                                                                                  
-*                             VBATPRD:                          TBS_TBSPRD_TMPPRD_OSC16S_MEM125mS  
-*                        @arg TBS_TBSPRD_VBATPRD_1S             TBS_TBSPRD_TMPPRD_OSC32S_MEM31mS   
-*                        @arg TBS_TBSPRD_VBATPRD_4S             TBS_TBSPRD_TMPPRD_OSC64S_MEM8mS    
-*                        @arg TBS_TBSPRD_VBATPRD_8S                                                
-*                        @arg TBS_TBSPRD_VBATPRD_32S            VBATPRD:                
-*                                                               TBS_TBSPRD_VBATPRD_1S              
-*                             VCCPRD:                           TBS_TBSPRD_VBATPRD_2S              
-*                        @arg TBS_TBSPRD_VCCPRD_1S              TBS_TBSPRD_VBATPRD_8S              
-*                        @arg TBS_TBSPRD_VCCPRD_4S              TBS_TBSPRD_VBATPRD_16S             
-*                        @arg TBS_TBSPRD_VCCPRD_8S                                                 
-*                        @arg TBS_TBSPRD_VCCPRD_32S             ADC0PRD:                 
-*                                                               TBS_TBSPRD_ADC0PRD_1S              
-*                             ADC0PRD:                          TBS_TBSPRD_ADC0PRD_2S              
-*                        @arg TBS_TBSPRD_ADC0PRD_1S             TBS_TBSPRD_ADC0PRD_8S              
-*                        @arg TBS_TBSPRD_ADC0PRD_4S             TBS_TBSPRD_ADC0PRD_16S             
-*                        @arg TBS_TBSPRD_ADC0PRD_8S                                                
-*                        @arg TBS_TBSPRD_ADC0PRD_32S            ADC1PRD:                 
-*                                                               TBS_TBSPRD_ADC1PRD_1S              
-*                             ADC1PRD:                          TBS_TBSPRD_ADC1PRD_2S              
-*                        @arg TBS_TBSPRD_ADC1PRD_1S             TBS_TBSPRD_ADC1PRD_8S              
-*                        @arg TBS_TBSPRD_ADC1PRD_4S             TBS_TBSPRD_ADC1PRD_16S             
-*                        @arg TBS_TBSPRD_ADC1PRD_8S                                                
-*                        @arg TBS_TBSPRD_ADC1PRD_32S            VCCPRD:                  
-*                                                               TBS_TBSPRD_VCCPRD_1S               
-*                             ADC2PRD:                          TBS_TBSPRD_VCCPRD_2S               
-*                        @arg TBS_TBSPRD_ADC2PRD_1S             TBS_TBSPRD_VCCPRD_8S               
-*                        @arg TBS_TBSPRD_ADC2PRD_4S             TBS_TBSPRD_VCCPRD_16S              
-*                        @arg TBS_TBSPRD_ADC2PRD_8S    
-*                        @arg TBS_TBSPRD_ADC2PRD_32S            ADC3PRD:(only for HT6x2x)
-*                                                               TBS_TBSPRD_ADC3PRD_1S
-*                             VREFPRD:                          TBS_TBSPRD_ADC3PRD_2S
-*                        @arg TBS_TBSPRD_VREFPRD_1S             TBS_TBSPRD_ADC3PRD_8S    
-*                        @arg TBS_TBSPRD_VREFPRD_4S             TBS_TBSPRD_ADC3PRD_16S
-*                        @arg TBS_TBSPRD_VREFPRD_8S    
-*                        @arg TBS_TBSPRD_VREFPRD_32S            ADC4PRD:(only for HT6x2x)
-*                                                               TBS_TBSPRD_ADC4PRD_1S
-*                                                               TBS_TBSPRD_ADC4PRD_2S
-*                                                               TBS_TBSPRD_ADC4PRD_8S
-*                                                               TBS_TBSPRD_ADC4PRD_16S
+*           Period       : å‘¨æœŸè®¾å®šï¼Œæ ¹æ®ä¸åŒèŠ¯ç‰‡ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°
+*                                   HT501x  HT502x                  HT6x1x  HT6x2x  HT6x3x
+*                                 TMPPRD:                           TMPPRD:
+*                            @arg TBS_TBSPRD_TMPPRD_1S              TBS_TBSPRD_TMPPRD_OSC0P5S_MEM8S
+*                            @arg TBS_TBSPRD_TMPPRD_8S              TBS_TBSPRD_TMPPRD_OSC1S_MEM4S
+*                            @arg TBS_TBSPRD_TMPPRD_32S             TBS_TBSPRD_TMPPRD_OSC2S_MEM2S
+*                            @arg TBS_TBSPRD_TMPPRD_125mS           TBS_TBSPRD_TMPPRD_OSC4S_MEM1S
+*                                                                   TBS_TBSPRD_TMPPRD_OSC8S_MEM0P5S
+*                                 VBATPRD:                          TBS_TBSPRD_TMPPRD_OSC16S_MEM125mS
+*                            @arg TBS_TBSPRD_VBATPRD_1S             TBS_TBSPRD_TMPPRD_OSC32S_MEM31mS
+*                            @arg TBS_TBSPRD_VBATPRD_4S             TBS_TBSPRD_TMPPRD_OSC64S_MEM8mS
+*                            @arg TBS_TBSPRD_VBATPRD_8S
+*                            @arg TBS_TBSPRD_VBATPRD_32S            VBATPRD:
+*                                                                   TBS_TBSPRD_VBATPRD_1S
+*                                 VCCPRD:                           TBS_TBSPRD_VBATPRD_2S
+*                            @arg TBS_TBSPRD_VCCPRD_1S              TBS_TBSPRD_VBATPRD_8S
+*                            @arg TBS_TBSPRD_VCCPRD_4S              TBS_TBSPRD_VBATPRD_16S
+*                            @arg TBS_TBSPRD_VCCPRD_8S
+*                            @arg TBS_TBSPRD_VCCPRD_32S             ADC0PRD:
+*                                                                   TBS_TBSPRD_ADC0PRD_1S
+*                                 ADC0PRD:                          TBS_TBSPRD_ADC0PRD_2S
+*                            @arg TBS_TBSPRD_ADC0PRD_1S             TBS_TBSPRD_ADC0PRD_8S
+*                            @arg TBS_TBSPRD_ADC0PRD_4S             TBS_TBSPRD_ADC0PRD_16S
+*                            @arg TBS_TBSPRD_ADC0PRD_8S
+*                            @arg TBS_TBSPRD_ADC0PRD_32S            ADC1PRD:
+*                                                                   TBS_TBSPRD_ADC1PRD_1S
+*                                 ADC1PRD:                          TBS_TBSPRD_ADC1PRD_2S
+*                            @arg TBS_TBSPRD_ADC1PRD_1S             TBS_TBSPRD_ADC1PRD_8S
+*                            @arg TBS_TBSPRD_ADC1PRD_4S             TBS_TBSPRD_ADC1PRD_16S
+*                            @arg TBS_TBSPRD_ADC1PRD_8S
+*                            @arg TBS_TBSPRD_ADC1PRD_32S            VCCPRD:
+*                                                                   TBS_TBSPRD_VCCPRD_1S
+*                                 ADC2PRD:                          TBS_TBSPRD_VCCPRD_2S
+*                            @arg TBS_TBSPRD_ADC2PRD_1S             TBS_TBSPRD_VCCPRD_8S
+*                            @arg TBS_TBSPRD_ADC2PRD_4S             TBS_TBSPRD_VCCPRD_16S
+*                            @arg TBS_TBSPRD_ADC2PRD_8S
+*                            @arg TBS_TBSPRD_ADC2PRD_32S            ADC3PRD:(for HT6x2x, HT6x3x)
+*                                                                   TBS_TBSPRD_ADC3PRD_1S
+*                                 VREFPRD:                          TBS_TBSPRD_ADC3PRD_2S
+*                            @arg TBS_TBSPRD_VREFPRD_1S             TBS_TBSPRD_ADC3PRD_8S
+*                            @arg TBS_TBSPRD_VREFPRD_4S             TBS_TBSPRD_ADC3PRD_16S
+*                            @arg TBS_TBSPRD_VREFPRD_8S
+*                            @arg TBS_TBSPRD_VREFPRD_32S            ADC4PRD:(for HT6x2x, HT6x3x)
+*                                                                   TBS_TBSPRD_ADC4PRD_1S
+*                                                                   TBS_TBSPRD_ADC4PRD_2S
+*                                                                   TBS_TBSPRD_ADC4PRD_8S
+*                                                                   TBS_TBSPRD_ADC4PRD_16S
 *
-*                                                               ADC5PRD:(only for HT6x2x)
-*                                                               TBS_TBSPRD_ADC5PRD_1S
-*                                                               TBS_TBSPRD_ADC5PRD_2S
-*                                                               TBS_TBSPRD_ADC5PRD_8S
-*                                                               TBS_TBSPRD_ADC5PRD_16S
+*                                                                   ADC5PRD:(for HT6x2x, HT6x3x)
+*                                                                   TBS_TBSPRD_ADC5PRD_1S
+*                                                                   TBS_TBSPRD_ADC5PRD_2S
+*                                                                   TBS_TBSPRD_ADC5PRD_8S
+*                                                                   TBS_TBSPRD_ADC5PRD_16S
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                     
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_TBS_PeriodSet(TBS_PeriodTypeDef PRDModule, uint32_t Period)
 {
     /*  assert_param  */
-
-     uint32_t tempreg = (HT_TBS->TBSPRD & (~PRDModule));  
+     uint32_t tempreg = (HT_TBS->TBSPRD & (~PRDModule));
      tempreg |= Period;
-     HT_TBS->TBSPRD = tempreg;                             /*!< ÅäÖÃ²âÁ¿ÖÜÆÚ           */     
+     HT_TBS->TBSPRD = tempreg;                             /*!< é…ç½®æµ‹é‡å‘¨æœŸ           */
 }
 
 /*
 *********************************************************************************************************
 *                                     SET COMPARE THRESHOLD
 *
-* º¯ÊýËµÃ÷: ÉèÖÃ±È½ÏãÐÖµ
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®æ¯”è¾ƒé˜ˆå€¼
 *
-* Èë¿Ú²ÎÊý: CmpReg    ±È½Ï¼Ä´æÆ÷£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý
-*                     @arg CMP_VBAT     £ºµç³ØµçÑ¹±È½Ï¼Ä´æÆ÷  
-*                     @arg CMP_ADC0     £ºADC0±È½Ï¼Ä´æÆ÷      (only for HT501x, HT502x, HT6x2x)
-*                     @arg CMP_ADC1     £ºADC1±È½Ï¼Ä´æÆ÷      (only for HT501x, HT502x)
+* å…¥å£å‚æ•°: CmpReg    æ¯”è¾ƒå¯„å­˜å™¨ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°
+*                       @arg CMP_VBAT     ï¼šç”µæ± ç”µåŽ‹æ¯”è¾ƒå¯„å­˜å™¨
+*                       @arg CMP_ADC0     ï¼šADC0æ¯”è¾ƒå¯„å­˜å™¨      (for HT501x, HT502x, HT6x2x, HT6x3x)
+*                       @arg CMP_ADC1     ï¼šADC1æ¯”è¾ƒå¯„å­˜å™¨      (for HT501x, HT502x)
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_TBS_CMPThresholdSet(TBS_CMPRegTypeDef CmpReg, int16_t Threshold)
 {
     /*  assert_param  */
-    
     if(CmpReg == CMP_VBAT)
-        HT_TBS->VBATCMP = Threshold;                /*!< ÉèÖÃµç³ØµçÑ¹±È½ÏãÐÖµ           */
-#if defined HT501x  ||  HT6x2x  ||  HT502x
+        HT_TBS->VBATCMP = Threshold;                /*!< è®¾ç½®ç”µæ± ç”µåŽ‹æ¯”è¾ƒé˜ˆå€¼           */
+#if  defined  HT6x2x  ||  defined  HT6x3x  ||  defined  HT501x  ||  defined  HT502x
     else if(CmpReg == CMP_ADC0)
-        HT_TBS->ADC0CMP = Threshold;                /*!< ÉèÖÃADC0±È½ÏãÐÖµ               */
+        HT_TBS->ADC0CMP = Threshold;                /*!< è®¾ç½®ADC0æ¯”è¾ƒé˜ˆå€¼               */
 #endif
-#if defined HT501x  ||  HT502x
+#if  defined  HT501x  ||  defined  HT502x
     else if(CmpReg == CMP_ADC1)
-        HT_TBS->ADC1CMP = Threshold;                /*!< ÉèÖÃADC1±È½ÏãÐÖµ               */
-#endif    
-} 
+        HT_TBS->ADC1CMP = Threshold;                /*!< è®¾ç½®ADC1æ¯”è¾ƒé˜ˆå€¼               */
+#endif
+}
 
 /*
 *********************************************************************************************************
 *                                     GET MEASURED VALUES
 *
-* º¯ÊýËµÃ÷: »ñÈ¡²âÁ¿Öµ
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–æµ‹é‡å€¼
 *
-* Èë¿Ú²ÎÊý: SubModule    : ×ÓÄ£¿éÑ¡Ôñ                       
+* å…¥å£å‚æ•°: SubModule    : å­æ¨¡å—é€‰æ‹©
 *
-* ·µ»Ø²ÎÊý: ±»Ñ¡ÖÐ×ÓÄ£¿é²âÁ¿Öµ£¬·µ»ØÖµÎª16Î»ÓÐ·ûºÅÊý                                     
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: è¢«é€‰ä¸­å­æ¨¡å—æµ‹é‡å€¼ï¼Œè¿”å›žå€¼ä¸º16ä½æœ‰ç¬¦å·æ•°
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 int16_t HT_TBS_ValueRead(TBS_SubModuleTypeDef SubModule)
 {
     /*  assert_param  */
-
     switch(SubModule)
     {
         case TBS_TMP:
-            return  (int16_t)HT_TBS->TMPDAT;       /*!< ·µ»ØÎÂ¶È²âÁ¿Öµ           */
+            return  (int16_t)HT_TBS->TMPDAT;       /*!< è¿”å›žæ¸©åº¦æµ‹é‡å€¼           */
         case TBS_VBAT:
-            return  (int16_t)HT_TBS->VBATDAT;      /*!< ·µ»Øµç³ØµçÑ¹²âÁ¿Öµ       */
+            return  (int16_t)HT_TBS->VBATDAT;      /*!< è¿”å›žç”µæ± ç”µåŽ‹æµ‹é‡å€¼       */
         case TBS_ADC0:
-            return  (int16_t)HT_TBS->ADC0DAT;      /*!< ·µ»ØADC0²âÁ¿Öµ           */
+            return  (int16_t)HT_TBS->ADC0DAT;      /*!< è¿”å›žADC0æµ‹é‡å€¼           */
         case TBS_ADC1:
-            return  (int16_t)HT_TBS->ADC1DAT;      /*!< ·µ»ØADC1²âÁ¿Öµ           */
+            return  (int16_t)HT_TBS->ADC1DAT;      /*!< è¿”å›žADC1æµ‹é‡å€¼           */
 #if defined HT501x
         case TBS_ADC2:
-            return  (int16_t)HT_TBS->ADC2DAT;      /*!< ·µ»ØADC2²âÁ¿Öµ           */
+            return  (int16_t)HT_TBS->ADC2DAT;      /*!< è¿”å›žADC2æµ‹é‡å€¼           */
 #endif
         default:
-            return  (int16_t)HT_TBS->VCCDAT;       /*!< ·µ»ØµçÔ´µçÑ¹²âÁ¿Öµ       */
+            return  (int16_t)HT_TBS->VCCDAT;       /*!< è¿”å›žç”µæºç”µåŽ‹æµ‹é‡å€¼       */
     }
-} 
+}
 /*
 *********************************************************************************************************
-*                                 ENABLE OR DISABLE TBS INTERRUPT    
+*                                 ENABLE OR DISABLE TBS INTERRUPT
 *
-* º¯ÊýËµÃ÷: Ê¹ÄÜ»òÕß¹Ø±ÕTBSÖÐ¶Ï
+* å‡½æ•°è¯´æ˜Ž: ä½¿èƒ½æˆ–è€…å…³é—­TBSä¸­æ–­
 *
-* Èë¿Ú²ÎÊý: ITEn       TBSÖÐ¶ÏÉèÖÃÎ»£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ
+* å…¥å£å‚æ•°: ITEn       TBSä¸­æ–­è®¾ç½®ä½ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ
 *                        @arg TBS_TBSIE_TMPIE
 *                        @arg TBS_TBSIE_VBATIE
 *                        @arg TBS_TBSIE_ADC0IE
 *                        @arg TBS_TBSIE_ADC1IE
 *                        @arg TBS_TBSIE_VBATCMPIE
 *                        @arg TBS_TBSIE_VCCIE
-*                        @arg TBS_TBSIE_ADC2IE        (only for HT501x)
-*                        @arg TBS_TBSIE_VREFIE        (only for HT501x)
-*                        @arg TBS_TBSIE_ADC0CMPIE     (only for HT501x, HT6x2x, HT502x)
-*                        @arg TBS_TBSIE_ADC1CMPIE     (only for HT501x, HT502x)
+*                        @arg TBS_TBSIE_ADC2IE        (for HT501x, HT502x)
+*                        @arg TBS_TBSIE_VREFIE        (for HT501x)
+*                        @arg TBS_TBSIE_ADC0CMPIE     (for HT6x2x, HT6x3x, HT501x, HT502x)
+*                        @arg TBS_TBSIE_ADC1CMPIE     (for HT501x, HT502x)
+*                        @arg TBS_TBSIE_ADC3IE        (for HT6x2x, HT6x3x)
+*                        @arg TBS_TBSIE_ADC4IE        (for HT6x2x, HT6x3x)
+*                        @arg TBS_TBSIE_ADC5IE        (for HT6x2x, HT6x3x)
 *
-*           NewState   = ENABLE£º Ê¹ÄÜÖÐ¶Ï
-*                      = DISABLE£º¹Ø±ÕÖÐ¶Ï
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+*           NewState   = ENABLEï¼š ä½¿èƒ½ä¸­æ–­
+*                      = DISABLEï¼šå…³é—­ä¸­æ–­
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_TBS_ITConfig(uint32_t ITEn, FunctionalState NewState)
 {
     /*  assert_param  */
-    
     if (NewState != DISABLE)
-    {       
-        HT_TBS->TBSIE |= (uint32_t)ITEn;            /*!< Ê¹ÄÜTBSÖÐ¶Ï           */
+    {
+        HT_TBS->TBSIE |= (uint32_t)ITEn;            /*!< ä½¿èƒ½TBSä¸­æ–­           */
     }
     else
     {
-        HT_TBS->TBSIE &= ~(uint32_t)ITEn;           /*!< ¹Ø±ÕTBSÖÐ¶Ï           */
-    } 
+        HT_TBS->TBSIE &= ~(uint32_t)ITEn;           /*!< å…³é—­TBSä¸­æ–­           */
+    }
 }
 
 /*
 *********************************************************************************************************
 *                            GET SPECIFIED TBS INTERRUPT FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦TBSÖÐ¶Ï±êÖ¾×´Ì¬
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”TBSä¸­æ–­æ ‡å¿—çŠ¶æ€
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒª¼ì²éµÄÄ³¸öTBSÖÐ¶Ï£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
-*                        @arg TBS_TBSIF_TMPIF
-*                        @arg TBS_TBSIF_VBATIF
-*                        @arg TBS_TBSIF_ADC0IF
-*                        @arg TBS_TBSIF_ADC1IF
-*                        @arg TBS_TBSIF_VBATCMPIF
-*                        @arg TBS_TBSIF_VCCIF
-*                        @arg TBS_TBSIF_ADC2IF        (only for HT501x)
-*                        @arg TBS_TBSIF_VREFIF        (only for HT501x)
-*                        @arg TBS_TBSIF_ADC0CMPIF     (only for HT501x, HT6x2x, HT502x)
-*                        @arg TBS_TBSIF_ADC1CMPIF     (only for HT501x, HT502x)
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªTBSä¸­æ–­ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
+*                        @arg TBS_TBSIE_TMPIF
+*                        @arg TBS_TBSIE_VBATIF
+*                        @arg TBS_TBSIE_ADC0IF
+*                        @arg TBS_TBSIE_ADC1IF
+*                        @arg TBS_TBSIE_VBATCMPIF
+*                        @arg TBS_TBSIE_VCCIF
+*                        @arg TBS_TBSIE_ADC2IF        (for HT501x, HT502x)
+*                        @arg TBS_TBSIE_VREFIF        (for HT501x)
+*                        @arg TBS_TBSIE_ADC0CMPIF     (for HT6x2x, HT6x3x, HT501x, HT502x)
+*                        @arg TBS_TBSIE_ADC1CMPIF     (for HT501x, HT502x)
+*                        @arg TBS_TBSIE_ADC3IF        (for HT6x2x, HT6x3x)
+*                        @arg TBS_TBSIE_ADC4IF        (for HT6x2x, HT6x3x)
+*                        @arg TBS_TBSIE_ADC5IF        (for HT6x2x, HT6x3x)
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  ÏàÓ¦ÖÐ¶Ï±êÖ¾²úÉú
-*                       = RESET£ºÏàÓ¦ÖÐ¶Ï±êÖ¾Î´²úÉú
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  ç›¸åº”ä¸­æ–­æ ‡å¿—äº§ç”Ÿ
+*                       = RESETï¼šç›¸åº”ä¸­æ–­æ ‡å¿—æœªäº§ç”Ÿ
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_TBS_ITFlagStatusGet(uint32_t ITFlag)
 {
     /*  assert_param  */
-    
     if (HT_TBS->TBSIF & ITFlag)
-    {       
+    {
         return SET;                        /*!< TBS Interrupt Flag is set   */
     }
     else
     {
         return RESET;                      /*!< TBS Interrupt Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                                   CLEAR TBS INTERRUPT FLAG
 *
-* º¯ÊýËµÃ÷: Çå³ýTBSÖÐ¶Ï±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: æ¸…é™¤TBSä¸­æ–­æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý: ITFlag     ÏëÒªÇå³ýµÄÄ³¸öTBSÖÐ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ:
-*                        @arg TBS_TBSIF_TMPIF
-*                        @arg TBS_TBSIF_VBATIF
-*                        @arg TBS_TBSIF_ADC0IF
-*                        @arg TBS_TBSIF_ADC1IF
-*                        @arg TBS_TBSIF_VBATCMPIF
-*                        @arg TBS_TBSIF_VCCIF
-*                        @arg TBS_TBSIF_ADC2IF        (only for HT501x)
-*                        @arg TBS_TBSIF_VREFIF        (only for HT501x)
-*                        @arg TBS_TBSIF_ADC0CMPIF     (only for HT501x, HT6x2x, HT502x)
-*                        @arg TBS_TBSIF_ADC1CMPIF     (only for HT501x, HT502x)
+* å…¥å£å‚æ•°: ITFlag     æƒ³è¦æ¸…é™¤çš„æŸä¸ªTBSä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
+*                        @arg TBS_TBSIE_TMPIF
+*                        @arg TBS_TBSIE_VBATIF
+*                        @arg TBS_TBSIE_ADC0IF
+*                        @arg TBS_TBSIE_ADC1IF
+*                        @arg TBS_TBSIE_VBATCMPIF
+*                        @arg TBS_TBSIE_VCCIF
+*                        @arg TBS_TBSIE_ADC2IF        (for HT501x, HT502x)
+*                        @arg TBS_TBSIE_VREFIF        (for HT501x)
+*                        @arg TBS_TBSIE_ADC0CMPIF     (for HT6x2x, HT6x3x, HT501x, HT502x)
+*                        @arg TBS_TBSIE_ADC1CMPIF     (for HT501x, HT502x)
+*                        @arg TBS_TBSIE_ADC3IF        (for HT6x2x, HT6x3x)
+*                        @arg TBS_TBSIE_ADC4IF        (for HT6x2x, HT6x3x)
+*                        @arg TBS_TBSIE_ADC5IF        (for HT6x2x, HT6x3x)
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_TBS_ClearITPendingBit(uint32_t ITFlag)
 {
     /*  assert_param  */
-    
-      
     HT_TBS->TBSIF  &= ~((uint32_t)ITFlag);                  /*!< Clear TBS Interrupt Flag       */
-    
 }
 
+/*
+*********************************************************************************************************
+*                                 SET TBS FILTER VALUE CNT
+*
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®TBSæ»¤æ³¢æ¬¡æ•°
+*
+* å…¥å£å‚æ•°: FilterVal    : æ»¤æ³¢æ¬¡æ•°
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
+*********************************************************************************************************
+*/
+void HT_TBS_FilCntConfig(TBS_ADCFilterCntTypeDef FilterVal)
+{
+    /*  assert_param  */
+    HT_TBS->TBSCON &= (~TBS_TBSCON_FILTER);
+    HT_TBS->TBSCON |= (FilterVal & TBS_TBSCON_FILTER);
+}
+
+#if  defined  HT6x3x
+/*
+*********************************************************************************************************
+*                                 SELECT TBS CLOKK
+*
+* å‡½æ•°è¯´æ˜Ž: è®¾ç½®TBSæ—¶é’Ÿæº
+*
+* å…¥å£å‚æ•°: ClkSel    : æ—¶é’Ÿæºè®¾ç½®
+*
+* è¿”å›žå‚æ•°: result    : æ—¶é’Ÿé€‰æ‹©ç»“æžœ
+*                       TBS_CLKSEL_SUCC       TBSæ—¶é’Ÿåˆ‡æ¢æˆåŠŸ
+*                       TBS_CLKSEL_PARA_ERR   æœ¬å‡½æ•°è¢«è°ƒç”¨æ—¶è¾“å…¥å‚æ•°é”™è¯¯
+*                       TBS_CLKSEL_PLL_EN_ERR è¦æ±‚åˆ‡æ¢PLLæ—¶é’Ÿï¼Œä½†PLLæ—¶é’Ÿå·¥ä½œå¼‚å¸¸
+*
+* ç‰¹æ®Šè¯´æ˜Ž: å»ºè®®ä¸ŽHT_TBSConfigä¸€èµ·é…ç½®
+*********************************************************************************************************
+*/
+TBS_ClkSelReturnTypeDef HT_TBS_ClkSelConfig(TBS_ClkSelectTypeDef ClkSel)
+{
+    TBS_ClkSelReturnTypeDef result;
+
+    /*  assert_param  */
+    switch (ClkSel)
+    {
+        case TBS_CLKSEL_OSC:
+        case TBS_CLKSEL_PLLDIV:
+            if (ClkSel == TBS_CLKSEL_PLLDIV)
+            {
+                if (((HT_CMU->CLKCTRL0 & CMU_CLKCTRL0_PLLEN) == CMU_CLKCTRL0_PLLEN)
+                    && ((HT_CMU->CLKSTA & CMU_CLKSTA_PLLLOCK) == CMU_CLKSTA_PLLLOCK)
+                    && ((HT_CMU->CLKSTA & CMU_CLKSTA_PLLFLAG) != CMU_CLKSTA_PLLFLAG))
+                {
+                    HT_TBS->TBSCON |= (TBS_CLKSEL_PLLDIV & TBS_TBSCON_TBSCLKSEL);
+                    result = TBS_CLKSEL_SUCC;
+                }
+                else
+                {
+                    HT_TBS->TBSCON &= (TBS_CLKSEL_OSC | (~TBS_TBSCON_TBSCLKSEL));
+                    result = TBS_CLKSEL_PLL_EN_ERR;
+                }
+            }
+            else
+            {
+                HT_TBS->TBSCON &= (TBS_CLKSEL_OSC | (~TBS_TBSCON_TBSCLKSEL));
+                result = TBS_CLKSEL_SUCC;
+            }
+            break;
+        default:
+            result = TBS_CLKSEL_PARA_ERR;
+            break;
+    }
+
+    return result;
+}
+
+/*
+*********************************************************************************************************
+*                                   å¿«é€Ÿè§¦å‘TBSé‡‡æ ·(ä»…ä¸€æ¬¡ï¼Œè‡ªåŠ¨å®Œæˆæ¸…ç©º)
+*
+* å‡½æ•°è¯´æ˜Ž: å¿«é€Ÿè§¦å‘TBSé‡‡æ ·
+*
+* å…¥å£å‚æ•°: TriChn     è§¦å‘é€šé“:
+*                      TBS_TRI_TMP
+*                      TBS_TRI_VBAT
+*                      TBS_TRI_ADC0
+*                      TBS_TRI_ADC1
+*                      TBS_TRI_VCC
+*                      TBS_TRI_ADC3
+*                      TBS_TRI_ADC4
+*                      TBS_TRI_ADC5
+*
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
+*********************************************************************************************************
+*/
+void HT_TBS_ADCTriSample(TBS_TriChnTypeDef TriChn)
+{
+    /*  assert_param  */
+    HT_TBS->TRIREQ |= (TriChn& TBS_TRIREQ);
+}
+#endif

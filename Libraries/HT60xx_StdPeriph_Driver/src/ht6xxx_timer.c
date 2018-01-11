@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_timer.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.0
-* Description  : 
+* Version      : V1.0.2
+* Description  :
 *********************************************************************************************************
 */
 
@@ -21,7 +21,7 @@
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æ„ä½“
 *********************************************************************************************************
 */
 
@@ -29,14 +29,14 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊıÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜
 *********************************************************************************************************
 */
 
@@ -45,215 +45,263 @@
 *********************************************************************************************************
 *                                         INITIAL TIMER MODULE
 *
-* º¯ÊıËµÃ÷: ³õÊ¼»¯TIMERÄ£¿é
+* å‡½æ•°è¯´æ˜: åˆå§‹åŒ–TIMERæ¨¡å—
 *
-* Èë¿Ú²ÎÊı: TMRx               Ö»ÄÜÊÇHT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3ÖĞÒ»¸ö
+* å…¥å£å‚æ•°: TMRx               åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3ä¸­ä¸€ä¸ª
 *
-*           TMR_InitStruct     TIMER³õÊ¼»¯½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬4¸ö²ÎÊı: 
-*                              1) TimerMode    : ¶¨Ê±Æ÷¹¤×÷Ä£Ê½
-*                              2) TimerPeriod  : ¶¨Ê±Æ÷¶¨Ê±ÖÜÆÚÉèÖÃ
-*                              3) TimerCompare : ¶¨Ê±Æ÷±È½Ï¼Ä´æÆ÷ÉèÖÃ  
-*                              4) TimerPreDiv  : ¶¨Ê±Æ÷Ô¤·ÖÆµÉèÖÃ                      
+*           TMR_InitStruct     TIMERåˆå§‹åŒ–ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«4ä¸ªå‚æ•°:
+*                              1) TimerMode    : å®šæ—¶å™¨å·¥ä½œæ¨¡å¼
+*                              2) TimerPeriod  : å®šæ—¶å™¨å®šæ—¶å‘¨æœŸè®¾ç½®
+*                              3) TimerCompare : å®šæ—¶å™¨æ¯”è¾ƒå¯„å­˜å™¨è®¾ç½®
+*                              4) TimerPreDiv  : å®šæ—¶å™¨é¢„åˆ†é¢‘è®¾ç½®
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§ÔÚÅäÖÃTIMER¼Ä´æÆ÷Ç°Ó¦ÏÈÊ¹ÄÜTIMERÄ£¿é£¬¾ßÌå²Î¼ûHT_CMU_ClkCtrl1Config()º¯Êı
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: ç”¨æˆ·åœ¨é…ç½®TIMERå¯„å­˜å™¨å‰åº”å…ˆä½¿èƒ½TIMERæ¨¡å—ï¼Œå…·ä½“å‚è§HT_CMU_ClkCtrl1Config()å‡½æ•°
 *********************************************************************************************************
 */
 void HT_TMR_Init(HT_TMR_TypeDef* TMRx, TMR_InitTypeDef* TMR_InitStruct)
 {
     /*  assert_param  */
-    
-    uint32_t tempreg = 0x01;                           /*!< ¶¨Ê±Æ÷Ê¹ÄÜ                  */
-    
-    TMRx->TMRDIV = TMR_InitStruct->TimerPreDiv;        /*!< ÉèÖÃ¶¨Ê±Æ÷Ô¤·ÖÆµÆ÷          */
+    uint32_t tempreg;
 
-    TMRx->TMRPRD = TMR_InitStruct->TimerPeriod;        /*!< ÉèÖÃ¶¨Ê±Æ÷ÖÜÆÚ¼Ä´æÆ÷        */
-
-    TMRx->TMRCMP = TMR_InitStruct->TimerCompare;       /*!< ÉèÖÃ¶¨Ê±Æ÷±È½Ï¼Ä´æÆ÷        */  
-    
-    tempreg |= TMR_InitStruct->TimerMode;
-
-    TMRx->TMRCON = tempreg;                            /*!< ÉèÖÃ¶¨Ê±Æ÷¹¤×÷Ä£Ê½          */
-
-} 
+    if ((TMRx == HT_TMR0) || (TMRx == HT_TMR1) || (TMRx == HT_TMR2) || (TMRx == HT_TMR3))
+    {
+        TMRx->TMRCON &= (~TMR_TMRCON_CNTEN);                    /*!< å…³é—­å®šæ—¶å™¨ä½¿èƒ½             */
+        TMRx->TMRDIV = TMR_InitStruct->TimerPreDiv;             /*!< è®¾ç½®å®šæ—¶å™¨é¢„åˆ†é¢‘å™¨          */
+        TMRx->TMRPRD = TMR_InitStruct->TimerPeriod;             /*!< è®¾ç½®å®šæ—¶å™¨å‘¨æœŸå¯„å­˜å™¨        */
+        TMRx->TMRCMP = TMR_InitStruct->TimerCompare;            /*!< è®¾ç½®å®šæ—¶å™¨æ¯”è¾ƒå¯„å­˜å™¨        */
+        TMRx->TMRCNT = 0;                                       /*!< æ¸…ç©ºå®šæ—¶å™¨è®¡æ•°å¯„å­˜å™¨        */
+        TMRx->TMRCAP = 0;                                       /*!< æ¸…ç©ºå®šæ—¶å™¨æ•æ‰å¯„å­˜å™¨        */
+#if  defined  HT6x3x
+        TMRx->TMRCODT = TMR_InitStruct->PwmMode & TMR_TMRCODT;  /*!< PWMè¾“å‡ºæ¨¡å¼                */
+        TMRx->TMRRDT = TMR_InitStruct->PwmDeadTime;             /*!< PWMæ­»åŒºæ—¶é—´å¯„å­˜å™¨          */
+#endif
+        tempreg = TMR_TMRCON_CNTEN;                             /*!< å®šæ—¶å™¨ä½¿èƒ½                 */
+        tempreg |= (uint32_t)TMR_InitStruct->TimerMode;
+        TMRx->TMRCON = tempreg;                                 /*!< è®¾ç½®å®šæ—¶å™¨å·¥ä½œæ¨¡å¼          */
+    }
+}
 
 /*
 *********************************************************************************************************
 *                                         INITIAL TIMEREXT MODULE
 *
-* º¯ÊıËµÃ÷: ³õÊ¼»¯TIMERÄ£¿é
+* å‡½æ•°è¯´æ˜: åˆå§‹åŒ–TIMERæ¨¡å—
 *
-* Èë¿Ú²ÎÊı: TMRx               Ö»ÄÜÊÇHT_TMR4/HT_TMR5ÖĞÒ»¸ö
+* å…¥å£å‚æ•°: TMRx               åªèƒ½æ˜¯HT_TMR4/HT_TMR5ä¸­ä¸€ä¸ª
 *
-*           TMR_InitStruct     TIMER³õÊ¼»¯½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬4¸ö²ÎÊı: 
-*                              1) TimerSource  : ¶¨Ê±Æ÷Ê±ÖÓÔ´Ñ¡Ôñ
-*                              2) TimerMode    : ¶¨Ê±Æ÷¹¤×÷Ä£Ê½
-*                              3) TimerPeriod  : ¶¨Ê±Æ÷¶¨Ê±ÖÜÆÚÉèÖÃ
-*                              4) TimerCompare : ¶¨Ê±Æ÷±È½Ï¼Ä´æÆ÷ÉèÖÃ  
-*                              5) TimerPreDiv  : ¶¨Ê±Æ÷Ô¤·ÖÆµÉèÖÃ                      
+*           TMR_InitStruct     TIMERåˆå§‹åŒ–ç»“æ„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«4ä¸ªå‚æ•°:
+*                              1) TimerSource  : å®šæ—¶å™¨æ—¶é’Ÿæºé€‰æ‹©
+*                              2) TimerMode    : å®šæ—¶å™¨å·¥ä½œæ¨¡å¼
+*                              3) TimerPeriod  : å®šæ—¶å™¨å®šæ—¶å‘¨æœŸè®¾ç½®
+*                              4) TimerCompare : å®šæ—¶å™¨æ¯”è¾ƒå¯„å­˜å™¨è®¾ç½®
+*                              5) TimerPreDiv  : å®šæ—¶å™¨é¢„åˆ†é¢‘è®¾ç½®
 *
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§ÔÚÅäÖÃTIMER¼Ä´æÆ÷Ç°Ó¦ÏÈÊ¹ÄÜTIMERÄ£¿é£¬¾ßÌå²Î¼ûHT_CMU_ClkCtrl1Config()º¯Êı
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: ç”¨æˆ·åœ¨é…ç½®TIMERå¯„å­˜å™¨å‰åº”å…ˆä½¿èƒ½TIMERæ¨¡å—ï¼Œå…·ä½“å‚è§HT_CMU_ClkCtrl1Config()å‡½æ•°
 *********************************************************************************************************
 */
-#if defined HT6x2x
+#if  defined  HT6x2x  ||  defined  HT6x3x
 void HT_TMRExt_Init(HT_TMR_TypeDef* TMRx, TMRExt_InitTypeDef* TMR_InitStruct)
 {
     /*  assert_param  */
-    
-    uint32_t tempreg = 0x01;                           /*!< ¶¨Ê±Æ÷Ê¹ÄÜ                  */
-    
-    TMRx->TMRDIV = TMR_InitStruct->TimerPreDiv;        /*!< ÉèÖÃ¶¨Ê±Æ÷Ô¤·ÖÆµÆ÷          */
+    uint32_t tempreg;
 
-    TMRx->TMRPRD = TMR_InitStruct->TimerPeriod;        /*!< ÉèÖÃ¶¨Ê±Æ÷ÖÜÆÚ¼Ä´æÆ÷        */
-    
-    tempreg |= (TMR_InitStruct->TimerMode|TMR_InitStruct->TimerSource);
-    
-
-    TMRx->TMRCON = tempreg;                            /*!< ÉèÖÃ¶¨Ê±Æ÷¹¤×÷Ä£Ê½          */
-
+    if ((TMRx == HT_TMR4) || (TMRx == HT_TMR5))
+    {
+        TMRx->TMRCON &= (~TMR_TMRCON_CNTEN);               /*!< å…³é—­å®šæ—¶å™¨ä½¿èƒ½             */
+        TMRx->TMRDIV = TMR_InitStruct->TimerPreDiv;        /*!< è®¾ç½®å®šæ—¶å™¨é¢„åˆ†é¢‘å™¨          */
+        TMRx->TMRPRD = TMR_InitStruct->TimerPeriod;        /*!< è®¾ç½®å®šæ—¶å™¨å‘¨æœŸå¯„å­˜å™¨        */
+        TMRx->TMRCMP = TMR_InitStruct->TimerCompare;       /*!< è®¾ç½®å®šæ—¶å™¨æ¯”è¾ƒå¯„å­˜å™¨        */
+        TMRx->TMRCNT = 0;                                  /*!< æ¸…ç©ºå®šæ—¶å™¨è®¡æ•°å¯„å­˜å™¨        */
+        tempreg = TMR_TMRCON_CNTEN;                        /*!< å®šæ—¶å™¨ä½¿èƒ½                 */
+        tempreg |= ((uint32_t)TMR_InitStruct->TimerMode|(uint32_t)TMR_InitStruct->TimerSource);
+        TMRx->TMRCON = tempreg;                            /*!< è®¾ç½®å®šæ—¶å™¨å·¥ä½œæ¨¡å¼          */
+    }
 }
 #endif
 
 /*
 *********************************************************************************************************
+*                                         SET TIMER PERIOD VALUE
+*
+* å‡½æ•°è¯´æ˜: è®¾ç½®å‘¨æœŸå¯„å­˜å™¨å€¼å¹¶æ¸…ç©ºå½“å‰è®¡æ•°å€¼
+*
+* å…¥å£å‚æ•°: TMRx               åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ä¸­ä¸€ä¸ª
+*
+*           TimerPeriod        å®šæ—¶å™¨å‘¨æœŸå€¼
+*
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
+*********************************************************************************************************
+*/
+void HT_TMR_PeriodSet(HT_TMR_TypeDef* TMRx, uint16_t TimerPeriod)
+{
+    /*  assert_param  */
+    TMRx->TMRPRD = TimerPeriod;                             /*!< è®¾ç½®å®šæ—¶å™¨å‘¨æœŸå¯„å­˜å™¨        */
+    TMRx->TMRCNT = 0;                                       /*!< æ¸…ç©ºå®šæ—¶å™¨è®¡æ•°å¯„å­˜å™¨        */
+}
+
+/*
+*********************************************************************************************************
+*                                         SET TIMER COMPARE VALUE
+*
+* å‡½æ•°è¯´æ˜: è®¾ç½®æ¯”è¾ƒå¯„å­˜å™¨å€¼
+*
+* å…¥å£å‚æ•°: TMRx               åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ä¸­ä¸€ä¸ª
+*
+*           TimerCompare       å®šæ—¶å™¨æ¯”è¾ƒå€¼
+*
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
+*********************************************************************************************************
+*/
+void HT_TMR_CompareSet(HT_TMR_TypeDef* TMRx, uint16_t TimerCompare)
+{
+    /*  assert_param  */
+    TMRx->TMRCMP = TimerCompare;                            /*!< è®¾ç½®å®šæ—¶å™¨æ¯”è¾ƒå¯„å­˜å™¨        */
+}
+
+/*
+*********************************************************************************************************
 *                                         GET TIMER CAPTURE VALUE
 *
-* º¯ÊıËµÃ÷: »ñÈ¡²¶»ñ¼Ä´æÆ÷²¶»ñÖµ
+* å‡½æ•°è¯´æ˜: è·å–æ•è·å¯„å­˜å™¨æ•è·å€¼
 *
-* Èë¿Ú²ÎÊı: TMRx               Ö»ÄÜÊÇHT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3ÖĞÒ»¸ö
-*                     
-* ·µ»Ø²ÎÊı: ·µ»Ø¶¨Ê±Æ÷²¶»ñÖµ                                      
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* å…¥å£å‚æ•°: TMRx               åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3ä¸­ä¸€ä¸ª
+*
+* è¿”å›å‚æ•°: è¿”å›å®šæ—¶å™¨æ•è·å€¼
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
 uint16_t HT_TMR_CaptureGet(HT_TMR_TypeDef* TMRx)
 {
     /*  assert_param  */
-    
-
-    return  ((uint16_t)TMRx->TMRCAP);                /*!< ·µ»Ø²¶»ñ¼Ä´æÆ÷²¶»ñÖµ        */
-} 
+    if ((TMRx == HT_TMR0) || (TMRx == HT_TMR1) || (TMRx == HT_TMR2) || (TMRx == HT_TMR3))
+    {
+        return  ((uint16_t)TMRx->TMRCAP);                /*!< è¿”å›æ•è·å¯„å­˜å™¨æ•è·å€¼        */
+    }
+    else
+    {
+        return 0xFFFF;
+    }
+}
 
 /*
 *********************************************************************************************************
 *                                         GET TIMER COUNT VALUE
 *
-* º¯ÊıËµÃ÷: »ñÈ¡¶¨Ê±Æ÷µ±Ç°¶¨Ê±Öµ
+* å‡½æ•°è¯´æ˜: è·å–å®šæ—¶å™¨å½“å‰å®šæ—¶å€¼
 *
-* Èë¿Ú²ÎÊı: TMRx               Ö»ÄÜÊÇHT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ÖĞÒ»¸ö
-*                     
-* ·µ»Ø²ÎÊı: ·µ»Ø¶¨Ê±Æ÷¶¨Ê±Öµ                                      
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* å…¥å£å‚æ•°: TMRx               åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ä¸­ä¸€ä¸ª
+*
+* è¿”å›å‚æ•°: è¿”å›å®šæ—¶å™¨å®šæ—¶å€¼
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
 uint16_t HT_TMR_CountGet(HT_TMR_TypeDef* TMRx)
 {
     /*  assert_param  */
-    
-
-    return  ((uint16_t)TMRx->TMRCNT);                /*!< ·µ»Ø¶¨Ê±Æ÷¶¨Ê±Öµ         */
-} 
+    return  ((uint16_t)TMRx->TMRCNT);                /*!< è¿”å›å®šæ—¶å™¨å®šæ—¶å€¼         */
+}
 
 /*
 *********************************************************************************************************
-*                                 ENABLE OR DISABLE TIMER INTERRUPT    
+*                                 ENABLE OR DISABLE TIMER INTERRUPT
 *
-* º¯ÊıËµÃ÷: Ê¹ÄÜ»òÕß¹Ø±ÕTIMERÖĞ¶Ï
+* å‡½æ•°è¯´æ˜: ä½¿èƒ½æˆ–è€…å…³é—­TIMERä¸­æ–­
 *
-* Èë¿Ú²ÎÊı: TMRx       Ö»ÄÜÊÇHT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ÖĞÒ»¸ö
+* å…¥å£å‚æ•°: TMRx       åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ä¸­ä¸€ä¸ª
 *
-*           ITEn       TIMERÖĞ¶ÏÉèÖÃÎ»£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊı»òÆä×éºÏ
+*           ITEn       TIMERä¸­æ–­è®¾ç½®ä½ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ
 *                        @arg TMR_TMRIE_PRDIE
 *                        @arg TMR_TMRIE_CAPIE
 *                        @arg TMR_TMRIE_CMPIE
-*                        @arg TMR_TMRIE_ACIE    (only for HT6x2x)
+*                        @arg TMR_TMRIE_ACIE    (only for HT502x, HT6x2x, HT6x3x)
 *
-*           NewState   = ENABLE£º Ê¹ÄÜÖĞ¶Ï
-*                      = DISABLE£º¹Ø±ÕÖĞ¶Ï
-* ·µ»Ø²ÎÊı: ÎŞ                                      
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+*           NewState   = ENABLEï¼š ä½¿èƒ½ä¸­æ–­
+*                      = DISABLEï¼šå…³é—­ä¸­æ–­
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
-void HT_TMR_ITConfig(HT_TMR_TypeDef* TMRx, uint8_t ITEn, FunctionalState NewState)
+void HT_TMR_ITConfig(HT_TMR_TypeDef* TMRx, uint16_t ITEn, FunctionalState NewState)
 {
     /*  assert_param  */
-    
     if (NewState != DISABLE)
-    {       
-        TMRx->TMRIE |= (uint32_t)ITEn;               /*!< Ê¹ÄÜTIMERÖĞ¶Ï           */
+    {
+        TMRx->TMRIE |= (uint32_t)ITEn;               /*!< ä½¿èƒ½TIMERä¸­æ–­           */
     }
     else
     {
-        TMRx->TMRIE &= ~(uint32_t)ITEn;              /*!< ¹Ø±ÕTIMERÖĞ¶Ï           */
-    } 
+        TMRx->TMRIE &= ~(uint32_t)ITEn;              /*!< å…³é—­TIMERä¸­æ–­           */
+    }
 }
 
 /*
 *********************************************************************************************************
 *                            GET SPECIFIED TIMER INTERRUPT FLAG STATUS
 *
-* º¯ÊıËµÃ÷: »ñÈ¡ÏàÓ¦TIMERÖĞ¶Ï±êÖ¾×´Ì¬
+* å‡½æ•°è¯´æ˜: è·å–ç›¸åº”TIMERä¸­æ–­æ ‡å¿—çŠ¶æ€
 *
-* Èë¿Ú²ÎÊı: TMRx       Ö»ÄÜÊÇHT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ÖĞÒ»¸ö
+* å…¥å£å‚æ•°: TMRx       åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ä¸­ä¸€ä¸ª
 *
-*           ITFlag     ÏëÒª¼ì²éµÄÄ³¸öTIMERÖĞ¶Ï£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊı:
+*           ITFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªTIMERä¸­æ–­ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg TMR_TMRIF_PRDIF
 *                        @arg TMR_TMRIF_CAPIF
 *                        @arg TMR_TMRIF_CMPIF
 *                        @arg TMR_TMRIF_ACIF    (only for HT6x2x)
 *
-* ·µ»Ø²ÎÊı: ITStatus    = SET£º  ÏàÓ¦ÖĞ¶Ï±êÖ¾²úÉú
-*                       = RESET£ºÏàÓ¦ÖĞ¶Ï±êÖ¾Î´²úÉú
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* è¿”å›å‚æ•°: ITStatus    = SETï¼š  ç›¸åº”ä¸­æ–­æ ‡å¿—äº§ç”Ÿ
+*                       = RESETï¼šç›¸åº”ä¸­æ–­æ ‡å¿—æœªäº§ç”Ÿ
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
-ITStatus HT_TMR_ITFlagStatusGet(HT_TMR_TypeDef* TMRx, uint8_t ITFlag)
+ITStatus HT_TMR_ITFlagStatusGet(HT_TMR_TypeDef* TMRx, uint16_t ITFlag)
 {
     /*  assert_param  */
-    
     if (TMRx->TMRIF & ITFlag)
-    {       
+    {
         return SET;                        /*!< TIMER Interrupt Flag is set   */
     }
     else
     {
         return RESET;                      /*!< TIMER Interrupt Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                                   CLEAR TIMER INTERRUPT FLAG
 *
-* º¯ÊıËµÃ÷: Çå³ıTIMERÖĞ¶Ï±êÖ¾
+* å‡½æ•°è¯´æ˜: æ¸…é™¤TIMERä¸­æ–­æ ‡å¿—
 *
-* Èë¿Ú²ÎÊı: TMRx       Ö»ÄÜÊÇHT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ÖĞÒ»¸ö
+* å…¥å£å‚æ•°: TMRx       åªèƒ½æ˜¯HT_TMR0/HT_TMR1/HT_TMR2/HT_TMR3/HT_TMR4/HT_TMR5ä¸­ä¸€ä¸ª
 *
-*           ITFlag     ÏëÒªÇå³ıµÄÄ³¸öTIMERÖĞ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊı»òÆä×éºÏ:
+*           ITFlag     æƒ³è¦æ¸…é™¤çš„æŸä¸ªTIMERä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
 *                        @arg TMR_TMRIF_PRDIF
 *                        @arg TMR_TMRIF_CAPIF
 *                        @arg TMR_TMRIF_CMPIF
 *                        @arg TMR_TMRIF_ACIF    (only for HT6x2x, HT502x)
 *
-* ·µ»Ø²ÎÊı: ÎŞ
-* 
-* ÌØÊâËµÃ÷: ÎŞ
+* è¿”å›å‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜: æ— 
 *********************************************************************************************************
 */
-void HT_TMR_ClearITPendingBit(HT_TMR_TypeDef* TMRx, uint8_t ITFlag)
+void HT_TMR_ClearITPendingBit(HT_TMR_TypeDef* TMRx, uint16_t ITFlag)
 {
     /*  assert_param  */
 #if  defined  HT6x1x  ||  defined  HT501x                /*!< HT6x1x, HT501x                  */
     ITFlag |= 0x08;
-#endif                                                   /*!< HT6x2x, HT502x                  */   
+#endif                                                   /*!< HT6x2x, HT502x                  */
     TMRx->TMRIF  &= ~((uint32_t)ITFlag);                 /*!< Clear TIMER Interrupt Flag      */
-    
 }
-

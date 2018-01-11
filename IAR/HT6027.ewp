@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>HT6X2X	Hitrendtech HT6X2X</state>
+          <state>HT6X3X	Hitrendtech HT6X3X</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -168,7 +168,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>HT6x2x</state>
+          <state>HT6x3x</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -184,7 +184,7 @@
         </option>
         <option>
           <name>CCListCFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCMnemonics</name>
@@ -229,7 +229,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>10010100</state>
+          <state>00000000</state>
         </option>
         <option>
           <name>CCDebugInfo</name>
@@ -320,7 +320,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -329,7 +329,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -470,7 +470,7 @@
         </option>
         <option>
           <name>AList</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AListHeader</name>
@@ -690,7 +690,7 @@
         </option>
         <option>
           <name>IlinkLogFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkLogInitialization</name>
@@ -710,11 +710,11 @@
         </option>
         <option>
           <name>IlinkIcfOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\HT6X2X.icf</state>
+          <state>$TOOLKIT_DIR$\config\flashloader\Hitrendtech\HT6X3X.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1893,7 +1893,7 @@
       <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</name>
+      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x3x.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</name>
@@ -1912,6 +1912,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6x3x_emu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</name>

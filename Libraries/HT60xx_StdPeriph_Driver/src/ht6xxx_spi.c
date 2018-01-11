@@ -5,13 +5,13 @@
 *
 *                                   Copyright 2013, Hi-Trend Tech, Corp.
 *                                        All Rights Reserved
-*                                         
+*
 *
 * Project      : HT6xxx
 * File         : ht6xxx_spi.c
 * By           : Hitrendtech_SocTeam
-* Version      : V1.0.0
-* Description  : 
+* Version      : V1.0.1
+* Description  :
 *********************************************************************************************************
 */
 
@@ -21,7 +21,7 @@
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØºê/½á¹¹Ìå
+*                                           æœ¬åœ°å®/ç»“æž„ä½“
 *********************************************************************************************************
 */
 
@@ -29,14 +29,14 @@
 
 /*
 *********************************************************************************************************
-*                                             ±¾µØ±äÁ¿
+*                                             æœ¬åœ°å˜é‡
 *********************************************************************************************************
 */
 
 
 /*
 *********************************************************************************************************
-*                                           ±¾µØº¯ÊýÉêÃ÷
+*                                           æœ¬åœ°å‡½æ•°ç”³æ˜Ž
 *********************************************************************************************************
 */
 
@@ -45,120 +45,138 @@
 *********************************************************************************************************
 *                                 INITIAL SPI MODULE
 *
-* º¯ÊýËµÃ÷: ³õÊ¼»¯SPIÄ£¿é
+* å‡½æ•°è¯´æ˜Ž: åˆå§‹åŒ–SPIæ¨¡å—
 *
-* Èë¿Ú²ÎÊý:  SPIx               Ö»ÄÜÊÇHT_SPI0/HT_SPI1ÖÐÒ»¸ö
-*            SPI_InitStruct     SPIÄ£¿é³õÊ¼»¯½á¹¹ÌåÖ¸Õë£¬Ö÷Òª°üº¬5¸ö²ÎÊý: 
-*                               1) SPI_CSInCtrol : ÊÇ·ñ´ò¿ªSPI_CSÊäÈë 
-*                               2) SPI_Baudrate  : SPIÊ±ÖÓÉèÖÃ
-*                               3) SPI_CPHA      : Ê±ÖÓÏàÎ»ÉèÖÃ
-*                               4) SPI_CPOL      : Ê±ÖÓ¼«ÐÔÉèÖÃ        
-*                               5) SPI_Mode      : SPIÖ÷´ÓÄ£Ê½ÉèÖÃ    
+* å…¥å£å‚æ•°:  SPIx               åªèƒ½æ˜¯HT_SPI0/HT_SPI1ä¸­ä¸€ä¸ª
+*            SPI_InitStruct     SPIæ¨¡å—åˆå§‹åŒ–ç»“æž„ä½“æŒ‡é’ˆï¼Œä¸»è¦åŒ…å«5ä¸ªå‚æ•°:
+*                               1) SPI_CSInCtrol : æ˜¯å¦æ‰“å¼€SPI_CSè¾“å…¥
+*                               2) SPI_Baudrate  : SPIæ—¶é’Ÿè®¾ç½®
+*                               3) SPI_CPHA      : æ—¶é’Ÿç›¸ä½è®¾ç½®
+*                               4) SPI_CPOL      : æ—¶é’Ÿæžæ€§è®¾ç½®
+*                               5) SPI_Mode      : SPIä¸»ä»Žæ¨¡å¼è®¾ç½®
+*                               6) SPI_CLK       : SPIæ—¶é’Ÿæºé€‰æ‹©ï¼ˆä»…é™SPI2, åŒæ—¶ç›®å‰åªå¼€æ”¾å…¼å®¹æ¨¡å¼ï¼‰
 *
-* ·µ»Ø²ÎÊý: ÎÞ                                      
-* 
-* ÌØÊâËµÃ÷: ÓÃ»§ÔÚÅäÖÃSPI¼Ä´æÆ÷Ç°Ó¦ÏÈÊ¹ÄÜSPIÄ£¿é£¬¾ßÌå²Î¼ûHT_CMU_ClkCtrl0Config()º¯Êý
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: ç”¨æˆ·åœ¨é…ç½®SPIå¯„å­˜å™¨å‰åº”å…ˆä½¿èƒ½SPIæ¨¡å—ï¼Œå…·ä½“å‚è§HT_CMU_ClkCtrl0Config()å‡½æ•°
 *********************************************************************************************************
 */
 void HT_SPI_Init(HT_SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
 {
     /*  assert_param  */
-    
     uint32_t tempreg = 0x81;
-    
+
     if(SPI_InitStruct->SPI_CSInCtrol != DISABLE)
     {
-        tempreg &= ~SPI_SPICON_SSDIS;                               /*!< ´ò¿ªSPI_CSÊäÈë          */
+        tempreg &= ~SPI_SPICON_SSDIS;                               /*!< æ‰“å¼€SPI_CSè¾“å…¥          */
     }
-    
-    tempreg |= SPI_InitStruct->SPI_Baudrate;                        /*!< ÅäÖÃÊ±ÖÓÆµÂÊ            */
-    tempreg |= SPI_InitStruct->SPI_CPHA;                            /*!< ÅäÖÃÏàÎ»                */
-    tempreg |= SPI_InitStruct->SPI_CPOL;                            /*!< ÅäÖÃÊ±ÖÓ¼«ÐÔ            */
-    tempreg |= SPI_InitStruct->SPI_Mode;                            /*!< ÅäÖÃÖ÷´ÓÄ£Ê½            */
-    
+
+#if  defined  HT6x3x
+    if ((SPI_InitStruct->SPI_Baudrate >= SPI_BaudRatePrescaler_3)
+      && (SPI_InitStruct->SPI_Baudrate <= SPI_BaudRatePrescaler_9))
+    {
+        SPIx->SPIDIV &= (~SPI_SPIDIV_DIV);                          /*!< æ¸…ç©ºè¾…åŠ©æ—¶é’Ÿé¢‘çŽ‡è®¾ç½®    */
+        SPIx->SPIDIV |= SPI_InitStruct->SPI_Baudrate;               /*!< è®¾ç½®è¾…åŠ©æ—¶é’Ÿé¢‘çŽ‡        */
+        SPIx->SPIDIV |= SPI_SPIDAT_DIV_EN;                          /*!< æ‰“å¼€è¾…åŠ©æ—¶é’Ÿé¢‘çŽ‡ä½¿èƒ½    */
+    }
+    else
+    {
+        SPIx->SPIDIV &= (~SPI_SPIDAT_DIV_EN);                       /*!< å…³é—­è¾…åŠ©æ—¶é’Ÿé¢‘çŽ‡ä½¿èƒ½    */
+        tempreg |= SPI_InitStruct->SPI_Baudrate;                    /*!< é…ç½®æ—¶é’Ÿé¢‘çŽ‡            */
+    }
+#else
+    tempreg |= SPI_InitStruct->SPI_Baudrate;                        /*!< é…ç½®æ—¶é’Ÿé¢‘çŽ‡            */
+#endif
+    tempreg |= SPI_InitStruct->SPI_CPHA;                            /*!< é…ç½®ç›¸ä½                */
+    tempreg |= SPI_InitStruct->SPI_CPOL;                            /*!< é…ç½®æ—¶é’Ÿæžæ€§            */
+    tempreg |= SPI_InitStruct->SPI_Mode;                            /*!< é…ç½®ä¸»ä»Žæ¨¡å¼            */
+
     SPIx->SPICON = tempreg;
-  
-} 
+
+#if  defined  HT6x3x
+    if (SPIx == HT_SPI2)
+    {
+        tempreg = SPI_SPICLKSEL_SPIMODE;
+        tempreg |= (SPI_InitStruct->SPI_CLK & SPI_SPICLKSEL_SPICLK);
+    }
+#endif
+}
 
 /*
 *********************************************************************************************************
 *                            GET SPECIFIED SPI INTERRUPT FLAG STATUS
 *
-* º¯ÊýËµÃ÷: »ñÈ¡ÏàÓ¦SPIÖÐ¶Ï±êÖ¾×´Ì¬
+* å‡½æ•°è¯´æ˜Ž: èŽ·å–ç›¸åº”SPIä¸­æ–­æ ‡å¿—çŠ¶æ€
 *
-* Èë¿Ú²ÎÊý: SPIx       Ö»ÄÜÊÇHT_SPI0/HT_SPI1ÖÐÒ»¸ö
-*           ITFlag     ÏëÒª¼ì²éµÄÄ³¸öSPIÖÐ¶Ï£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý:
+* å…¥å£å‚æ•°: SPIx       åªèƒ½æ˜¯HT_SPI0/HT_SPI1ä¸­ä¸€ä¸ª
+*           ITFlag     æƒ³è¦æ£€æŸ¥çš„æŸä¸ªSPIä¸­æ–­ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°:
 *                        @arg SPI_SPISTA_MODF
-*                        @arg SPI_SPISTA_SSERR   ×¢£º´Ë±êÖ¾Î»²»ÊÇÖÐ¶Ï±êÖ¾Î»
-*                        @arg SPI_SPISTA_WCOL    ×¢£º´Ë±êÖ¾Î»²»ÊÇÖÐ¶Ï±êÖ¾Î»
+*                        @arg SPI_SPISTA_SSERR   æ³¨ï¼šæ­¤æ ‡å¿—ä½ä¸æ˜¯ä¸­æ–­æ ‡å¿—ä½
+*                        @arg SPI_SPISTA_WCOL    æ³¨ï¼šæ­¤æ ‡å¿—ä½ä¸æ˜¯ä¸­æ–­æ ‡å¿—ä½
 *                        @arg SPI_SPISTA_SPIF
 *
-* ·µ»Ø²ÎÊý: ITStatus    = SET£º  ÏàÓ¦ÖÐ¶Ï±êÖ¾²úÉú
-*                       = RESET£ºÏàÓ¦ÖÐ¶Ï±êÖ¾Î´²úÉú
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: ITStatus    = SETï¼š  ç›¸åº”ä¸­æ–­æ ‡å¿—äº§ç”Ÿ
+*                       = RESETï¼šç›¸åº”ä¸­æ–­æ ‡å¿—æœªäº§ç”Ÿ
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 ITStatus HT_SPI_ITFlagStatusGet(HT_SPI_TypeDef* SPIx, uint8_t ITFlag)
 {
     /*  assert_param  */
-    
     if (SPIx->SPISTA & ITFlag)
-    {       
+    {
         return SET;                              /*!< Interrupt Flag is set   */
     }
     else
     {
         return RESET;                            /*!< Interrupt Flag is reset */
-    } 
+    }
 }
 
 /*
 *********************************************************************************************************
 *                                   CLEAR SPI INTERRUPT FLAG
 *
-* º¯ÊýËµÃ÷: Çå³ýSPIÖÐ¶Ï±êÖ¾
+* å‡½æ•°è¯´æ˜Ž: æ¸…é™¤SPIä¸­æ–­æ ‡å¿—
 *
-* Èë¿Ú²ÎÊý:     SPIx       Ö»ÄÜÊÇHT_SPI0/HT_SPI1ÖÐÒ»¸ö
-*               ITFlag     ÏëÒªÇå³ýµÄÄ³¸öSPIÖÐ¶Ï±êÖ¾£¬¿ÉÒÔÎªÒÔÏÂ²ÎÊý»òÆä×éºÏ:
-*                        @arg SPI_SPISTA_MODF
-*                        @arg SPI_SPISTA_SSERR   ×¢£º´Ë±êÖ¾Î»²»ÊÇÖÐ¶Ï±êÖ¾Î»
-*                        @arg SPI_SPISTA_WCOL    ×¢£º´Ë±êÖ¾Î»²»ÊÇÖÐ¶Ï±êÖ¾Î»
-*                        @arg SPI_SPISTA_SPIF
+* å…¥å£å‚æ•°:     SPIx       åªèƒ½æ˜¯HT_SPI0/SPI1/SPI2ä¸­ä¸€ä¸ª
+*               ITFlag     æƒ³è¦æ¸…é™¤çš„æŸä¸ªSPIä¸­æ–­æ ‡å¿—ï¼Œå¯ä»¥ä¸ºä»¥ä¸‹å‚æ•°æˆ–å…¶ç»„åˆ:
+*                            @arg SPI_SPISTA_MODF
+*                            @arg SPI_SPISTA_SSERR   æ³¨ï¼šæ­¤æ ‡å¿—ä½ä¸æ˜¯ä¸­æ–­æ ‡å¿—ä½
+*                            @arg SPI_SPISTA_WCOL    æ³¨ï¼šæ­¤æ ‡å¿—ä½ä¸æ˜¯ä¸­æ–­æ ‡å¿—ä½
+*                            @arg SPI_SPISTA_SPIF
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_SPI_ClearITPendingBit(HT_SPI_TypeDef* SPIx, uint8_t ITFlag)
 {
     /*  assert_param  */
-    
-      
     SPIx->SPISTA  &= ~((uint32_t)ITFlag);               /*!< Clear SPI Interrupt Flag      */
-    
 }
 
 /*
 *********************************************************************************************************
 *                              WRITE AND READ SPIDAT REGISTER
 *
-* º¯ÊýËµÃ÷: ÍùSPIÊý¾Ý¼Ä´æÆ÷Ð´Êý¾Ý£¬Í¬Ê±¶ÁÊý¾Ý
+* å‡½æ•°è¯´æ˜Ž: å¾€SPIæ•°æ®å¯„å­˜å™¨å†™æ•°æ®ï¼ŒåŒæ—¶è¯»æ•°æ®
 *
-* Èë¿Ú²ÎÊý: SPIx       Ö»ÄÜÊÇHT_SPI0/HT_SPI1ÖÐÒ»¸ö
-*           halfword   ÐèÒªÐ´µÄÊý¾Ý  
+* å…¥å£å‚æ•°: SPIx       åªèƒ½æ˜¯HT_SPI0/HT_SPI1ä¸­ä¸€ä¸ª
+*           halfword   éœ€è¦å†™çš„æ•°æ®
 *
-* ·µ»Ø²ÎÊý: SPIDAT  : SPIDAT¼Ä´æÆ÷ÖÐ¶Áµ½µÄÊý¾Ý
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: SPIDAT  : SPIDATå¯„å­˜å™¨ä¸­è¯»åˆ°çš„æ•°æ®
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 uint8_t HT_SPI_SendByte(HT_SPI_TypeDef* SPIx, uint16_t halfword)
 {
     while(SET==HT_SPI_ITFlagStatusGet(SPIx, SPI_SPISTA_SPIF));
     SPIx->SPIDAT = halfword;
-    
+
     while(RESET==HT_SPI_ITFlagStatusGet(SPIx, SPI_SPISTA_SPIF));
     return (uint8_t)SPIx->SPIDAT;
 }
@@ -167,39 +185,37 @@ uint8_t HT_SPI_SendByte(HT_SPI_TypeDef* SPIx, uint16_t halfword)
 *********************************************************************************************************
 *                                 SET SPI_CS HIGH
 *
-* º¯ÊýËµÃ÷: Éè¶¨SPICSÎª¸ß
+* å‡½æ•°è¯´æ˜Ž: è®¾å®šSPICSä¸ºé«˜
 *
-* Èë¿Ú²ÎÊý: SPIx       Ö»ÄÜÊÇHT_SPI0/HT_SPI1ÖÐÒ»¸ö    
+* å…¥å£å‚æ•°: SPIx       åªèƒ½æ˜¯HT_SPI0/HT_SPI1ä¸­ä¸€ä¸ª
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_SPI_CSHigh(HT_SPI_TypeDef* SPIx)
 {
     /*  assert_param  */
-    
-    SPIx->SPISSN = 0x03;                       /*!< SPI CSÀ­¸ß           */
+    SPIx->SPISSN |= 0x03;                       /*!< SPI CSæ‹‰é«˜           */
 }
 
 /*
 *********************************************************************************************************
 *                                 SET SPI_CS LOW
 *
-* º¯ÊýËµÃ÷: Éè¶¨SPICSÎªµÍ
+* å‡½æ•°è¯´æ˜Ž: è®¾å®šSPICSä¸ºä½Ž
 *
-* Èë¿Ú²ÎÊý: SPIx       Ö»ÄÜÊÇHT_SPI0/HT_SPI1ÖÐÒ»¸ö   
+* å…¥å£å‚æ•°: SPIx       åªèƒ½æ˜¯HT_SPI0/HT_SPI1ä¸­ä¸€ä¸ª
 *
-* ·µ»Ø²ÎÊý: ÎÞ
-* 
-* ÌØÊâËµÃ÷: ÎÞ
+* è¿”å›žå‚æ•°: æ— 
+*
+* ç‰¹æ®Šè¯´æ˜Ž: æ— 
 *********************************************************************************************************
 */
 void HT_SPI_CSLow(HT_SPI_TypeDef* SPIx)
 {
     /*  assert_param  */
-    
-    SPIx->SPISSN = 0x02;                       /*!< SPI CSÀ­µÍ           */
+    SPIx->SPISSN &= (~0x02);                       /*!< SPI CSæ‹‰ä½Ž           */
 }
 

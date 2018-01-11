@@ -1,9 +1,13 @@
+#include <string.h>
 #include "ht6xxx_gpio.h"
+#include "ht6xxx_reset.h"
 #include "ht6xxx.h"
+#include "General.h"
 #include "TypeRAM.h"
 #include "Port.h"
 #include "data.h"
 #include "TypeE2p.h"
+
 #define	E2P_PAGE	32
 //#define MAX_TMP 	50
 #define MAX_TMP 	150
@@ -266,20 +270,23 @@ short E2Pwrite( unsigned short E2P_Addr, unsigned char* RAM_Addr, unsigned short
 	{
 		case DataEAds:
 		case ProfEAds:		
-			PageLen = 64;						//页写的最大长度
-			break;
+                  PageLen = 64;						//页写的最大长度
+                  break;
 		case FMAds:
-			PageLen = 16;
-			break;
-		default: PageLen = 8;
-			break;				
+                  PageLen = 16;
+                  break;
+		default: 
+                  PageLen = 8;
+                  break;				
 	}
 
 	while( Lenth > 0 )
 	{
 		Len = E2P_Addr % PageLen;
-		if( Len != 0 ) Len = PageLen - Len;
-		else Len = PageLen;
+		if( Len != 0 ) 
+                  Len = PageLen - Len;
+		else 
+                  Len = PageLen;
 		if( Lenth < Len ) Len = Lenth;
 		
 		if(( I2CStartAddr( I2CPara, E2P_Addr, Devads )) != 0 ) return -1;  
@@ -309,40 +316,43 @@ short E2Pwrite( unsigned short E2P_Addr, unsigned char* RAM_Addr, unsigned short
 **********************************************************************/
 short E2P_Write( unsigned short E2P_Dest, unsigned char* RAM_Src, short Lenth, short Dev_Ads )
 {
-	unsigned char Buffer[MAX_TMP];
-	unsigned char* Temp_Pt;
-	short i=0;
-	short NextPage;
-	unsigned char BakNum;
-	
-	Temp_Pt = Buffer;
-	HT_FreeDog();
-        memcpy( Temp_Pt, RAM_Src, Lenth );
-	if(( Dev_Ads == DataEAds )&&( E2P_Dest >= (E2P_PGLEN * 2) )) 
-	{
-		BakNum = 1;				//事件记录无备份	
-		Lenth -= 1;			//无备份数据无校验和
-	}	
-	else
-	{
-		*(Temp_Pt + Lenth ) = ChkNum( Temp_Pt, Lenth );
-		for( i=0;i<4;i++)
-		{
-			if( E2PTab[i].DevAds == Dev_Ads )
-			{
-				BakNum = E2PTab[i].BakNum;
-				NextPage = E2PTab[i].NextPage;	
-				break;
-			}				
-		}		 
-	}
-	for( i=0;i<BakNum;i++)
-	{
-		if( E2Pwrite( E2P_Dest, Temp_Pt, Lenth+1, Dev_Ads ) != 0) Flag.AlarmFlg[0] |= F_AlarmE2P;
-		else Flag.AlarmFlg[0] &= ~F_AlarmE2P;
-	}
-
-	return 0;
+  unsigned char Buffer[MAX_TMP];
+  unsigned char* Temp_Pt;
+  short i=0;
+  short NextPage;
+  unsigned char BakNum;
+  
+  Temp_Pt = Buffer;
+  HT_FreeDog();
+  memcpy( Temp_Pt, RAM_Src, Lenth );
+  
+  if(( Dev_Ads == DataEAds )&&( E2P_Dest >= (E2P_PGLEN * 2) )) 
+  {
+    BakNum = 1;//事件记录无备份
+    Lenth -= 1;//无备份数据无校验和
+  }
+  else
+  {
+    *(Temp_Pt + Lenth ) = ChkNum( Temp_Pt, Lenth );
+    for( i=0;i<4;i++)
+    {
+      if( E2PTab[i].DevAds == Dev_Ads )
+      {
+        BakNum = E2PTab[i].BakNum;
+        NextPage = E2PTab[i].NextPage;	
+        break;
+      }				
+    }		 
+  }
+  
+  for( i=0;i<BakNum;i++)
+  {
+    if( E2Pwrite( E2P_Dest, Temp_Pt, Lenth+1, Dev_Ads ) != 0) 
+      Flag.AlarmFlg[0] |= F_AlarmE2P;
+    else 
+      Flag.AlarmFlg[0] &= ~F_AlarmE2P;
+  }
+  return 0;
 }
 
 /**********************************************************************
@@ -350,89 +360,87 @@ short E2P_Write( unsigned short E2P_Dest, unsigned char* RAM_Src, short Lenth, s
 **********************************************************************/
 short E2P_Read( unsigned char* RAM_Dest,unsigned short E2P_Src, short Lenth, short Dev_Ads )
 {
-	unsigned char Buffer[MAX_TMP];
-	unsigned char* Temp_Pt;
-	short i=0;
-	short NextPage;
-	unsigned char BakNum;
-	unsigned char CorrectMode;
-    unsigned char Check;
-
-	Temp_Pt = Buffer;
-//	WDTCTL = WDT_ARST_1000;
-	HT_FreeDog();
-	for( i=0;i<4;i++)
-	{
-		if( E2PTab[i].DevAds == Dev_Ads )
-		{
-			BakNum = E2PTab[i].BakNum;
-			NextPage = E2PTab[i].NextPage;	
-			CorrectMode = E2PTab[i].CorrectMode;
-			break;
-		}				
-	}		 
-	if(( Dev_Ads == DataEAds )&&( E2P_Src >= (E2P_PGLEN * 2) )) 
-	{
+  unsigned char Buffer[MAX_TMP];
+  unsigned char* Temp_Pt;
+  short i=0;
+  short NextPage;
+  unsigned char BakNum;
+  unsigned char CorrectMode;
+  unsigned char Check;
+  
+  Temp_Pt = Buffer;
+  HT_FreeDog();
+  for( i=0;i<4;i++)
+  {
+    if( E2PTab[i].DevAds == Dev_Ads )
+    {
+      BakNum = E2PTab[i].BakNum;
+      NextPage = E2PTab[i].NextPage;	
+      CorrectMode = E2PTab[i].CorrectMode;
+      break;
+    }				
+  }		 
+  if(( Dev_Ads == DataEAds )&&( E2P_Src >= (E2P_PGLEN * 2) )) 
+  {
 //		BakNum = 1;		//事件记录无备份
-		if( E2PRead( Temp_Pt, E2P_Src, Lenth, Dev_Ads ) != 0 )
-		{
-			Flag.AlarmFlg[0] |= F_AlarmE2P;
-			Flag.BatState |= F_E2PCheck;		//EC		//E2PROM校验和错
-		}
-		else Flag.BatState &= ~F_E2PCheck;		//E2PROM正常	//10.11.05
-	    memcpy( RAM_Dest, Temp_Pt, Lenth );
-		return 0;		
-	}	
-
-	for( i=0;i<BakNum;i++ )
-	{
-		if( E2PRead( Temp_Pt, E2P_Src, Lenth+1, Dev_Ads ) != 0 )
-		{
+    if( E2PRead( Temp_Pt, E2P_Src, Lenth, Dev_Ads ) != 0 )
+    {
+      Flag.AlarmFlg[0] |= F_AlarmE2P;
+      Flag.BatState |= F_E2PCheck;		//EC		//E2PROM校验和错
+    }
+    else 
+      Flag.BatState &= ~F_E2PCheck;		//E2PROM正常	//10.11.05
+    memcpy( RAM_Dest, Temp_Pt, Lenth );
+    return 0;		
+  }	
+  
+  for( i=0;i<BakNum;i++ )
+  {
+    if( E2PRead( Temp_Pt, E2P_Src, Lenth+1, Dev_Ads ) != 0 )
+    {
 			//Flag.ErrFlg |= F_ErrE2P;
-			Flag.AlarmFlg[0] |= F_AlarmE2P;
-			E2P_Src += NextPage;
-			Flag.BatState |= F_E2PCheck;		//EC		//E2PROM校验和错
-			continue;		
-		}
+      Flag.AlarmFlg[0] |= F_AlarmE2P;
+      E2P_Src += NextPage;
+      Flag.BatState |= F_E2PCheck;		//EC		//E2PROM校验和错
+      continue;		
+    }
 		//else Flag.ErrFlg &= ~F_ErrE2P;
-		else Flag.AlarmFlg[0] &= ~F_AlarmE2P;
-        Check = *(Temp_Pt + Lenth );
+    else 
+      Flag.AlarmFlg[0] &= ~F_AlarmE2P;
+    Check = *(Temp_Pt + Lenth );
 //		if( *(Temp_Pt + Lenth ) != ChkNum( Temp_Pt, Lenth ) )
-        if( Check != ChkNum( Temp_Pt, Lenth ) )
-		{
-			E2P_Src += NextPage;
-			Flag.BatState |= F_E2PCheck;		//EC		//E2PROM校验和错
-			continue;		
-		}
-		else Flag.BatState &= ~F_E2PCheck;		//EC
-		break;
-	}
+    if( Check != ChkNum( Temp_Pt, Lenth ) )
+    {
+      E2P_Src += NextPage;
+      Flag.BatState |= F_E2PCheck;		//EC		//E2PROM校验和错
+      continue;		
+    }
+    else 
+      Flag.BatState &= ~F_E2PCheck;		//EC
+    break;
+  }
 //	WDTCTL = WDT_ARST_1000;
-	HT_FreeDog();
-	if( i != 0) 
-	{
-		//for(;i>=0;i--)
-		for(;i>0;i--)
-		{
-			if( i == BakNum )
-			{
-				if( CorrectMode == 1 ) 
-				{
-					//RAM_Fill( Temp_Pt, Lenth, 0x00);
-					memset( Temp_Pt, 0,Lenth);	
-					*(Temp_Pt + Lenth ) = 0xA5;			
-				}	
-				else break;
-			}	
-			//E2P_Write( E2P_Src - NextPage, Temp_Pt, Lenth, Dev_Ads );
-//			_E2Pwrite( E2P_Src - ( NextPage * ( BakNum - i )), Temp_Pt, Lenth+1, Dev_Ads );
-//			E2Pwrite( E2P_Src - ( NextPage * ( BakNum - i )), Temp_Pt, Lenth+1, Dev_Ads );
-			E2P_Src -= NextPage;
-			E2Pwrite( E2P_Src, Temp_Pt, Lenth+1, Dev_Ads );
-		}	
-	}
-	memcpy( RAM_Dest, Temp_Pt, Lenth );
-	return	0;	
+  HT_FreeDog();
+  if( i != 0)
+  {
+    for(;i>0;i--)
+    {
+      if( i == BakNum )
+      {
+        if( CorrectMode == 1 ) 
+        {
+          memset( Temp_Pt, 0,Lenth);
+          *(Temp_Pt + Lenth ) = 0xA5;			
+        }
+        else 
+          break;
+      }	
+      E2P_Src -= NextPage;
+      E2Pwrite( E2P_Src, Temp_Pt, Lenth+1, Dev_Ads );
+    }
+  }
+  memcpy( RAM_Dest, Temp_Pt, Lenth );
+  return 0;	
 }
 
 short E2P_RData( unsigned char* RAM_Dest,unsigned short E2P_Src, short Lenth )
