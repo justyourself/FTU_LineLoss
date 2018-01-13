@@ -33,6 +33,7 @@ static int Blk_size;
 static int Blk_ptr;
 static int Record_no;
 static int Record_num;
+static int m_Channel_no;
 int Assamble_XmlFormat(int sect,char *In,char *Out)
 {
   int Len=0,i;
@@ -44,15 +45,17 @@ int Assamble_XmlFormat(int sect,char *In,char *Out)
   for(i=0;i<8;++i)
   {
     memcpy(&l_val,In+6+i*4,4);
-    f_val = l_val/1000;
-    sprintf(tmp,"\t\t<DI val=\"%.3f\"/>\r\n",f_val);
+    f_val = l_val;
+    f_val = f_val/100;
+    sprintf(tmp,"\t\t<DI val=\"%.2f\"/>\r\n",f_val);
     memcpy(Out+Len,tmp,strlen(tmp));
     Len += strlen(tmp);
   }
   for(i=0;i<4;++i)
   {
     memcpy(&l_val,In+38+i*4,4);
-    f_val = l_val/1000;
+    f_val = l_val;
+    f_val = f_val/1000;
     sprintf(tmp,"\t\t<DI val=\"%.3f\"/>\r\n",f_val);
     memcpy(Out+Len,tmp,strlen(tmp));
     Len += strlen(tmp);
@@ -60,6 +63,64 @@ int Assamble_XmlFormat(int sect,char *In,char *Out)
   strcpy(Out+Len,"\t</DataRec>\r\n");
   Len += strlen("\t</DataRec>\r\n");
   return Len; 
+}
+//unsigned short InfoAddrList[12]={0x6401,0x};
+int Assamble_MsgFormat(int sect,char *In,char *Out)
+{
+  int Len=0,i;
+  unsigned long l_val;
+  float f_val;
+  char tmp[64];
+  sprintf(Out,"12,%04d-%02d-%02d %02d:%02d:%02d",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len = strlen(Out);
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&l_val,In+6+i*4,4);
+    f_val = l_val;
+    f_val = f_val/100;
+    sprintf(tmp,"%.2f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+            
+  for(i=0;i<4;++i)
+  {
+    memcpy(&l_val,In+38+i*4,4);
+    f_val = l_val;
+    f_val = f_val/1000;
+    sprintf(tmp,",%04X,",0x4008+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=10)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',10-strlen(tmp));
+      Len += 10-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  memcpy(Out+Len,"\r\n",2);
+  Len +=2;
+  return Len;
 }
 
 typedef struct {
@@ -99,60 +160,80 @@ struct IEC101_STRUCT *lpIEC101=&m_IEC101;	//IEC101规约私用数据指针
 int Send_LoadXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
+      char tmp[64];
       strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       strcpy(buf + byMsgNum,"FIXD");
       byMsgNum += strlen("FIXD");
-      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
-      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//96\" interval=\"15min\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");
+      sprintf(tmp,"%d\" interval=\"15min\">\r\n",Record_num);
+      strcpy(buf + byMsgNum,tmp);
+      byMsgNum += strlen(tmp);
       return byMsgNum;
 }
 
 int Send_RandXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
+      char tmp[64];
       strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       strcpy(buf + byMsgNum,"RAND");
       byMsgNum += strlen("RAND");
-      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
-      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      sprintf(tmp,"%d\">\r\n",Record_num);
+      strcpy(buf + byMsgNum,tmp);
+      byMsgNum += strlen(tmp);
       return byMsgNum;
 }
 
 int Send_FrzdXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
+      char tmp[64];
       strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       strcpy(buf + byMsgNum,"FRZD");
       byMsgNum += strlen("FRZD");
-      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
-      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      sprintf(tmp,"%d\">\r\n",Record_num);
+      strcpy(buf + byMsgNum,tmp);
+      byMsgNum += strlen(tmp);
       return byMsgNum;
 }
 
 int Send_SharpdXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
+      char tmp[64];
       strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       strcpy(buf + byMsgNum,"SHARPD");
       byMsgNum += strlen("SHARPD");
-      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
-      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      sprintf(tmp,"%d\">\r\n",Record_num);
+      strcpy(buf + byMsgNum,tmp);
+      byMsgNum += strlen(tmp);
       return byMsgNum;
 }
 
 int Send_MonthdXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
+      char tmp[64];
       strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
       strcpy(buf + byMsgNum,"MONTHD");
       byMsgNum += strlen("MONTHD");
-      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
-      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"3\">\r\n");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"");//3\">\r\n");
+      sprintf(tmp,"%d\">\r\n",Record_num);
+      strcpy(buf + byMsgNum,tmp);
+      byMsgNum += strlen(tmp);
       return byMsgNum;
 }
 
@@ -671,6 +752,8 @@ void SettimeToCan(u8* pbyBuf)
         pRTCTime[5] = pbyBuf[2] & 0x3F;
         pRTCTime[6] = (u8)(wTotalMs / 1000);
         HT_RTC_Write(pRTCTime);
+        GetTime();
+        MoveCurrentTimeBCD_Hex();
 #endif        
 }
 //从动应用层接收处理函数
@@ -1824,6 +1907,34 @@ u8 SendFileInfo(u8 bySendReason)
     p_filename += 1;
     strcpy(lpby + byMsgNum,p_filename);
     byMsgNum += strlen(p_filename);
+    Record_no=0;
+    if(strstr(lpIEC101->Fname,"FIXD"))
+    {
+        Record_num=Load_Record_Num();
+    }
+    else if(strstr(lpIEC101->Fname,"RAND"))
+    {
+      Record_num=Rand_Record_Num();
+    }
+    else if(strstr(lpIEC101->Fname,"FRZD"))
+    {
+        Record_num=Day_Record_Num();
+    }
+      else if(strstr(lpIEC101->Fname,"SHARPD"))
+      {
+        Record_num=Hour_Record_Num();
+      }
+      else if(strstr(lpIEC101->Fname,"MONTHD"))
+      {
+        Record_num=Month_Record_Num();
+      }
+      p_filename=strstr(lpIEC101->Fname,".");
+      if(p_filename)
+      {
+        m_Channel_no = *(p_filename-1)-0x30 + (*(p_filename-2)-0x30)*10;
+        if(m_Channel_no)
+          m_Channel_no -= 1;
+      }
   }
 #endif  
   strcpy(lpby + byMsgNum,"  v1.0\r\n");
@@ -1842,6 +1953,7 @@ u8 SendFileData(u8 bySendReason)
 {
   char * lpby = (char *)lpIEC101->PSeAppLayer.lpByBuf;
   char tmpbuf[64];
+  int Len;
   u8 i,byMsgNum = 0,pos,bySum=0,j;
   u32 m_filelen;
   *(lpby + byMsgNum ++) = F_FR_NA_1;		// 210
@@ -1862,15 +1974,46 @@ u8 SendFileData(u8 bySendReason)
   memcpy(lpby + byMsgNum,&(m_filelen),4);
   byMsgNum += 4;
   //if(lpIEC101->byPSGenStep<9)
+#if  0  
   if(Record_no<Record_num)
     *(lpby + byMsgNum ++) = 0x1;
   else
     *(lpby + byMsgNum ++) = 0x0;
+#endif  
   pos = byMsgNum;
+  byMsgNum ++;//
   if(strstr(lpIEC101->Fname,".msg"))
   {
-    strcpy(lpby + byMsgNum,"12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
-    byMsgNum += strlen("12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
+    //strcpy(lpby + byMsgNum,"12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
+    //byMsgNum += strlen("12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
+    if(Record_no<Record_num)
+    {
+      //Get_LoadData(Record_no,m_Channel_no,tmpbuf);
+      if(strstr(lpIEC101->Fname,"FIXD"))
+      {
+        Get_LoadData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"RAND"))
+      {
+        Get_RandData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"FRZD"))
+      {
+        Get_DayData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"SHARPD"))
+      {
+        Get_MonthData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"MONTHD"))
+      {
+        Get_MonthData(Record_no,m_Channel_no,tmpbuf);
+      }
+      Blk_size=Assamble_MsgFormat(Record_no,tmpbuf,Block_buf);
+      memcpy(lpby + byMsgNum,Block_buf,Blk_size);
+      byMsgNum += Blk_size;
+    }
+    Blk_size =0;
     if(++Record_no>=Record_num)
     {
       lpIEC101->byPSGenStep=254;
@@ -1905,6 +2048,7 @@ u8 SendFileData(u8 bySendReason)
       //byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
       break;
     case 3:
+#if 0      
       strcpy(lpby + byMsgNum,"\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
     \t\t<DI ioa=\"25602\" type=\"float\" unit=\"kVARh\" />\r\n \
     \t\t<DI ioa=\"25603\" type=\"float\" unit=\"kVARh\" />\r\n \
@@ -1913,8 +2057,12 @@ u8 SendFileData(u8 bySendReason)
     \t\t<DI ioa=\"25602\" type=\"float\" unit=\"kVARh\" />\r\n \
     \t\t<DI ioa=\"25603\" type=\"float\" unit=\"kVARh\" />\r\n \
     \t\t<DI ioa=\"25604\" type=\"float\" unit=\"kVARh\" />\r\n");
+#else
+    byMsgNum += Send_XmlDataType1(lpby + byMsgNum);
+#endif    
       break;
     case 4:
+#if 0      
       strcpy(lpby + byMsgNum,"\t\t<DI ioa=\"25601\" type=\"float\" unit=\"kWh\" />\r\n \
     \t\t<DI ioa=\"25605\" type=\"float\" unit=\"kVARh\" />\r\n \
     \t\t<DI ioa=\"25606\" type=\"float\" unit=\"kVARh\" />\r\n \
@@ -1923,8 +2071,12 @@ u8 SendFileData(u8 bySendReason)
     \t\t<DI ioa=\"25605\" type=\"float\" unit=\"kVARh\" />\r\n \
     \t\t<DI ioa=\"25606\" type=\"float\" unit=\"kVARh\" />\r\n \
     \t\t<DI ioa=\"25607\" type=\"float\" unit=\"kVARh\" />\r\n");
+#else
+    byMsgNum += Send_XmlDataType2(lpby + byMsgNum);
+#endif    
       break;
     case 5:
+#if 0      
       strcpy(lpby + byMsgNum,"\t\t<DI ioa=\"16392\" type=\"float\" unit=\"W\" />\r\n \
     \t\t<DI ioa=\"16393\" type=\"float\" unit=\"W\" />\r\n \
     \t\t<DI ioa=\"16394\" type=\"float\" unit=\"W\" />\r\n \
@@ -1935,8 +2087,11 @@ u8 SendFileData(u8 bySendReason)
     \t\t<DI ioa=\"16394\" type=\"float\" unit=\"W\" />\r\n \
     \t\t<DI ioa=\"16395\" type=\"float\" unit=\"W\" />\r\n \
   \t</DataAttr>\r\n");
-    Record_no=0;
-    Record_num=10;
+#else
+    byMsgNum += Send_XmlDataType3(lpby + byMsgNum);
+#endif    
+    //Record_no=0;
+    //Record_num=10;
     break;
     default:
 #if 0      
@@ -1980,21 +2135,49 @@ u8 SendFileData(u8 bySendReason)
 #endif
       if(Blk_size<=Blk_ptr)
       {
-        Get_LoadData(Record_no,0,tmpbuf);
-        Blk_size=Assamble_XmlFormat(Record_no,tmpbuf,Block_buf);
-        Blk_ptr=0;
-        Record_no++;
+        if(Record_no<Record_num)
+        {
+          //Get_LoadData(Record_no,m_Channel_no,tmpbuf);
+          if(strstr(lpIEC101->Fname,"FIXD"))
+      {
+        Get_LoadData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"RAND"))
+      {
+        Get_RandData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"FRZD"))
+      {
+        Get_DayData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"SHARPD"))
+      {
+        Get_MonthData(Record_no,m_Channel_no,tmpbuf);
+      }
+      else if(strstr(lpIEC101->Fname,"MONTHD"))
+      {
+        Get_MonthData(Record_no,m_Channel_no,tmpbuf);
+      }
+          Record_no++;
+          Blk_size=Assamble_XmlFormat(Record_no,tmpbuf,Block_buf);
+          Blk_ptr=0;
+        }
         if(Record_no>=Record_num)
         {
           strcpy(Block_buf + Blk_size,"</DataFile>\r\n");
           Blk_size += strlen("</DataFile>\r\n");
         }
       }
-      if((Blk_size-Blk_ptr)>220)
+      if((Blk_size-Blk_ptr)>200)
       {
-        memcpy(lpby + byMsgNum,Block_buf+Blk_ptr,220); 
-        byMsgNum +=220;
-        Blk_ptr +=220;
+        for(Len=200;Len<220;++Len)
+        {
+          if((Block_buf[Blk_ptr+Len-2]=='\r') &&  (Block_buf[Blk_ptr+Len-1]=='\n'))
+            break;
+        }
+        memcpy(lpby + byMsgNum,Block_buf+Blk_ptr,Len); 
+        byMsgNum +=Len;
+        Blk_ptr +=Len;
       }
       else
       {
@@ -2009,6 +2192,11 @@ u8 SendFileData(u8 bySendReason)
       break;
     }
   }
+  if((Record_no<Record_num) || (Blk_ptr<Blk_size))
+    *(lpby + pos) = 0x1;
+  else
+    *(lpby + pos) = 0x0;
+  pos++;
    for(j=pos;j<byMsgNum;j++)
     bySum = bySum + *(lpby + j);
   *(lpby + byMsgNum ++) = bySum;
@@ -2026,8 +2214,6 @@ void File_Send(void)
       byMsgNum=SendFileInfo(1);
       lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
       lpIEC101->PSeAppLayer.LinkFunCode = 3;
-      Record_no=0;
-      Record_num=10;
     }
     else if(lpIEC101->byPSGenStep<254)
     {

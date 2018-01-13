@@ -739,18 +739,27 @@ short Write_Flash( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned shor
   else 
     return -1;
 }
-
+static char m_Databuf[4096];
 short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned long Fls_Sta, unsigned long Fls_End,unsigned short Lenth )
 {
   unsigned short Buf_Addr;
   unsigned short Len;
   unsigned long Value;
+#if 0  
   Value = Fls_Dest+Lenth;
-  if(( Value / 4096 ) != ( Fls_Dest / 4096 ))			//写数据空间超过4K分界线
+  if((( Value / 4096 ) != ( Fls_Dest / 4096 )) || ((Fls_Dest%4096)==0))			//写数据空间超过4K分界线
   {
     if( Value >= Fls_End ) Value = Value - Fls_End + Fls_Sta; 
     BlockErase( Value );
   }
+#else
+  Read_Flash(m_Databuf,Fls_Dest&(~0xfff),4096);
+  memcpy(m_Databuf+(Fls_Dest&(0xfff)),RAM_Src,Lenth);
+  BlockErase(Fls_Dest&(~0xfff));
+  Fls_Dest &= (~0xfff);
+  Lenth=4096;
+  RAM_Src=m_Databuf;
+#endif  
   while( Lenth > 0 )
   {
     Buf_Addr = Fls_Dest % FLS_PAGE;

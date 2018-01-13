@@ -34,6 +34,20 @@
 #define	MonthdRecord_Time                ShrpdRecord_Time+10  //考核日冻结
 #define	EventdRecord_Time                MonthdRecord_Time+10
 
+#define E2P_PGLEN		         0x1000//0x0B00//0xAAA//0x1554		//数据备份页长度
+
+#define E2ONE_RECORD_LEN                 54
+#define MONTH_RECORD_NUM                 12
+#define E2ONE_RECORD_SIZE                60
+#define MONTH_RECORD_SIZE                (MONTH_RECORD_NUM*E2ONE_RECORD_SIZE)
+
+#define RAND_RECORD_NUM                   3
+#define RAND_RECORD_SIZE                (RAND_RECORD_NUM*E2ONE_RECORD_SIZE)
+
+#define MONTH_DATA_ADDR                  0
+#define RAND_DATA_ADDR                   0x1680
+#define E2END_DATA_ADDR                 (RAND_DATA_ADDR+0x05A0)
+
 
 #define ONE_RECORD_LEN                   54
 #define LOAD_RECORD_NUM                  96
@@ -46,19 +60,15 @@
 #define HOUR_RECORD_NUM                  264
 #define HOUR_RECORD_SIZE                 (HOUR_RECORD_NUM*ONE_RECORD_SIZE)
 
+
+//FLASH
 #define LOAD_DATA_ADDR                   0
 #define DAY_DATA_ADDR                    0xC000 //负荷记录留48k空间
 #define HOUR_DATA_ADDR                  (0xC000+0x5000) //20k空间
 #define END_DATA_ADDR                  (HOUR_DATA_ADDR+0x21000) //132K空间
 
 
-
-#define E2P_PGLEN		0x1000//0x0B00//0xAAA//0x1554		//数据备份页长度
-
-
 #define FlashChip		YesCheck
-
-
 
 ///////////   FLASH	//前300页为负荷记录
 #if (FlashChip == YesCheck)

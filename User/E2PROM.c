@@ -96,22 +96,28 @@ void GetI2CPara( I2CPARA* I2CPara, unsigned short Devads )	//获取该I2C接口芯片在
 short I2CMtData( I2CPARA* I2CPara, unsigned char SendData )			//I2C总线发送1字节	
 {
 	short i;
-	
+	*I2CPara->SDA_DIR |= I2CPara->SDA;
+        *I2CPara->SDA_IN &=(~I2CPara->SCL);
 	for( i=0;i<8;i++ )
 	{
 //		Delay(5);				//10.08.17
 		Delay(3);				//14.09.03
-		if(( SendData & ByteBit[7-i] ) != 0 ) *I2CPara->SDA_DIR &= ~I2CPara->SDA;
+		if(( SendData & ByteBit[7-i] ) != 0 ) 
+                {
+                  //*I2CPara->SDA_DIR &= ~I2CPara->SDA;
+                  *I2CPara->SDA_IN |= I2CPara->SDA;
+                }
 		else
-			{
-			*I2CPara->SDA_DIR |= I2CPara->SDA;
-			HT_GPIOE->PTCLR |= I2CPara->SDA;
-			}
+                {
+                 // *I2CPara->SDA_DIR |= I2CPara->SDA;
+                  //HT_GPIOC->PTCLR |= I2CPara->SDA;
+                  *I2CPara->SDA_IN &= (~I2CPara->SDA);
+                }
 		Delay(5);
-//		Delay(10);				//10.08.17
+		//Delay(10);				//10.08.17
 		*I2CPara->SCL_DIR &= ~I2CPara->SCL;
 		Delay(5);
-//		Delay(10);				//10.08.17	
+		//Delay(10);				//10.08.17	
 		*I2CPara->SCL_DIR |= I2CPara->SCL;
 	}
 	Delay(5);
@@ -119,8 +125,10 @@ short I2CMtData( I2CPARA* I2CPara, unsigned char SendData )			//I2C总线发送1字节
 	Delay(5);
 	*I2CPara->SCL_DIR &= ~I2CPara->SCL;
 	Delay(5);
-	if(( *I2CPara->SDA_IN & I2CPara->SDA ) != 0 ) i = 1;		//检测ACK信号
-	else  i = 0;
+	if(( *I2CPara->SDA_IN & I2CPara->SDA ) != 0 ) 
+          i = 1;		//检测ACK信号
+	else  
+          i = 0;
 	*I2CPara->SCL_DIR |= I2CPara->SCL;
 	Delay(3);				//14.09.03
 	return i;	
@@ -145,18 +153,21 @@ short I2CStart( I2CPARA* I2CPara, unsigned short E2P_Addr, unsigned short Devads
 		CtlByte |= E2PAddr;
 	}		
 	Delay(3);				//14.09.03
-	*I2CPara->SDA_DIR |= I2CPara->SDA;	
-	HT_GPIOE->PTCLR |= I2CPara->SDA;
+	*I2CPara->SDA_DIR |= I2CPara->SDA;
+        *I2CPara->SDA_IN &= (~I2CPara->SDA);	
+	//HT_GPIOC->PTCLR |= I2CPara->SDA;
 	Delay(5);
 	*I2CPara->SCL_DIR |= I2CPara->SCL;
+        *I2CPara->SDA_IN &=(~I2CPara->SCL);
 	return I2CMtData( I2CPara, CtlByte );				
 }
 
 short I2CErr( I2CPARA* I2CPara )			//I2C总线发送1字节	
 {
 	Delay(3);				//14.09.03
-	*I2CPara->SDA_DIR |= I2CPara->SDA;	
-	HT_GPIOE->PTCLR |= I2CPara->SDA;
+	*I2CPara->SDA_DIR |= I2CPara->SDA;
+        *I2CPara->SDA_IN &= (~I2CPara->SDA);	
+	//HT_GPIOC->PTCLR |= I2CPara->SDA;
 	Delay(5);
 	*I2CPara->SCL_DIR &= ~I2CPara->SCL;
 	Delay(5);
@@ -228,15 +239,19 @@ short E2PRead( unsigned char* RAM_Addr, unsigned short E2P_Addr, unsigned short 
 //			else *I2CPara->SDA_DIR |= I2CPara->SDA;
 			*I2CPara->SCL_DIR &= ~I2CPara->SCL;
 			Delay(5);
-			if(( *I2CPara->SDA_IN & I2CPara->SDA ) != 0 ) *(RAM_Addr+i) |= ByteBit[7-j];	
+			if(( *I2CPara->SDA_IN & I2CPara->SDA ) != 0 ) 
+                          *(RAM_Addr+i) |= ByteBit[7-j];	
 			*I2CPara->SCL_DIR |= I2CPara->SCL;
 			Delay(5);
 		}	
-		if( i == (Lenth-1) ) *I2CPara->SDA_DIR &= ~I2CPara->SDA;
+		if( i == (Lenth-1) ) 
+                  *I2CPara->SDA_DIR &= ~I2CPara->SDA;
 		else
-			{*I2CPara->SDA_DIR |= I2CPara->SDA;
-			HT_GPIOE->PTCLR |= I2CPara->SDA;
-			}
+                  {
+                      *I2CPara->SDA_DIR |= I2CPara->SDA;
+                      *I2CPara->SDA_IN &= (~I2CPara->SDA);
+			//HT_GPIOC->PTCLR |= I2CPara->SDA;
+                  }
 		Delay(5);				//14.09.03
 		*I2CPara->SCL_DIR &= ~I2CPara->SCL;	
 		Delay(5);
@@ -245,8 +260,8 @@ short E2PRead( unsigned char* RAM_Addr, unsigned short E2P_Addr, unsigned short 
 	}
 	
 	*I2CPara->SDA_DIR |= I2CPara->SDA;		//STOP
-	HT_GPIOE->PTCLR |= I2CPara->SDA;
-	
+	//HT_GPIOC->PTCLR |= I2CPara->SDA;
+	*I2CPara->SDA_IN &= (~I2CPara->SDA);
 	Delay(5);				//14.09.03
 	*I2CPara->SCL_DIR &= ~I2CPara->SCL;		
 	Delay(5);
@@ -296,8 +311,9 @@ short E2Pwrite( unsigned short E2P_Addr, unsigned char* RAM_Addr, unsigned short
 			if( I2CMtData( I2CPara, *(RAM_Addr+i) ) != 0 ) return I2CErr( I2CPara );			
 		}	
 		Delay(5);				//10.08.17
-		*I2CPara->SDA_DIR |= I2CPara->SDA;		//STOP		
-		HT_GPIOE->PTCLR |= I2CPara->SDA;
+		*I2CPara->SDA_DIR |= I2CPara->SDA;		//STOP	
+                *I2CPara->SDA_IN &= (~I2CPara->SDA);
+		//HT_GPIOC->PTCLR |= I2CPara->SDA;
 		Delay(5);
 		*I2CPara->SCL_DIR &= ~I2CPara->SCL;
 		Delay(5);

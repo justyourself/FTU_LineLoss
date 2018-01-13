@@ -74,7 +74,7 @@ struct IEC101_STRUCT
   u32 wRecvLen;
   u8 PReMsgType;
   u8 byReason;
-  u8 byPSGenStep;
+  u32 byPSGenStep;
   u8 frameno;
   u8 TypeProtocol;
   u8 byPSDdStep;
