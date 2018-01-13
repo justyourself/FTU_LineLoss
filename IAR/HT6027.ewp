@@ -596,7 +596,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>HT6027_Line.bin</state>
+          <state>HT6027.bin</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -604,7 +604,7 @@
         </option>
         <option>
           <name>OOCObjCopyEnable</name>
-          <state>1</state>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -686,11 +686,11 @@
         </option>
         <option>
           <name>IlinkMapFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogFile</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkLogInitialization</name>
