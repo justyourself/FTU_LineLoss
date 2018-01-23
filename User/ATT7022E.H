@@ -1,6 +1,6 @@
-void ATT7022EStateCheckRun( void );
-short Read_ATTAmper( unsigned char Cmd, unsigned char* Data );
-short GetATT7022ECalibrateReg( unsigned char* ComBuf );
+void ATT7022EStateCheckRun( unsigned short Devads );
+short Read_ATTAmper( unsigned char Cmd, unsigned char* Data ,unsigned short Devads);
+short GetATT7022ECalibrateReg( unsigned char* ComBuf ,unsigned short Devads);
 #if ( NEW7022E == YesCheck )
 short UpdateTPSoffset(void);				
 #endif

@@ -850,6 +850,361 @@ void Energy_Read(void)
 
 #endif
 
+
+void GetSPIPara( SPIPARA* SPIPara, unsigned short Devads )	//获取该SPI接口芯片在CPU上的IO口配置
+{
+	switch( Devads )
+	{
+		case 0:		
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOA->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOA->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOA->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOA->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOA->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOA->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOA_EMU_CS1;
+			SPIPara->AD_RST = GPIOA_EMU_RST1;
+			break;
+		case 1:		
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOD->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOD->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOD->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOD->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOD->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOD->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOD_EMU_CS2;
+			SPIPara->AD_RST = GPIOD_EMU_RST2;
+			break;
+		case 2:		
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOD->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOD->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOD->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOD->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOD->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOD->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOD_EMU_CS3;
+			SPIPara->AD_RST = GPIOD_EMU_RST3;
+			break;
+		case 3:		
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOG->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOG->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOG->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOD->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOD->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOD->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOG_EMU_CS4;
+			SPIPara->AD_RST = GPIOD_EMU_RST4;
+			break;
+		case 4:		
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOA->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOA->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOA->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOD->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOD->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOD->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOA_EMU_CS5;
+			SPIPara->AD_RST = GPIOD_EMU_RST5;
+			break;
+		case 5:		
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOH->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOH->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOH->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOA->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOA->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOA->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOH_EMU_CS6;
+			SPIPara->AD_RST = GPIOA_EMU_RST6;
+			break;
+		case 6:	
+                        HT_GPIOB->IOCFG &= (~GPIOB_EMU_CS7);
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOB->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOB->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOB->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOA->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOA->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOA->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOB_EMU_CS7;
+			SPIPara->AD_RST = GPIOA_EMU_RST7;
+			break;						
+		default: 
+                        HT_GPIOB->IOCFG &= (~GPIOB_EMU_RST8);
+			SPIPara->AD_CS_PTDIR = (unsigned long*)&HT_GPIOH->PTDIR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTSET = (unsigned long*)&HT_GPIOH->PTSET;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_CS_PTCLR = (unsigned long*)&HT_GPIOH->PTCLR;//(unsigned char*)&PDIR_SDA;
+			SPIPara->AD_RST_PTDIR = (unsigned long*)&HT_GPIOB->PTDIR;//(unsigned char*)&PDIR_SCL;
+			SPIPara->AD_RST_PTSET = (unsigned long*)&HT_GPIOB->PTSET;//(unsigned char*)&PDIR_SCL;	
+			SPIPara->AD_RST_PTCLR = (unsigned long*)&HT_GPIOB->PTCLR;//(unsigned char*)&PDIR_SCL;			
+			SPIPara->AD_CS = GPIOH_EMU_CS8;
+			SPIPara->AD_RST = GPIOB_EMU_RST8;
+			break;				
+	}
+}
+
+#if( AllFail7022Chk == YesCheck )							//10.11.11
+void WriteATByte( unsigned char Cmd )
+{
+	unsigned short i;
+	
+	for(i=0;i<8;i++ )
+	{
+		Delay(DELEY2);	
+//		PDIR_ADSCLK &= ~P_ADSCLK;
+		HT_GPIOG->PTSET |= GPIOG_EMU_CLK;//POUT_ADSCLK |= P_ADSCLK;
+		Delay(DELEY4);	
+//		if(( Cmd & ByteBit[7-i] ) != 0 ) PDIR_ADDIN &= ~P_ADDIN;
+//		else PDIR_ADDIN |= P_ADDIN;
+		if(( Cmd & ByteBit[7-i] ) != 0 ) HT_GPIOG->PTSET |= GPIOG_EMU_DIN;//POUT_ADDIN |= P_ADDIN;
+		else HT_GPIOG->PTCLR |= GPIOG_EMU_DIN; //POUT_ADDIN &= ~P_ADDIN;
+		Delay(DELEY2);								//11.08.03
+//		PDIR_ADSCLK |= P_ADSCLK;
+		HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;//POUT_ADSCLK &= ~P_ADSCLK;
+		Delay(DELEY2);	
+	}	
+}
+
+//**********************************************************************
+// SPI READ
+//**********************************************************************
+void ATT7022Rd(unsigned char Cmd, unsigned char* Data, short Length ,unsigned short Devads)
+{
+	unsigned short i,j;
+	unsigned char Temp;
+	
+	unsigned char Buff1[18];
+	SPIPARA* SPIPara;	
+	SPIPara = (SPIPARA*)Buff1;
+	GetSPIPara( SPIPara, Devads );
+	
+//	PDIR_ADCS &= ~P_ADCS;
+	*SPIPara->AD_CS_PTSET |= SPIPara->AD_CS;//HT_GPIOC->PTSET |= GPIOC_EMU_CS;//POUT_ADCS |= P_ADCS;
+	Delay(DELEY2);	
+//	PDIR_ADSCLK |= P_ADSCLK;
+	HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;//POUT_ADSCLK &= ~P_ADSCLK;
+	Delay(DELEY2);	
+//	PDIR_ADCS |= P_ADCS;
+	*SPIPara->AD_CS_PTCLR &= ~SPIPara->AD_CS;//HT_GPIOC->PTCLR |= GPIOC_EMU_CS;//POUT_ADCS &= ~P_ADCS;
+	Delay(DELEY5);
+	WriteATByte( Cmd );
+	Delay(DELEY5);
+	
+	for( i=0;i<Length;i++ )
+	{
+		Temp = 0;
+		for( j=0;j<8;j++ )
+		{
+			Delay(DELEY2);	
+//			PDIR_ADSCLK &= ~P_ADSCLK;
+			HT_GPIOG->PTSET |= GPIOG_EMU_CLK;//POUT_ADSCLK |= P_ADSCLK;
+			Delay(DELEY4);	
+			if(( HT_GPIOG->PTDAT & GPIOG_EMU_DOUT ) != 0 ) Temp |= ByteBit[7-j];//if(( PIN_MDOUT & P_MDOUT ) != 0 ) Temp |= ByteBit[7-j];
+//			PDIR_ADSCLK |= P_ADSCLK;
+			HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;//POUT_ADSCLK &= ~P_ADSCLK;
+			Delay(DELEY2);	
+		}	
+		*(Data+Length-1-i) = Temp; 		
+	}	
+//	PDIR_ADCS &= ~P_ADCS;
+	*SPIPara->AD_CS_PTSET |= SPIPara->AD_CS;//HT_GPIOC->PTSET |= GPIOC_EMU_CS;//POUT_ADCS |= P_ADCS;
+	Delay(DELEY2);	
+//	PDIR_ADSCLK &= ~P_ADSCLK;
+	HT_GPIOG->PTSET |= GPIOG_EMU_CLK;//POUT_ADSCLK |= P_ADSCLK;
+	Delay(DELEY2);	
+//    PDIR_ADDIN &= ~P_ADDIN;
+    	HT_GPIOG->PTSET |= GPIOG_EMU_DIN;//POUT_ADDIN |= P_ADDIN;
+	Delay(DELEY2);								//11.08.03
+}
+
+void ATT7022WR(unsigned char Cmd, unsigned char* Data, short Length,unsigned short Devads )
+{
+	unsigned short i;
+	
+	unsigned char Buff1[18];
+	SPIPARA* SPIPara;	
+	SPIPara = (SPIPARA*)Buff1;
+	GetSPIPara( SPIPara, Devads );
+	
+//	PDIR_ADCS &= ~P_ADCS;
+	*SPIPara->AD_CS_PTSET |= SPIPara->AD_CS;//HT_GPIOC->PTSET |= GPIOC_EMU_CS;//POUT_ADCS |= P_ADCS;
+	Delay(DELEY2);	
+//	PDIR_ADSCLK |= P_ADSCLK;
+	HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;//POUT_ADSCLK &= ~P_ADSCLK;
+	Delay(DELEY2);	
+//	PDIR_ADCS |= P_ADCS;
+	*SPIPara->AD_CS_PTCLR &= ~SPIPara->AD_CS;//HT_GPIOC->PTCLR |= GPIOC_EMU_CS;//POUT_ADCS &= ~P_ADCS;
+	Delay(DELEY5);
+	WriteATByte( Cmd );
+	Delay(DELEY5);
+	
+	for( i=0;i<Length;i++ )
+	{
+		WriteATByte(*(Data+Length-1-i) );
+	}	
+//	PDIR_ADCS &= ~P_ADCS;
+	*SPIPara->AD_CS_PTSET |= SPIPara->AD_CS;//HT_GPIOC->PTSET |= GPIOC_EMU_CS;//POUT_ADCS |= P_ADCS;
+	Delay(DELEY2);	
+//	PDIR_ADSCLK &= ~P_ADSCLK;
+	HT_GPIOG->PTSET |= GPIOG_EMU_CLK;//POUT_ADSCLK |= P_ADSCLK;
+	Delay(DELEY2);	
+//	PDIR_ADDIN &= ~P_ADDIN;
+	HT_GPIOG->PTSET |= GPIOG_EMU_DIN;//POUT_ADDIN |= P_ADDIN;
+	Delay(DELEY2);								//11.08.03
+}
+#else
+void WriteATByte( unsigned char Cmd )
+{
+  unsigned short i;
+ // HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;
+  for(i=0;i<8;i++ )
+  {
+    Delay(DELEY2);	
+    //HT_GPIOG->PTDIR &= ~GPIOG_EMU_CLK;
+    HT_GPIOG->PTSET |= GPIOG_EMU_CLK;
+    Delay(DELEY4);	
+    if(( Cmd & ByteBit[7-i] ) != 0 ) 
+      //HT_GPIOG->PTDIR &= ~GPIOG_EMU_DIN;
+      HT_GPIOG->PTSET |= GPIOG_EMU_DIN;
+    else 
+      HT_GPIOG->PTCLR |= GPIOG_EMU_DIN;
+      //HT_GPIOG->PTDIR |= GPIOG_EMU_DIN;
+    Delay(DELEY2);
+    //HT_GPIOG->PTDIR |= GPIOG_EMU_CLK;
+    HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;
+    Delay(DELEY2);	
+  }	
+}
+
+//**********************************************************************
+// SPI READ
+//**********************************************************************
+void ATT7022Rd(unsigned char Cmd, unsigned char* Data, short Length,unsigned short Devads )
+{
+  unsigned short i,j;
+  unsigned char Temp;
+  unsigned char Buff1[32];
+  SPIPARA* SPIPara;	
+  SPIPara = (SPIPARA*)Buff1;
+  GetSPIPara( SPIPara, Devads );
+ // HT_GPIOG->PTUP |= GPIOG_EMU_DOUT;
+  //*SPIPara->AD_CS_PTDIR &= ~SPIPara->AD_CS;
+  HT_GPIOG->PTDIR   &= (~GPIOG_EMU_DOUT);
+  Delay(DELEY2);
+  HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;
+  HT_GPIOG->PTDIR |= GPIOG_EMU_CLK;
+  Delay(DELEY2);
+  *SPIPara->AD_CS_PTCLR = SPIPara->AD_CS;
+  *SPIPara->AD_CS_PTDIR |= SPIPara->AD_CS;
+  Delay(DELEY5);
+  WriteATByte( Cmd );
+  Delay(DELEY5);
+  for( i=0;i<Length;i++ )
+  {
+    Temp = 0;
+    for( j=0;j<8;j++ )
+    {
+      Delay(DELEY2);
+      //HT_GPIOG->PTDIR &= ~GPIOG_EMU_CLK;
+      HT_GPIOG->PTSET |= GPIOG_EMU_CLK;
+      Delay(DELEY4);	
+      if(( HT_GPIOG->PTDAT &GPIOG_EMU_DOUT ) != 0 ) 
+        Temp |= ByteBit[7-j];
+      HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;
+      //HT_GPIOG->PTDIR |= GPIOG_EMU_CLK;
+      Delay(DELEY2);	
+    }
+    *(Data+Length-1-i) = Temp; 		
+  }
+  //*SPIPara->AD_CS_PTDIR &= ~SPIPara->AD_CS;
+  *SPIPara->AD_CS_PTSET = SPIPara->AD_CS;
+  Delay(DELEY2);
+  //HT_GPIOG->PTDIR &= ~GPIOG_EMU_CLK;
+  Delay(DELEY2);	
+ // HT_GPIOG->PTDIR &= ~GPIOG_EMU_DIN;
+  Delay(DELEY2);
+}
+
+void ATT7022WR(unsigned char Cmd, unsigned char* Data, short Length,unsigned short Devads )
+{
+  unsigned short i;
+  unsigned char Buff1[32];
+  SPIPARA* SPIPara;	
+  SPIPara = (SPIPARA*)Buff1;
+  GetSPIPara( SPIPara, Devads );
+  //*SPIPara->AD_CS_PTDIR &= ~SPIPara->AD_CS;
+  Delay(DELEY2);	
+  HT_GPIOG->PTCLR |= GPIOG_EMU_CLK;
+  HT_GPIOG->PTDIR |= GPIOG_EMU_DIN;
+  Delay(DELEY2);
+  *SPIPara->AD_CS_PTDIR |= SPIPara->AD_CS;
+  *SPIPara->AD_CS_PTCLR |= SPIPara->AD_CS;
+  Delay(DELEY5);
+  WriteATByte( Cmd );
+  Delay(DELEY5);
+  for( i=0;i<Length;i++ )
+  {
+    WriteATByte(*(Data+Length-1-i) );
+  }
+  //*SPIPara->AD_CS_PTDIR &= ~SPIPara->AD_CS;
+  *SPIPara->AD_CS_PTSET |= SPIPara->AD_CS;
+  Delay(DELEY2);
+  //HT_GPIOG->PTDIR &= ~GPIOG_EMU_CLK;
+  HT_GPIOG->PTSET |= GPIOG_EMU_CLK;
+  Delay(DELEY2);
+  //HT_GPIOG->PTDIR &= ~GPIOG_EMU_DIN;
+  Delay(DELEY2);
+}
+
+
+
+void ATT7022WtReg(  unsigned char Cmd, unsigned char* Data ,unsigned short Devads)
+{
+  unsigned char Buff[3];
+  unsigned char* Point;
+  short i;
+  
+  Point = Buff;
+  HT_FreeDog();
+#if ( MEASCHIP == ATT7022E )									//11.09.24
+  *(Data+2) = 0;
+#endif
+  for( i=0;i<3;i++)
+  {
+    ATT7022WR( Cmd, Data, 3,Devads );
+    ATT7022Rd( ATSPIWBuffA, Point, 3,Devads );
+    if( Data_Comp(Data, Point, 3) == 0 ) break;
+  }
+}
+
+short ATT7022RdReg(  unsigned char Cmd, unsigned char* Data,unsigned short Devads )				//11.08.03
+{
+  unsigned char Buff[3];        
+  unsigned char* Point;
+  short i;
+  Point = Buff;
+  HT_FreeDog();
+  for( i=0;i<3;i++)	
+  {
+    ATT7022Rd( Cmd, Data, 3,Devads );
+    ATT7022Rd( ATSPIRBuff, Point, 3,Devads );
+    if( Data_Comp(Data, Point, 3) == 0 ) 
+    {
+      if(( IsAllData( Data, 3, 0x00 ) == 0 )||( IsAllData( Data, 3, 0xff ) == 0 )) 
+        SM.MeasChipErrCnt++;
+      else 
+        SM.MeasChipErrCnt = 0;
+      break;
+    }
+    else if( i>= 2 ) 
+    {
+      RAM_Fill( Data, 3 ); 
+      SM.MeasChipErrCnt++;
+      if( SM.MeasChipErrCnt > 80 ) SM.MeasChipErrCnt = 80;
+      return -1;													//11.08.03		
+    }
+  }
+  if( SM.MeasChipErrCnt > 80 ) SM.MeasChipErrCnt = 80;
+  return 0;															//11.08.03	
+}
+#endif
 void Read_CMonEC( unsigned char* Dest, unsigned short ECRgAds )
 	{
 		unsigned short i;

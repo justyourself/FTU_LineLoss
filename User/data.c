@@ -16,10 +16,12 @@ PARA		Para;				// 电表参数
 CLK	        Clk;
 FLAG		Flag;
 SRAM 		SM;
-
+METERSPEC	MSpec;				//电表规格		//新国网		//13.08.30
 REAL            Real_Data[8];
 ENERGY          Energy_Data[8];
-
+DISKEY		Disk;
+INTPULSE	ECInt;
+ECRAM           EC;
 const short DayTab[13] =
 {
 	0,0,31,59,90,120,151,181,212,243,273,304,334
@@ -282,4 +284,41 @@ const unsigned short Crc16tab[256] = {
 0x6b46, 0x7acf, 0x4854, 0x59dd, 0x2d62, 0x3ceb, 0x0e70, 0x1ff9,
 0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
+};
+
+
+const ECRg ECRgTab[ECUnitNum] =
+{
+	CMon_EC_Pp0,  FRCMon_EC_Pp0, EC.RCMon_EC_Pp0, &ECP.PL_CumPp[0], &ECP.PL_ChkPp[0], 0x01,			//当前有功正向电量
+	CMon_EC_Pn0,  FRCMon_EC_Pn0, EC.RCMon_EC_Pn0, &ECP.PL_CumPn[0], &ECP.PL_ChkPn[0], 0x01,			//当前有功反向电量
+        CMon_EC_Qp0,  FRCMon_EC_Qp0, EC.RCMon_EC_Qp0, &ECP.PL_CumQp[0], &ECP.PL_ChkQp[0], 0x01,			//当前无功正向电量
+	CMon_EC_Qn0,  FRCMon_EC_Qn0, EC.RCMon_EC_Qn0, &ECP.PL_CumQn[0], &ECP.PL_ChkQn[0], 0x01,			//当前无功反向电量
+        CMon_EC_Pp1,  FRCMon_EC_Pp1, EC.RCMon_EC_Pp1, &ECP.PL_CumPp[1], &ECP.PL_ChkPp[1], 0x01,			//当前有功正向电量
+	CMon_EC_Pn1,  FRCMon_EC_Pn1, EC.RCMon_EC_Pn1, &ECP.PL_CumPn[1], &ECP.PL_ChkPn[1], 0x01,			//当前有功反向电量
+        CMon_EC_Qp1,  FRCMon_EC_Qp1, EC.RCMon_EC_Qp1, &ECP.PL_CumQp[1], &ECP.PL_ChkQp[1], 0x01,			//当前无功正向电量
+	CMon_EC_Qn1,  FRCMon_EC_Qn1, EC.RCMon_EC_Qn1, &ECP.PL_CumQn[1], &ECP.PL_ChkQn[1], 0x01,			//当前无功反向电量
+        CMon_EC_Pp2,  FRCMon_EC_Pp2, EC.RCMon_EC_Pp2, &ECP.PL_CumPp[2], &ECP.PL_ChkPp[2], 0x01,			//当前有功正向电量
+	CMon_EC_Pn2,  FRCMon_EC_Pn2, EC.RCMon_EC_Pn2, &ECP.PL_CumPn[2], &ECP.PL_ChkPn[2], 0x01,			//当前有功反向电量
+        CMon_EC_Qp2,  FRCMon_EC_Qp2, EC.RCMon_EC_Qp2, &ECP.PL_CumQp[2], &ECP.PL_ChkQp[2], 0x01,			//当前无功正向电量
+	CMon_EC_Qn2,  FRCMon_EC_Qn2, EC.RCMon_EC_Qn2, &ECP.PL_CumQn[2], &ECP.PL_ChkQn[2], 0x01,			//当前无功反向电量
+        CMon_EC_Pp3,  FRCMon_EC_Pp3, EC.RCMon_EC_Pp3, &ECP.PL_CumPp[3], &ECP.PL_ChkPp[3], 0x01,			//当前有功正向电量
+	CMon_EC_Pn3,  FRCMon_EC_Pn3, EC.RCMon_EC_Pn3, &ECP.PL_CumPn[3], &ECP.PL_ChkPn[3], 0x01,			//当前有功反向电量
+        CMon_EC_Qp3,  FRCMon_EC_Qp3, EC.RCMon_EC_Qp3, &ECP.PL_CumQp[3], &ECP.PL_ChkQp[3], 0x01,			//当前无功正向电量
+	CMon_EC_Qn3,  FRCMon_EC_Qn3, EC.RCMon_EC_Qn3, &ECP.PL_CumQn[3], &ECP.PL_ChkQn[3], 0x01,			//当前无功反向电量
+        CMon_EC_Pp4,  FRCMon_EC_Pp4, EC.RCMon_EC_Pp4, &ECP.PL_CumPp[4], &ECP.PL_ChkPp[4], 0x01,			//当前有功正向电量
+	CMon_EC_Pn4,  FRCMon_EC_Pn4, EC.RCMon_EC_Pn4, &ECP.PL_CumPn[4], &ECP.PL_ChkPn[4], 0x01,			//当前有功反向电量
+        CMon_EC_Qp4,  FRCMon_EC_Qp4, EC.RCMon_EC_Qp4, &ECP.PL_CumQp[4], &ECP.PL_ChkQp[4], 0x01,			//当前无功正向电量
+	CMon_EC_Qn4,  FRCMon_EC_Qn4, EC.RCMon_EC_Qn4, &ECP.PL_CumQn[4], &ECP.PL_ChkQn[4], 0x01,			//当前无功反向电量
+        CMon_EC_Pp5,  FRCMon_EC_Pp5, EC.RCMon_EC_Pp5, &ECP.PL_CumPp[5], &ECP.PL_ChkPp[5], 0x01,			//当前有功正向电量
+	CMon_EC_Pn5,  FRCMon_EC_Pn5, EC.RCMon_EC_Pn5, &ECP.PL_CumPn[5], &ECP.PL_ChkPn[5], 0x01,			//当前有功反向电量
+        CMon_EC_Qp5,  FRCMon_EC_Qp5, EC.RCMon_EC_Qp5, &ECP.PL_CumQp[5], &ECP.PL_ChkQp[5], 0x01,			//当前无功正向电量
+	CMon_EC_Qn5,  FRCMon_EC_Qn5, EC.RCMon_EC_Qn5, &ECP.PL_CumQn[5], &ECP.PL_ChkQn[5], 0x01,			//当前无功反向电量
+        CMon_EC_Pp6,  FRCMon_EC_Pp6, EC.RCMon_EC_Pp6, &ECP.PL_CumPp[6], &ECP.PL_ChkPp[6], 0x01,			//当前有功正向电量
+	CMon_EC_Pn6,  FRCMon_EC_Pn6, EC.RCMon_EC_Pn6, &ECP.PL_CumPn[6], &ECP.PL_ChkPn[6], 0x01,			//当前有功反向电量
+        CMon_EC_Qp6,  FRCMon_EC_Qp6, EC.RCMon_EC_Qp6, &ECP.PL_CumQp[6], &ECP.PL_ChkQp[6], 0x01,			//当前无功正向电量
+	CMon_EC_Qn6,  FRCMon_EC_Qn6, EC.RCMon_EC_Qn6, &ECP.PL_CumQn[6], &ECP.PL_ChkQn[6], 0x01,			//当前无功反向电量
+        CMon_EC_Pp7,  FRCMon_EC_Pp7, EC.RCMon_EC_Pp7, &ECP.PL_CumPp[7], &ECP.PL_ChkPp[7], 0x01,			//当前有功正向电量
+	CMon_EC_Pn7,  FRCMon_EC_Pn7, EC.RCMon_EC_Pn7, &ECP.PL_CumPn[7], &ECP.PL_ChkPn[7], 0x01,			//当前有功反向电量
+        CMon_EC_Qp7,  FRCMon_EC_Qp7, EC.RCMon_EC_Qp7, &ECP.PL_CumQp[7], &ECP.PL_ChkQp[7], 0x01,			//当前无功正向电量
+	CMon_EC_Qn7,  FRCMon_EC_Qn7, EC.RCMon_EC_Qn7, &ECP.PL_CumQn[7], &ECP.PL_ChkQn[7], 0x01,			//当前无功反向电量
 };

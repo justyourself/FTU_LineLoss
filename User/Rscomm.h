@@ -1,26 +1,5 @@
-/**********************************
-	Baut rate Define (SMCLK=8M)
-**********************************/	
-/*
-#define Baut_300L		0x2A	
-#define Baut_300H		0x68
-#define Baut_600L		0x15
-#define Baut_600H		0x34
-#define Baut_1200L	0x0B
-#define Baut_1200H	0x1A
-#define Baut_2400L	0x05
-#define Baut_2400H	0x0D
-#define Baut_9600L	0x41
-#define Baut_9600H	0x03
-#define Baut_19200L	0xA1
-#define Baut_19200H	0x01
-*/
-
-
-/**********************************
-	Baut rate Define (SMCLK=4M)
-**********************************/	
-//#define Baut_300L	0x9D	
+#ifndef __RSCOMM_H__
+#define __RSCOMM_H__
 #define Baut_300L	0x9f	
 #define Baut_300H	0x36
 //#define Baut_300M	0xFF
@@ -103,12 +82,8 @@
 
 //#define RS_MaxSize  99		//等待接收的最大字节数
 #define RS_MinSize  	12
-//#define RTx_MaxSize  RS_MinSize+32	//200
-//#define RRx_MaxSize  RS_MinSize+32
-//#define RTx_MaxSize  RS_MinSize+48+40	//200	//N645
-#define RTx_MaxSize  RS_MinSize+207	//200	//N645
-//#define RRx_MaxSize  RS_MinSize+48+40			//N645	
-#define RRx_MaxSize  RS_MinSize+207			//N645	
+#define RTx_MaxSize  RS_MinSize+207	//200	//N645	
+#define RRx_MaxSize  RS_MinSize+207    //N645	
 
 //#define CPTInsItem 	27		//CDParaTab 中瞬时值项数 
 //#define MS500		32		//500MS		//V1001
@@ -131,7 +106,7 @@
 //#define BATADCYC	128		//电池电压检测次数			//V32
 #define BATADCYC	64		//电池电压检测次数			//V32
 
-#define PWUPTIME	75		//EC
+//#define PWUPTIME	75		//EC
 
 #define	NAK		0x15
 #define	ACK		0x06
@@ -451,7 +426,7 @@ void CommMode( short COM_No );
 //short CommModeRec(void);
 //short Proc_Read(void);	
 //short Proc_Write(void);	
-short Read_ATTValue( unsigned char Cmd, unsigned char* Data );
+//short Read_ATTValue( unsigned char Cmd, unsigned char* Data );
 void DayInc( unsigned char* Data );
 //void DayDec( unsigned char* Data );
 //unsigned short SumLoadAds(unsigned char* Dest );
@@ -470,7 +445,7 @@ unsigned char Com_Write(unsigned char* ComBuf);
 void Proc_Read( short ItemAds, unsigned long Addr, unsigned short Info, unsigned short Len, unsigned char* ComBuf);
 //short GetSegNum( void );
 //unsigned char ComAdjWrite(void);
-unsigned char ComAdjWrite(unsigned char* ComBuf);
+unsigned char ComAdjWrite(unsigned char* ComBuf ,unsigned short Devads);
 //unsigned short PtAddrChk( unsigned short PtNum, short Type );
 long PtAddrChk( unsigned short PtNum, short Type );
 
@@ -637,5 +612,5 @@ short IsFlashType64( void );
 #endif
 
 short BroadC_Time( unsigned char* Source );
-
+#endif
 

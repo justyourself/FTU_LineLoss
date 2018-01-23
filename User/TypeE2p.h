@@ -1,6 +1,4 @@
 #include "TypeMeter.h"
-//#define CMonItems	123		//当前月电量、需量、需量时间总项数
-//#define	CMonLength	574		//当前月电量、需量、需量时间总长度
 
 //铁电存储器中保存当前所有电量，有一个备份(占前4页 4*2*128 )
 //和当前有功正向、当前有功反向、当前视在、一、二、三、四象限需量缓存区（60分钟、120字节），无备份(后4页 4*2*128)
@@ -12,18 +10,45 @@
 // 3：节假日、周休日、季节、时段等电表参数
 // 4：轮显项等参数
 //校表参数 放在前100字节
-#define EE_CAL_IA			 0x0000			//IA(3)
-#define EE_CAL_IB			 EE_CAL_IA+3		//IB(3)
-#define EE_CAL_PA			 EE_CAL_IA+3*2		//PA(3)
-#define EE_CAL_PB			 EE_CAL_IA+3*3		//PB(3)
-#define EE_CAL_V			 EE_CAL_IA+3*4		//V(3)
-#define EE_PHADJ_A			 EE_CAL_IA+3*5		//A相相位(3)
-#define EE_PHADJ_B			 EE_CAL_IA+3*6		//B相相位(3)
-#define EE_Offset_A			 EE_CAL_IA+3*7		//A相Offset(3)
-#define EE_Offset_B			 EE_CAL_IA+3*8		//B相Offset(3)
-#define EMUStatusJY			 EE_Offset_B+3		//校验和(5)  
-#define	ClockAdj			 EMUStatusJY+5				//（2）//结束地址:0x088D
+#define CMon_EC_Pp0                     0
+#define	CMon_EC_Pn0                     CMon_EC_Pp0+5
+#define CMon_EC_Qp0                     CMon_EC_Pn0+5
+#define CMon_EC_Qn0                     CMon_EC_Qp0+5
+#define CMon_EC_Pp1                     CMon_EC_Qn0+5
+#define	CMon_EC_Pn1                     CMon_EC_Pp1+5
+#define CMon_EC_Qp1                     CMon_EC_Pn1+5
+#define CMon_EC_Qn1                     CMon_EC_Qp1+5
+#define CMon_EC_Pp2                     CMon_EC_Qn1+5
+#define	CMon_EC_Pn2                     CMon_EC_Pp2+5
+#define CMon_EC_Qp2                     CMon_EC_Pn2+5
+#define CMon_EC_Qn2                     CMon_EC_Qp2+5
+#define CMon_EC_Pp3                     CMon_EC_Qn2+5
+#define	CMon_EC_Pn3                     CMon_EC_Pp3+5
+#define CMon_EC_Qp3                     CMon_EC_Pn3+5
+#define CMon_EC_Qn3                     CMon_EC_Qp3+5
+#define CMon_EC_Pp4                     CMon_EC_Qn3+5
+#define	CMon_EC_Pn4                     CMon_EC_Pp4+5
+#define CMon_EC_Qp4                     CMon_EC_Pn4+5
+#define CMon_EC_Qn4                     CMon_EC_Qp4+5
+#define CMon_EC_Pp5                     CMon_EC_Qn4+5
+#define	CMon_EC_Pn5                     CMon_EC_Pp5+5
+#define CMon_EC_Qp5                     CMon_EC_Pn5+5
+#define CMon_EC_Qn5                     CMon_EC_Qp5+5
+#define CMon_EC_Pp6                     CMon_EC_Qn5+5
+#define	CMon_EC_Pn6                     CMon_EC_Pp6+5
+#define CMon_EC_Qp6                     CMon_EC_Pn6+5
+#define CMon_EC_Qn6                     CMon_EC_Qp6+5
+#define CMon_EC_Pp7                     CMon_EC_Qn6+5
+#define	CMon_EC_Pn7                     CMon_EC_Pp7+5
+#define CMon_EC_Qp7                     CMon_EC_Pn7+5
+#define CMon_EC_Qn7                     CMon_EC_Qp7+5
 
+#define	ClockAdj			 CMon_EC_Qn7+5				//（2）//结束地址:0x088D
+
+//事件参数均改为HEX码
+#define	EPhFail_Valve		          ClockAdj+6				//失压起始阀值(3)			yyy.y V 
+#define AT7022ChkSum		          EPhFail_Valve+7				//7022校表数据校验和(4)		//ATChk		//V1000
+#define AT7022ChkSum2		          AT7022ChkSum+6		//7022e校表数据校验和2(4)		//ATChk		//V1000
 
 #define IEC_LINK_ADDR                    ClockAdj+6      //2
 #define IEC_COMM_ADDR                    IEC_LINK_ADDR+4  //2
@@ -33,6 +58,9 @@
 #define	ShrpdRecord_Time                 FrzdRecord_Time+10 //整点冻结
 #define	MonthdRecord_Time                ShrpdRecord_Time+10  //考核日冻结
 #define	EventdRecord_Time                MonthdRecord_Time+10
+
+
+#define ErrorRegAddr			E2P_PGLEN-0x800
 
 #define E2P_PGLEN		         0x1000//0x0B00//0xAAA//0x1554		//数据备份页长度
 

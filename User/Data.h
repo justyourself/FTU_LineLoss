@@ -1,9 +1,10 @@
 #include "Measure.h"
-
+#ifndef __DATA_H__
+#define __DATA_H__
 #define OPEN_STATE	0x01	//打开
 #define CLOSE_STATE	0x02	//关闭
 #define PWUPTIME	64		//EC
-#define MS500		1000//1000//500MS
+//#define MS500		1000//1000//500MS
 #define TM485		6		//500MS
 #define MS4000		1000		//4000MS
 //#define MS3000		192		//128*16 = 2S
@@ -374,16 +375,16 @@
 #define ECUnitNum	11		//电量计量项数
 #define MDUnitNum	5		//需量计量项数			//反向需量不计
 #elif (MeterPhase == SinglePhase) //单相
-#define ECUnitNum	5		//电量计量项数
+#define ECUnitNum	32		//电量计量项数
 #define MDUnitNum	5		//需量计量项数			//反向需量不计
 #endif
 
 
-extern  PARA			Para;				// 电表参数
-extern  COMM			Comm;
-
+extern  PARA    Para;				// 电表参数
+extern  COMM	Comm;
+extern	METERSPEC MSpec;				//电表规格		//新国网		//13.08.30
 extern 	CLK		Clk;
-
+extern DISKEY		Disk;
 extern 	FLAG		Flag;
 extern 	Demand_Reg  Demand_Class5;
 extern 	SRAM SM;
@@ -722,5 +723,5 @@ extern  const short DayTab[13];
 extern  const unsigned short Crc16tab[256];
 extern REAL            Real_Data[8];
 extern ENERGY          Energy_Data[8];
-
+#endif
 

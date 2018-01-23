@@ -70,6 +70,18 @@
 *                                           本地函数申明
 *********************************************************************************************************
 */
+/*
+__asm void wait()
+{
+      BX lr
+}*/
+
+void HardFault_Handler(void)
+{
+    /* Go to infinite loop when Hard Fault exception occurs */
+      // wait();
+  return;
+}
 
 void SysTick_Handler()			//1/64秒中断
 {
@@ -920,10 +932,132 @@ void EMU_IRQHandler(void)
 *********************************************************************************************************
 */
 
-#if defined  HT6x2x
+#if defined  HT6x2x || HT6x3x
 void TIMER_5_IRQHandler(void)		//5ms
 {
-        HT_TMR_ClearITPendingBit(HT_TMR5, TMR_TMRIF_PRDIF);                    /*!< 清除中断标志       */        			    
+  int i;
+  unsigned char flag;
+  HT_TMR_ClearITPendingBit(HT_TMR5, TMR_TMRIF_PRDIF);                    /*!< 清除中断标志       */     
+  for(i=0;i<8;++i)
+  {
+        ECInt.YPulse_Mode[i] = (ECInt.YPulse_Mode[i] << 1);
+        flag=0;
+        switch(i)
+        {
+        case 0:
+          if(HT_GPIOD->PTDAT&GPIO_Pin_1)
+            flag=1;
+          break;
+        case 1:
+          if(HT_GPIOD->PTDAT&GPIO_Pin_6)
+            flag=1;
+          break;
+        case 2:
+          if(HT_GPIOG->PTDAT&GPIO_Pin_12)
+            flag=1;
+          break;
+        case 3:
+          if(HT_GPIOG->PTDAT&GPIO_Pin_14)
+            flag=1;
+          break;
+        case 4:
+          if(HT_GPIOA->PTDAT&GPIO_Pin_1)
+            flag=1;
+          break;
+        case 5:
+          if(HT_GPIOA->PTDAT&GPIO_Pin_4)
+            flag=1;
+          break;
+        case 6:
+          if(HT_GPIOB->PTDAT&GPIO_Pin_2)
+            flag=1;
+          break;
+        case 7:
+          if(HT_GPIOH->PTDAT&GPIO_Pin_2)
+            flag=1;
+          break;
+        default:
+          break;
+        }
+        if(flag) 
+          ECInt.YPulse_Mode[i] |= 0x01;
+        else  
+          ECInt.YPulse_Mode[i] &= ~0x01;
+        if( ECInt.YPulse_Mode[i] == 0xf0 )
+        {
+#if( RunOverCheck == YesCheck )
+          SM.SecSumPluse[i] += 1;			//V03
+          if( SM.RunOverState == 0 ) ECInt.YPulse_Cum[i] += 1;	//V03
+#else
+          ECInt.YPulse_Cum[i] += 1;
+#endif
+          ECInt.YPulse_CumChk[8] = ECInt.YPulse_Cum[8] + 0xA5;
+          SM.Delay30Min = 30;	
+          SM.Delay60Sec = 55;	
+          SM.SumPluseECP0[i] += 1;
+        }
+        
+        ECInt.WPulse_Mode[i] = (ECInt.WPulse_Mode[i] << 1);
+        flag=0;
+        switch(i)
+        {
+        case 0:
+          if(HT_GPIOD->PTDAT&GPIO_Pin_0)
+            flag=1;
+          break;
+        case 1:
+          if(HT_GPIOD->PTDAT&GPIO_Pin_5)
+            flag=1;
+          break;
+        case 2:
+          if(HT_GPIOG->PTDAT&GPIO_Pin_11)
+            flag=1;
+          break;
+        case 3:
+          if(HT_GPIOG->PTDAT&GPIO_Pin_13)
+            flag=1;
+          break;
+        case 4:
+          if(HT_GPIOA->PTDAT&GPIO_Pin_0)
+            flag=1;
+          break;
+        case 5:
+          if(HT_GPIOH->PTDAT&GPIO_Pin_4)
+            flag=1;
+          break;
+        case 6:
+          if(HT_GPIOB->PTDAT&GPIO_Pin_1)
+            flag=1;
+          break;
+        case 7:
+          if(HT_GPIOH->PTDAT&GPIO_Pin_1)
+            flag=1;
+          break;
+        default:
+          break;
+        }
+        if(flag) 
+          ECInt.WPulse_Mode[i] |= 0x01;
+        else  
+          ECInt.WPulse_Mode[i] &= ~0x01;
+        if( ECInt.WPulse_Mode[i] == 0xf0 ) 
+        {
+          ECInt.WPulse_Cum[i] += 1;
+          ECInt.WPulse_CumChk[i] = ECInt.WPulse_Cum[i] + 0xA5;				
+        }	
+
+#if ( NewHardScheme2 == YesCheck )		
+        if( SM.PulseWidthCnt[i] != 0 )
+#else
+          if((( SM.RPulseOutMode == 1 )||( SM.RPulseOutMode == 2 ))&& ( SM.PulseWidthCnt != 0 ))
+#endif
+          {
+            SM.PulseWidthCnt[i]--;
+            if( SM.PulseWidthCnt[i] == 0 )
+            {
+            }
+          }
+  }
 }
 #elif defined HT501x
 void DMA_IRQHandler(void)

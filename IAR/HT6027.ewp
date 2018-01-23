@@ -1968,6 +1968,9 @@
   <group>
     <name>User</name>
     <file>
+      <name>$PROJ_DIR$\..\User\ATT7022E.C</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\User\data.c</name>
     </file>
     <file>
@@ -1987,6 +1990,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\User\interrupt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Measure.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\User\power.c</name>

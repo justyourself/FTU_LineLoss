@@ -407,147 +407,27 @@ typedef struct
 
 typedef struct
 {
-	unsigned short PL_CumPp;				//当前正向有功电量脉冲计数器(2)
-	unsigned short PL_CumPn;				//当前反向有功电量脉冲计数器(2)
-	unsigned short PL_CumQp;				//当前正向无功电量脉冲计数器(2)
-	unsigned short PL_CumQn;				//当前反向无功电量脉冲计数器(2)
+	unsigned short PL_CumPp[8];				//当前正向有功电量脉冲计数器(2)
+	unsigned short PL_CumPn[8];				//当前反向有功电量脉冲计数器(2)
+	unsigned short PL_CumQp[8];				//当前正向无功电量脉冲计数器(2)
+	unsigned short PL_CumQn[8];				//当前反向无功电量脉冲计数器(2)
 	unsigned short PL_CumQ1;				//当前1象限无功电量脉冲计数器(2)
 	unsigned short PL_CumQ2;				//当前2象限无功电量脉冲计数器(2)
 	unsigned short PL_CumQ3;				//当前3象限无功电量脉冲计数器(2)
 	unsigned short PL_CumQ4;				//当前4象限无功电量脉冲计数器(2)
 	unsigned short PL_CumSp;				//当前正向视在电量脉冲计数器(2)
 	unsigned short PL_CumSn;				//当前反向视在电量脉冲计数器(2)
-/*	
-	unsigned short PL_CumG;				//当前关联电量脉冲计数器(2)
-	unsigned short PL_CumBp;				//当前正向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumBn;				//当前反向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumHp;				//当前正向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumHn;				//当前反向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumCu;				//当前铜损有功电量脉冲计数器(2)
-	unsigned short PL_CumFe;				//当前铁损有功电量脉冲计数器(2)
-	
-	unsigned short PL_CumPpA;				//当前A相正向有功电量脉冲计数器(2)
-	unsigned short PL_CumPnA;				//当前A相反向有功电量脉冲计数器(2)
-	unsigned short PL_CumQ1A;				//当前A相1象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ2A;				//当前A相2象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ3A;				//当前A相3象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ4A;				//当前A相4象限无功电量脉冲计数器(2)
-	unsigned short PL_CumSpA;				//当前A相正向视在电量脉冲计数器(2)
-	unsigned short PL_CumSnA;				//当前A相反向视在电量脉冲计数器(2)
-	
-	unsigned short PL_CumGA;				//当前A相关联电量脉冲计数器(2)
-	unsigned short PL_CumBpA;				//当前A相正向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumBnA;				//当前A相反向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumHpA;				//当前A相正向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumHnA;				//当前A相反向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumCuA;				//当前A相铜损有功电量脉冲计数器(2)
-	unsigned short PL_CumFeA;				//当前A相铁损有功电量脉冲计数器(2)
-	
-	unsigned short PL_CumPpB;				//当前B相正向有功电量脉冲计数器(2)
-	unsigned short PL_CumPnB;				//当前B相反向有功电量脉冲计数器(2)
-	unsigned short PL_CumQ1B;				//当前B相1象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ2B;				//当前B相2象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ3B;				//当前B相3象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ4B;				//当前B相4象限无功电量脉冲计数器(2)
-	unsigned short PL_CumSpB;				//当前B相正向视在电量脉冲计数器(2)
-	unsigned short PL_CumSnB;				//当前B相反向视在电量脉冲计数器(2)
-	
-	unsigned short PL_CumGB;				//当前B相关联电量脉冲计数器(2)
-	unsigned short PL_CumBpB;				//当前B相正向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumBnB;				//当前B相反向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumHpB;				//当前B相正向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumHnB;				//当前B相反向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumCuB;				//当前B相铜损有功电量脉冲计数器(2)
-	unsigned short PL_CumFeB;				//当前B相铁损有功电量脉冲计数器(2)
-	
-	unsigned short PL_CumPpC;				//当前C相正向有功电量脉冲计数器(2)
-	unsigned short PL_CumPnC;				//当前C相反向有功电量脉冲计数器(2)
-	unsigned short PL_CumQ1C;				//当前C相1象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ2C;				//当前C相2象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ3C;				//当前C相3象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ4C;				//当前C相4象限无功电量脉冲计数器(2)
-	unsigned short PL_CumSpC;				//当前C相正向视在电量脉冲计数器(2)
-	unsigned short PL_CumSnC;				//当前C相反向视在电量脉冲计数器(2)
-	
-	unsigned short PL_CumGC;				//当前C相关联电量脉冲计数器(2)
-	unsigned short PL_CumBpC;				//当前C相正向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumBnC;				//当前C相反向有功基波电量脉冲计数器(2)
-	unsigned short PL_CumHpC;				//当前C相正向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumHnC;				//当前C相反向有功谐波电量脉冲计数器(2)
-	unsigned short PL_CumCuC;				//当前C相铜损有功电量脉冲计数器(2)
-	unsigned short PL_CumFeC;				//当前C相铁损有功电量脉冲计数器(2)
-	*/
 
-	unsigned char PL_ChkPp;				//当前正向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkPn;				//当前反向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQp;				//当前正向无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQn;				//当前反向无功电量脉冲计数器校验和(1)
+	unsigned char PL_ChkPp[8];				//当前正向有功电量脉冲计数器校验和(1)
+	unsigned char PL_ChkPn[8];				//当前反向有功电量脉冲计数器校验和(1)
+	unsigned char PL_ChkQp[8];				//当前正向无功电量脉冲计数器校验和(1)
+	unsigned char PL_ChkQn[8];				//当前反向无功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkQ1;				//当前1象限无功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkQ2;				//当前2象限无功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkQ3;				//当前3象限无功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkQ4;				//当前4象限无功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkSp;				//当前正向视在电量脉冲计数器校验和(1)
 	unsigned char PL_ChkSn;				//当前反向视在电量脉冲计数器校验和(1)
-/*	
-	unsigned char PL_ChkG;				//当前关联电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBp;				//当前正向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBn;				//当前反向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHp;				//当前正向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHn;				//当前反向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkCu;				//当前铜损有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkFe;				//当前铁损有功电量脉冲计数器校验和(1)
-	
-	unsigned char PL_ChkPpA;			//当前A相正向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkPnA;			//当前A相反向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ1A;			//当前A相1象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ2A;			//当前A相2象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ3A;			//当前A相3象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ4A;			//当前A相4象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSpA;			//当前A相正向视在电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSnA;			//当前A相反向视在电量脉冲计数器校验和(1)
-	
-	unsigned char PL_ChkGA;				//当前A相关联电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBpA;			//当前A相正向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBnA;			//当前A相反向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHpA;			//当前A相正向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHnA;			//当前A相反向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkCuA;			//当前A相铜损有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkFeA;			//当前A相铁损有功电量脉冲计数器校验和(1)
-	
-	unsigned char PL_ChkPpB;			//当前B相正向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkPnB;			//当前B相反向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ1B;			//当前B相1象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ2B;			//当前B相2象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ3B;			//当前B相3象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ4B;			//当前B相4象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSpB;			//当前B相正向视在电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSnB;			//当前B相反向视在电量脉冲计数器校验和(1)
-	
-	unsigned char PL_ChkGB;				//当前B相关联电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBpB;			//当前B相正向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBnB;			//当前B相反向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHpB;			//当前B相正向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHnB;			//当前B相反向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkCuB;			//当前B相铜损有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkFeB;			//当前B相铁损有功电量脉冲计数器校验和(1)
-	
-	unsigned char PL_ChkPpC;			//当前C相正向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkPnC;			//当前C相反向有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ1C;			//当前C相1象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ2C;			//当前C相2象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ3C;			//当前C相3象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ4C;			//当前C相4象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSpC;			//当前C相正向视在电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSnC;			//当前C相反向视在电量脉冲计数器校验和(1)
-	
-	unsigned char PL_ChkGC;				//当前C相关联电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBpC;			//当前C相正向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkBnC;			//当前C相反向有功基波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHpC;			//当前C相正向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkHnC;			//当前C相反向有功谐波电量脉冲计数器校验和(1)
-	unsigned char PL_ChkCuC;			//当前C相铜损有功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkFeC;			//当前C相铁损有功电量脉冲计数器校验和(1)
-*/
 	unsigned short PL_CumPp_Dis;		//当前正向有功电量脉冲计数器--显示进度条用
 	unsigned short PL_CumPn_Dis;		//当前反向有功电量脉冲计数器--显示进度条用
 
@@ -742,42 +622,26 @@ typedef struct
 
 typedef struct
 {
-#if ( MEASCHIP == ADE7878 )	
- 	unsigned long EcPSumA;				//A相有功电量累计缓存
-	unsigned long EcPSumB;				//B相有功电量累计缓存
-	unsigned long EcPSumC;				//C相有功电量累计缓存
-	unsigned long EcQSumA;				//A相无功电量累计缓存
-	unsigned long EcQSumB;				//B相无功电量累计缓存
-	unsigned long EcQSumC;				//C相无功电量累计缓存
-#endif
+
 
 	unsigned long SMEcSumA;				//0.01度A相视在电量累计缓存
 	unsigned long SMEcSumB;				//0.01度B相视在电量累计缓存
 	unsigned long SMEcSumC;				//0.01度C相视在电量累计缓存
 	unsigned long SMEcSum;				//0.01度总视在电量累计缓存
 	
-	unsigned char YPulse_Mode;			//有功脉冲检测移位寄存器
-	unsigned char WPulse_Mode;			//无功脉冲检测移位寄存器
+	unsigned char YPulse_Mode[8];			//有功脉冲检测移位寄存器
+	unsigned char WPulse_Mode[8];			//无功脉冲检测移位寄存器
 
-	unsigned char YPulse_Cum;			//中断有功脉冲计数器
-	unsigned char WPulse_Cum;			//中断无功脉冲计数器
+	unsigned char YPulse_Cum[8];			//中断有功脉冲计数器
+	unsigned char WPulse_Cum[8];			//中断无功脉冲计数器
 	
-#if ( MEASCHIP == ADE7878 )	
- 	unsigned char EcPSumAChk;			//A相有功电量累计缓存校验和
-	unsigned char EcPSumBChk;			//B相有功电量累计缓存校验和
-	unsigned char EcPSumCChk;			//C相有功电量累计缓存校验和
-	unsigned char EcQSumAChk;			//A相无功电量累计缓存校验和
-	unsigned char EcQSumBChk;			//B相无功电量累计缓存校验和
-	unsigned char EcQSumCChk;			//C相无功电量累计缓存校验和
-#endif
-
 	unsigned char SMEcSumAChk;			//0.01度A相视在电量累计缓存
 	unsigned char SMEcSumBChk;			//0.01度B相视在电量累计缓存
 	unsigned char SMEcSumCChk;			//0.01度C相视在电量累计缓存
 	unsigned char SMEcSumChk;			//0.01度总视在电量累计缓存
 	
-	unsigned char YPulse_CumChk;		//中断有功脉冲计数器
-	unsigned char WPulse_CumChk;		//中断无功脉冲计数器
+	unsigned char YPulse_CumChk[8];		//中断有功脉冲计数器
+	unsigned char WPulse_CumChk[8];		//中断无功脉冲计数器
 	
 }INTPULSE;					
 
@@ -940,7 +804,21 @@ typedef struct
 typedef struct
 {
   unsigned int HDLC_ADDR;
+  BCD3	RAT7022ChkSum;			//7022校表数据校验和	//ATChk
+  BCD3	RAT7022ChkSum2;			//7022E校表数据校验和2
 } PARA;
+
+typedef struct
+{
+	unsigned long* AD_CS_PTDIR;
+	unsigned long* AD_CS_PTSET;
+	unsigned long* AD_CS_PTCLR;
+	unsigned long* AD_RST_PTDIR;
+	unsigned long* AD_RST_PTSET;
+	unsigned long* AD_RST_PTCLR;
+	unsigned long AD_CS;
+	unsigned long AD_RST;
+}SPIPARA;
 
 typedef struct
 {
@@ -1507,7 +1385,15 @@ typedef struct
   unsigned short BatUpTime;
   unsigned short TestCnt;
   unsigned long BatteryWTime;
-  unsigned long ClockBatAD;  
+  unsigned long ClockBatAD; 
+  unsigned int CalibCount;
+  unsigned int AT7022ChkSumCnt;
+  unsigned int MeasChipErrCnt;
+  unsigned int State[8];
+  unsigned int PulseWidthCnt[8];
+  unsigned int SumPluseECP0[8];
+  unsigned char Delay30Min;
+  unsigned char Delay60Sec;
 } SRAM;
 
 //总及分相电压检测记录结构
@@ -1588,9 +1474,9 @@ typedef struct
 	unsigned short ECEAds;
 	unsigned short ECFAds;
 	unsigned char* ECRAds;
-//	unsigned short* ECRamBufAds;
-//	unsigned char* ECRamBufChkAds;
-	unsigned short ECRgMode;		//0:电量包含费率；1：不包含费率。
+	unsigned short* ECRamBufAds;
+	unsigned char* ECRamBufChkAds;
+	unsigned short ECRgMode;		//0:电量包含费率；1：不包含费率
 } ECRg;
 //#endif
 

@@ -50,11 +50,22 @@ void WDTReset( void )
 //**********************************************************************
 void Delay( unsigned short i )
 {
-	while( i > 0)
-	{
-		i--;	
-	}	
-}	
+  while( i > 0)
+  {
+    i--;
+  }	
+}
+/*
+void udelay(unsigned int us)
+{
+  unsigned int i,j;
+  for(i=0;i<us;++i)
+  {
+    for(j=0;j<10;++j)
+      ;
+    HT_FreeDog();
+  }
+}*/
 /**********************************************************************
 	Calculate the checksum Of Data in RAM
 **********************************************************************/

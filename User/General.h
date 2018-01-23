@@ -174,7 +174,7 @@ void GetPrivateKeyFlag( void );
 void AllFailCalibrateDelay( void );			//10.10.06
 #if ( MEASCHIP == IDT90E32 )							//12.08.29	
 #else
-float GetPhasePW( unsigned char Cmd );		//10.10.08
+long GetPhasePW( unsigned char Cmd ,unsigned short Devads);
 #endif
 
 #if ( NewHardScheme2 == YesCheck )		//11.04.29

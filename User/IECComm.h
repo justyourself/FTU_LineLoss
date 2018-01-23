@@ -62,11 +62,13 @@
 //#define Baut7200 5
 //#define Baut9600 6
 //#define Baut19200 7
+/*
 #define Baut9600  5
 #define Baut19200 6
 #define Baut38400 7
 #define Baut57600 8
 #define Baut115200 9
+*/
 
 #define IECIdle				  0	  // IEC通讯空闲
 #define IECStartCode		  1	  // IEC通讯起始
@@ -161,8 +163,8 @@
 #define MAX_INFO_SIZE		230//128//128
 #define GPRS_MAX_INFO_SIZE	128//256 
 
-#define RS_MinSize   14					//12.04.07
-#define RRx_MaxSize  RS_MinSize+128			
+//#define RS_MinSize   14					//12.04.07
+//#define RRx_MaxSize  RS_MinSize+128			
 
 #define MAX_485_SIZE	 128
 #define RRx_485_MaxSize  RS_MinSize+MAX_485_SIZE			

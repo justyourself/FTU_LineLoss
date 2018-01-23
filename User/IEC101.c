@@ -292,7 +292,7 @@ short GetDd(unsigned short kwhno,unsigned char *buf)
   int m_ch,ptr_v;
   unsigned long *Ptr;
   unsigned long m_Lval;
-  unsigned char tmp_buf[48];
+  unsigned char tmp_buf[64];
   float f_val;
   m_ch=kwhno/16;
   ptr_v=kwhno%16;
@@ -380,6 +380,8 @@ void Iec101LinkRecv(void)
       }
       if(lpIEC101->byRecvBuf[i]==V_STARTCODE)
       {
+        if(lpIEC101->wRecvNum-i<5)
+          return;
         if((lpIEC101->byRecvBuf[i]==lpIEC101->byRecvBuf[i+3])
 					&& (lpIEC101->byRecvBuf[i+1]==lpIEC101->byRecvBuf[i+2]))
         {
@@ -397,6 +399,21 @@ void Iec101LinkRecv(void)
             lpIEC101->PRecvFrame.byFull=1;
           }
           break;
+        }
+      }
+    }
+    if(lpIEC101->wRecvNum)
+    {
+      if(i)
+      {
+        if(lpIEC101->wRecvNum>i)
+        {
+          memcpy(lpIEC101->byRecvBuf,lpIEC101->byRecvBuf+i,lpIEC101->wRecvNum-i);
+          lpIEC101->wRecvNum=lpIEC101->wRecvNum-i;
+        }
+        else
+        {
+          lpIEC101->wRecvNum=0;
         }
       }
     }
@@ -1333,13 +1350,25 @@ u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
                         case 7:
                         case 8:
                         case 9:
-                        case 10:  
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+                        case 15:
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19:
+                        case 20:
+                        case 21:
+                        case 22:
                           f_val = f_val/1000;
                           break;
                         case 4:
                         case 5:
                         case 6:
-                          f_val = f_val/10;
+                          f_val = f_val/100;
                           break;
                         default:
                           break;

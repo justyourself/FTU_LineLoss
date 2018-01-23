@@ -194,7 +194,7 @@
 //#define MEASCHIP	ADE7758	//选择计量芯片类型	
 //#define MEASCHIP	ATT7022	//选择计量芯片类型	
 //#define MEASCHIP	RN8209//选择计量芯片类型		
-#define MEASCHIP	HT7017//选择计量芯片类型		
+#define MEASCHIP	ATT7022E//选择计量芯片类型		
 
 //#define MEASCHIP	IDT90E32//选择计量芯片类型	
 //#define MEASCHIP	ADE7878	//选择计量芯片类型	
@@ -832,7 +832,7 @@
 #define AllFailChk 	YesCheck	//检测全失压检测
 //#define AllFailChk 	NoCheck		//不检测全失压
 
-#define AllFail7022Chk 		YesCheck	//通过7022检测全失压检测	//10.11.11
+#define AllFail7022Chk 		NoCheck	//通过7022检测全失压检测	//10.11.11
 //#define AllFail7022Chk 	NoCheck		//不通过7022检测全失压		//10.11.11
 
 #define ESAMPowerControl 	YesCheck	//ESAM电源控制				//10.12.02

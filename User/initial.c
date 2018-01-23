@@ -56,7 +56,7 @@ void fnTarget_Init(void)
   CMU_InitTypeDef  CMU_InitStruct;
   __disable_irq();
   Flag.Power &= ~F_PwrUp;
-  //HT_CMU_Prefetch_Set( DISABLE ); 	//关闭指令预取功能，降低功耗		//17.02.07
+  HT_CMU_Prefetch_Set( DISABLE ); 	//关闭指令预取功能，降低功耗		//17.02.07
   CMU_InitStruct.SysClkSel = SysPLL;//SysHRCDiv1;//SysPLL;
   CMU_InitStruct.CPUDiv = CPUDiv1;
   HT_CMU_Init(&CMU_InitStruct);	
@@ -105,9 +105,12 @@ void PwrOnInit(void)
 
   // NET RX TX 指示灯
    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_5;
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_5;
    HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure);  
-   HT_GPIO_BitsSet(HT_GPIOA,GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_5);
+   HT_GPIO_BitsSet(HT_GPIOA,GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_5);
+   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_4;
+   HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure);
 #if 0		
     HT_INT->EXTIE |= (uint32_t)(INT_EXTIE_RIE_INT3);
     HT_INT->PINFLT |= (uint32_t)(INT_EXTIE_RIE_INT3);
@@ -125,11 +128,15 @@ void PwrOnInit(void)
     HT_GPIO_BitsSet(HT_GPIOB,GPIO_Pin_10);
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-  GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
-  GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
-  HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
-  HT_GPIOB->PTSET |=  GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
+    HT_GPIOB->PTSET |=  GPIO_Pin_5;
+    
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2;
+    HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
 
     /*!< GPIOC配置信息*/    		   
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
@@ -157,14 +164,14 @@ void PwrOnInit(void)
 
     /*!< GPIOD配置信息*/     		   
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_11;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_11|GPIO_Pin_14|GPIO_Pin_15;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
     HT_GPIO_Init(HT_GPIOD, &GPIO_InitStructure);
-    HT_GPIO_BitsSet(HT_GPIOD,GPIO_Pin_9|GPIO_Pin_11);
+    HT_GPIO_BitsSet(HT_GPIOD,GPIO_Pin_9|GPIO_Pin_11|GPIO_Pin_14|GPIO_Pin_15);
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_8|GPIO_Pin_10;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
     HT_GPIO_Init(HT_GPIOD, &GPIO_InitStructure);
@@ -188,6 +195,18 @@ void PwrOnInit(void)
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOE, &GPIO_InitStructure);
+    
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14;
+    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    HT_GPIO_Init(HT_GPIOG, &GPIO_InitStructure);
+    
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_4;
+    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    HT_GPIO_Init(HT_GPIOH, &GPIO_InitStructure);
         
         HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR0EN, ENABLE); 
 	HT_TMR0->TMRDIV = 0x0004;                            /*!< 设置定时器预分频器     4分频 */
@@ -211,7 +230,14 @@ void PwrOnInit(void)
         HT_TMR3->TMRPRD = 0x157C;                             /*!< 设置定时器周期寄存器  500us */   
         HT_TMR3->TMRCON = 0x0307;                            /*!< 设置定时器工作模式          */    
         HT_TMR3->TMRIE = 0x0001;               			     /*!< 使能TIMER中断               */
-        NVIC_EnableIRQ(TIMER_3_IRQn);        
+        NVIC_EnableIRQ(TIMER_3_IRQn);    
+        
+        HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR5EN, ENABLE); 
+	HT_TMR5->TMRDIV = 0x0013;                            /*!< 设置定时器预分频器     20分频 */
+        HT_TMR5->TMRPRD = 0x157C;                             /*!< 设置定时器周期寄存器  5ms */   
+        HT_TMR5->TMRCON = 0x0307;                            /*!< 设置定时器工作模式          */    
+        HT_TMR5->TMRIE = 0x0001;               			     /*!< 使能TIMER中断               */
+        NVIC_EnableIRQ(TIMER_5_IRQn);
     
 	//-----------配置LCD-----------
 	HT_CMU_ClkCtrl0Config(CMU_CLKCTRL0_LCDEN, DISABLE);
@@ -405,6 +431,7 @@ void VarInit(void)
 {
   int i;
   SM.TestDisCnt = TESTDISCNT;
+#if 0  
   for(i=0;i<8;++i)
   {
     Real_Data[i].AFreq=50000+i;
@@ -433,6 +460,10 @@ void VarInit(void)
     Real_Data[i].Pb=194+i;
     Real_Data[i].Pc=194+i;
   }
+#endif  
+  MSpec.RMeterConst = 5000;
+  MSpec.R7022E_HFConst = 4;
+  MSpec.RBaseCurrent = 1000;
 }
 
 void HW_ON( void )
@@ -471,8 +502,8 @@ void RepeatHWTime( unsigned short Temp )
 void EnterHold(void)
 {
   // Bat_on(0);
-  
-  HT_WDT->WDTCLR = 0xAAFF;        //16s                                /*!< 看门狗喂狗                   */
+  //HT_WDT->WDTCLR = 0xAAFF;        //16s                                /*!< 看门狗喂狗                   */
+  HT_FreeDog();
   if(!SM.PowerUpTime)  //zzl add for 低功耗进入正常运行模块
   {
     SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;	//禁用SysTick滴答定时器
@@ -505,7 +536,7 @@ void ExitHold(void)
   HT_CMU->SYSCLKCFG = (CMU_SYSCLKCFG_CLKSEL_PLL | CMU_SYSCLKCFG_WCLKEN);       //配置系统为PLL时钟 // 	
   HT_CMU->WPREG = 0x0000;		//WPREG 写非0xA55A，则开启写保护功能
 #else
-  CMU_InitStructure.SysClkSel = SysHRCDiv1;
+  CMU_InitStructure.SysClkSel = SysPLL;
   CMU_InitStructure.CPUDiv = CPUDiv1;
   HT_CMU_Init(&CMU_InitStructure);//配置时钟为PLL输出22.020096Mhz
 #endif

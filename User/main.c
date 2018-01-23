@@ -22,6 +22,7 @@
 #include "Initial.h"
 #include "serial.h"
 #include "IEC101.h"
+#
 
 
 short Save_Data(unsigned char *Time_buf)
@@ -375,8 +376,20 @@ int Get_LoadFile_Xml_Len(void)
 
 void ProcHalfSec(void)
 {
+  int i;
+  unsigned int tmp_p;
   Flag.Clk &= ~F_HalfSec;
   HT_GPIO_BitsToggle(HT_GPIOB,GPIO_Pin_5);
+  for(i=0;i<8;++i)
+  {
+    ATT7022RdReg(ATVoltFlag,(unsigned char*)&(SM.State[i]),i);
+    ATT7022RdReg(ATPZ,(unsigned char*)&tmp_p,i);
+    tmp_p &= 0xffffff;
+    Energy_Data[i].Pp += tmp_p;
+    ATT7022RdReg(ATQZ,(unsigned char*)&tmp_p,i);
+    tmp_p &= 0xffffff;
+    Energy_Data[i].Qp += tmp_p;
+  }
 }
 /***************************************************
 	Working for Every Second
@@ -388,7 +401,8 @@ void ProcHalfSec(void)
 void ProcSec(void)
 {
   char Buff[8];
-  char* Point;		
+  char* Point;
+  int i;
 
   Flag.Clk &= ~F_Sec;
   Point = Buff;
@@ -405,6 +419,7 @@ void ProcSec(void)
     {
        SM.TestDisCnt--;
     }
+#if 0    
     for(Buff[0]=0;Buff[0]<8;++Buff[0])
     {
      // Energy_Data[Buff[0]].Pn++;
@@ -413,11 +428,57 @@ void ProcSec(void)
       Energy_Data[Buff[0]].Qn++;
       Energy_Data[Buff[0]].Q1++;
       Energy_Data[Buff[0]].Q2++;
+      /*
       Energy_Data[Buff[0]].Pa = rand();
       Energy_Data[Buff[0]].Pb = rand();
       Energy_Data[Buff[0]].Pc = rand();
       Energy_Data[Buff[0]].Pt = Energy_Data[Buff[0]].Pa+Energy_Data[Buff[0]].Pb+Energy_Data[Buff[0]].Pc;
-      Real_Data[Buff[0]].Qa++;
+      Real_Data[Buff[0]].Qa++;*/
+    }
+#endif    
+    for(i=0;i<8;++i)
+    {
+#if 0      
+      Energy_Data[i].Pa = GetPhasePW(ATPWPA,i);
+      Energy_Data[i].Pb = GetPhasePW(ATPWPB,i);
+      Energy_Data[i].Pc = GetPhasePW(ATPWPC,i);
+      Energy_Data[i].Pt = GetPhasePW(ATPWPZ,i);
+#else
+      Read_ATTValue(ATPWPA,&Energy_Data[i].Pa,i);
+      Read_ATTValue(ATPWPB,&Energy_Data[i].Pb,i);
+      Read_ATTValue(ATPWPC,&Energy_Data[i].Pc,i);
+      Read_ATTValue(ATPWPZ,&Energy_Data[i].Pt,i);
+#endif      
+      Real_Data[i].Pa = Energy_Data[i].Pa;
+      Real_Data[i].Pb = Energy_Data[i].Pb;
+      Real_Data[i].Pc = Energy_Data[i].Pc;
+      Real_Data[i].Pt = Energy_Data[i].Pt;
+#if 0      
+      Real_Data[i].Qa = GetPhasePW(ATPWQA,i);
+      Real_Data[i].Qb = GetPhasePW(ATPWQB,i);
+      Real_Data[i].Qb = GetPhasePW(ATPWQB,i);
+      Real_Data[i].Qt = GetPhasePW(ATPWQZ,i);
+#else
+      Read_ATTValue(ATPWQA,&Real_Data[i].Qa,i);
+      Read_ATTValue(ATPWQB,&Real_Data[i].Qb,i);
+      Read_ATTValue(ATPWQC,&Real_Data[i].Qc,i);
+      Read_ATTValue(ATPWQZ,&Real_Data[i].Qt,i);
+#endif      
+      Read_ATTValue(ATPWSA,&Real_Data[i].Sa,i);
+      Read_ATTValue(ATPWSB,&Real_Data[i].Sb,i);
+      Read_ATTValue(ATPWSC,&Real_Data[i].Sc,i);
+      Read_ATTValue(ATPWSZ,&Real_Data[i].St,i);
+      Read_ATTValue(ATFreq,&Real_Data[i].AFreq,i);
+      Read_ATTValue(ATUrmsA,&Real_Data[i].Ua,i);
+      Read_ATTValue(ATUrmsB,&Real_Data[i].Ub,i);
+      Read_ATTValue(ATUrmsC,&Real_Data[i].Uc,i);
+      Read_ATTValue(ATIrmsA,&Real_Data[i].Ia,i);
+      Read_ATTValue(ATIrmsB,&Real_Data[i].Ib,i);
+      Read_ATTValue(ATIrmsC,&Real_Data[i].Ic,i);
+      Read_ATTValue(ATFactorA,&Real_Data[i].Pfa,i);
+      Read_ATTValue(ATFactorB,&Real_Data[i].Pfb,i);
+      Read_ATTValue(ATFactorC,&Real_Data[i].Pfc,i);
+      Read_ATTValue(ATFactorZ,&Real_Data[i].Pft,i);
     }
 #if 0    
     if(SM.TestDisCnt==0)
@@ -435,7 +496,7 @@ void ProcSec(void)
   }
   else
   {
-    HT_GPIO_BitsToggle(HT_GPIOC,GPIO_Pin_7);
+    HT_GPIO_BitsToggle(HT_GPIOB,GPIO_Pin_5);
   }
 }
 
@@ -450,24 +511,26 @@ void ProcMin(void)
  {
     unsigned char Time_buf[8];
     unsigned short year;
+    Flag.Clk &= ~F_Min;
+    if((Flag.Power & F_PwrUp) != 0)
+      return;
     //GetTime();
     MoveCurrentTimeBCD_Hex();
-    //if((Clk.MinH%15)==0)
+    Time_buf[0]=Clk.SecH;
+    Time_buf[1]=Clk.MinH;
+    Time_buf[2]=Clk.HourH;
+    Time_buf[3]=Clk.DayH;
+    Time_buf[4]=Clk.Month;
+    year = Clk.YearH;
+    year = year*256 + Clk.YearL;
+    Time_buf[5]=year-2000;
+    if((Clk.MinH%15)==0)
     {
-      Time_buf[0]=Clk.SecH;
-      Time_buf[1]=Clk.MinH;
-      Time_buf[2]=Clk.HourH;
-      Time_buf[3]=Clk.DayH;
-      Time_buf[4]=Clk.Month;
-      year = Clk.YearH;
-      year = year*256 + Clk.YearL;
-      Time_buf[5]=year-2000;
       Save_Data(Time_buf);
     }
     
     Save_RandData(Time_buf);
-    Save_MonthData(Time_buf);
-    Flag.Clk &= ~F_Min;
+ //   Save_MonthData(Time_buf);
 }	
 
 /***************************************************
@@ -478,7 +541,9 @@ void ProcHour(void)
 {
   unsigned char Time_buf[8];
   unsigned short year;
-  
+  Flag.Clk &= ~F_Hour;
+  if((Flag.Power & F_PwrUp) != 0)
+      return;
   GetTime();
   MoveCurrentTimeBCD_Hex();
   Time_buf[0]=Clk.SecH;
@@ -490,13 +555,15 @@ void ProcHour(void)
   year = year*256 + Clk.YearL;
   Time_buf[5]=year-2000;
   Save_HourData(Time_buf);
-  Flag.Clk &= ~F_Hour;
 }
 
 void ProcDay(void)
 {
   unsigned char Time_buf[8];
   unsigned short year;
+  Flag.Clk &= ~F_Day;
+  if((Flag.Power & F_PwrUp) != 0)
+      return;
   Time_buf[0]=Clk.SecH;
   Time_buf[1]=Clk.MinH;
   Time_buf[2]=Clk.HourH;
@@ -510,7 +577,6 @@ void ProcDay(void)
   {
     Save_MonthData(Time_buf);
   }
-  Flag.Clk &= ~F_Day;
 }	
 
 void main(void)
@@ -568,7 +634,11 @@ void main(void)
         E2P_WData(FrzdRecord_Time,flash_id,8);
         E2P_WData(ShrpdRecord_Time,flash_id,8);
         E2P_WData(MonthdRecord_Time,flash_id,8);
-#endif        
+#endif  
+        for(i=0;i<8;i++)
+        {
+          ATT7022Init(i);	//Test
+        }
         break;
       }	
       if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))
