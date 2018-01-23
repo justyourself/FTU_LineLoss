@@ -232,13 +232,14 @@ void PwrOnInit(void)
         HT_TMR3->TMRIE = 0x0001;               			     /*!< 使能TIMER中断               */
         NVIC_EnableIRQ(TIMER_3_IRQn);    
         
-        HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR5EN, ENABLE); 
+        HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR5EN, DISABLE); 
+#if 0
 	HT_TMR5->TMRDIV = 0x0013;                            /*!< 设置定时器预分频器     20分频 */
         HT_TMR5->TMRPRD = 0x157C;                             /*!< 设置定时器周期寄存器  5ms */   
         HT_TMR5->TMRCON = 0x0307;                            /*!< 设置定时器工作模式          */    
         HT_TMR5->TMRIE = 0x0001;               			     /*!< 使能TIMER中断               */
         NVIC_EnableIRQ(TIMER_5_IRQn);
-    
+#endif    
 	//-----------配置LCD-----------
 	HT_CMU_ClkCtrl0Config(CMU_CLKCTRL0_LCDEN, DISABLE);
 #if 0        
@@ -399,7 +400,7 @@ void GetFRamEC( void )							//10.06.22
 		
 		ECFAddress = ECRgTab[i].ECFAds;
 		FeeMode = ECRgTab[i].ECRgMode;
-		ECRAddress = ECRgTab[i].ECRAds;
+		//ECRAddress = ECRgTab[i].ECRAds;
 		for( j=0;j<5;j++ )
 		{
 			E2P_RFM( Ptr, ECFAddress, ECDIGIT );	 	//读取FRAM内电量
@@ -461,9 +462,20 @@ void VarInit(void)
     Real_Data[i].Pc=194+i;
   }
 #endif  
-  MSpec.RMeterConst = 5000;
-  MSpec.R7022E_HFConst = 4;
+  //脉冲常数100000
+  //MSpec.RMeterConst = 100000;
+  //MSpec.R7022E_HFConst = 4;
+  //脉冲常数100000
+  //1000
+  /*
+  MSpec.RMeterConst = 1000;
+  MSpec.R7022E_HFConst = 400;
+  */
+  //10000
+  MSpec.RMeterConst = 10000;
+  MSpec.R7022E_HFConst = 40;
   MSpec.RBaseCurrent = 1000;
+  MSpec.RPW00002Ib = 4600;
 }
 
 void HW_ON( void )

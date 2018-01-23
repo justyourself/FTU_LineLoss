@@ -1473,7 +1473,7 @@ typedef struct
 {
 	unsigned short ECEAds;
 	unsigned short ECFAds;
-	unsigned char* ECRAds;
+	unsigned long* ECRAds;
 	unsigned short* ECRamBufAds;
 	unsigned char* ECRamBufChkAds;
 	unsigned short ECRgMode;		//0:电量包含费率；1：不包含费率

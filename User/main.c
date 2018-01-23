@@ -143,7 +143,7 @@ short Save_DayData(unsigned char *Time_buf)
 
 short Get_DayData(int No,int ch,unsigned char *buf)
 {
-  unsigned char Record_buf[8];
+  unsigned char Record_buf[12];
   int rec_ptr;
   if(ch>8)
     return 0;
@@ -250,7 +250,7 @@ short Save_MonthData(unsigned char *Time_buf)
 
 short Get_MonthData(int No,int ch,unsigned char *buf)
 {
-  unsigned char Record_buf[8];
+  unsigned char Record_buf[12];
   int rec_ptr;
   if(ch>8)
     return 0;
@@ -312,7 +312,7 @@ short Save_RandData(unsigned char *Time_buf)
 }
 short Get_RandData(int No,int ch,unsigned char *buf)
 {
-  unsigned char Record_buf[8];
+  unsigned char Record_buf[12];
   int rec_ptr;
   if(ch>8)
     return 0;
@@ -374,22 +374,101 @@ int Get_LoadFile_Xml_Len(void)
   return Len; 
 }
 
+void EC_MeasA(void)
+{
+  int i;
+  unsigned short* ECRamBufAdsPtr;
+  unsigned char* ECRamBufChkAdsPtr;
+  unsigned long* ECRAds;
+  unsigned short ECEAds;
+  unsigned int Ps2;
+  Ps2 = MSpec.RMeterConst/1000;
+  for( i=0;i<ECUnitNum;++i)
+  {
+    ECRamBufAdsPtr = ECRgTab[i].ECRamBufAds;
+    ECRamBufChkAdsPtr = ECRgTab[i].ECRamBufChkAds;
+    ECRAds = ECRgTab[i].ECRAds;
+    if( *ECRamBufChkAdsPtr != ChkNum( (unsigned char*)ECRamBufAdsPtr, 2 ) )
+    {
+      *ECRamBufAdsPtr = 0;
+      *ECRamBufChkAdsPtr = 0;
+    }
+    if(*ECRamBufAdsPtr>=Ps2)
+    {
+      *ECRAds += 1;//*ECRamBufAdsPtr;
+      ECEAds = ECRgTab[i].ECEAds;
+      E2P_WData(ECEAds,(unsigned char*)ECRAds,4);
+      *ECRamBufAdsPtr -= Ps2;
+      *ECRamBufChkAdsPtr = ChkNum((unsigned char*)ECRamBufAdsPtr,2);
+    }
+  }
+}
+void EC_ClearA(void)
+{
+  int i;
+  unsigned long* ECRAds;
+  unsigned short ECEAds;
+  unsigned char tmpbuf[8];
+  memset(tmpbuf,0,8);
+  for( i=0;i<ECUnitNum;++i)
+  {
+    ECRAds = ECRgTab[i].ECRAds;
+    ECEAds = ECRgTab[i].ECEAds;
+    E2P_WData(ECEAds,tmpbuf,4);
+  }
+}
+void Read_E2R()
+{
+  int i;
+  unsigned long* ECRAds;
+  unsigned short ECEAds;
+  for( i=0;i<ECUnitNum;++i)
+  {
+    ECRAds = ECRgTab[i].ECRAds;
+    ECEAds = ECRgTab[i].ECEAds;
+    E2P_RData((unsigned char*)ECRAds,ECEAds,4);
+  }
+}
+
 void ProcHalfSec(void)
 {
   int i;
   unsigned int tmp_p;
   Flag.Clk &= ~F_HalfSec;
+  if((Flag.Power & F_PwrUp) == 0)
+      return;
   HT_GPIO_BitsToggle(HT_GPIOB,GPIO_Pin_5);
   for(i=0;i<8;++i)
   {
     ATT7022RdReg(ATVoltFlag,(unsigned char*)&(SM.State[i]),i);
     ATT7022RdReg(ATPZ,(unsigned char*)&tmp_p,i);
     tmp_p &= 0xffffff;
-    Energy_Data[i].Pp += tmp_p;
+    if(tmp_p)
+    if(SM.State[i]&0x1000)
+    {
+      ECP.PL_CumPn[i] += tmp_p;
+      ECP.PL_ChkPn[i]=ChkNum((unsigned char*)&ECP.PL_CumPn[i],2);
+    }
+    else
+    {
+      ECP.PL_CumPp[i] += tmp_p;
+      ECP.PL_ChkPp[i]=ChkNum((unsigned char*)&ECP.PL_CumPp[i],2);
+    }
     ATT7022RdReg(ATQZ,(unsigned char*)&tmp_p,i);
     tmp_p &= 0xffffff;
-    Energy_Data[i].Qp += tmp_p;
+    if(tmp_p)
+    if(SM.State[i]&0x2000)
+    {
+      ECP.PL_CumQn[i] += tmp_p;
+      ECP.PL_ChkQn[i]=ChkNum((unsigned char*)&ECP.PL_CumQn[i],2);
+    }
+    else
+    {
+      ECP.PL_CumQp[i] += tmp_p;
+      ECP.PL_ChkQp[i]=ChkNum((unsigned char*)&ECP.PL_CumQp[i],2);
+    }
   }
+  EC_MeasA();
 }
 /***************************************************
 	Working for Every Second
@@ -512,7 +591,7 @@ void ProcMin(void)
     unsigned char Time_buf[8];
     unsigned short year;
     Flag.Clk &= ~F_Min;
-    if((Flag.Power & F_PwrUp) != 0)
+    if((Flag.Power & F_PwrUp) == 0)
       return;
     //GetTime();
     MoveCurrentTimeBCD_Hex();
@@ -542,7 +621,7 @@ void ProcHour(void)
   unsigned char Time_buf[8];
   unsigned short year;
   Flag.Clk &= ~F_Hour;
-  if((Flag.Power & F_PwrUp) != 0)
+  if((Flag.Power & F_PwrUp) == 0)
       return;
   GetTime();
   MoveCurrentTimeBCD_Hex();
@@ -562,7 +641,7 @@ void ProcDay(void)
   unsigned char Time_buf[8];
   unsigned short year;
   Flag.Clk &= ~F_Day;
-  if((Flag.Power & F_PwrUp) != 0)
+  if((Flag.Power & F_PwrUp) == 0)
       return;
   Time_buf[0]=Clk.SecH;
   Time_buf[1]=Clk.MinH;
@@ -634,7 +713,9 @@ void main(void)
         E2P_WData(FrzdRecord_Time,flash_id,8);
         E2P_WData(ShrpdRecord_Time,flash_id,8);
         E2P_WData(MonthdRecord_Time,flash_id,8);
-#endif  
+#endif
+     //   EC_ClearA();
+        Read_E2R();
         for(i=0;i<8;i++)
         {
           ATT7022Init(i);	//Test

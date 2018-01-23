@@ -1343,10 +1343,12 @@ u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
 			f_val = GetYc(i);
                         switch(i%23)
                         {
-                        case 0:
                         case 1:
                         case 2:
                         case 3:
+                          f_val = f_val/10000;
+                          break;
+                        case 0:
                         case 7:
                         case 8:
                         case 9:

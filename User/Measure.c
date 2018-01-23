@@ -1080,7 +1080,7 @@ void ATT7022Rd(unsigned char Cmd, unsigned char* Data, short Length,unsigned sho
 {
   unsigned short i,j;
   unsigned char Temp;
-  unsigned char Buff1[32];
+  unsigned char Buff1[64];
   SPIPARA* SPIPara;	
   SPIPara = (SPIPARA*)Buff1;
   GetSPIPara( SPIPara, Devads );
@@ -1125,7 +1125,7 @@ void ATT7022Rd(unsigned char Cmd, unsigned char* Data, short Length,unsigned sho
 void ATT7022WR(unsigned char Cmd, unsigned char* Data, short Length,unsigned short Devads )
 {
   unsigned short i;
-  unsigned char Buff1[32];
+  unsigned char Buff1[64];
   SPIPARA* SPIPara;	
   SPIPara = (SPIPARA*)Buff1;
   GetSPIPara( SPIPara, Devads );
@@ -1217,7 +1217,7 @@ void Read_CMonEC( unsigned char* Dest, unsigned short ECRgAds )
 		for( i=0;i<ECUnitNum;i++ )
 		{
 			ECEAds = ECRgTab[i].ECEAds; 
-			ECRAds = ECRgTab[i].ECRAds; 
+			//ECRAds = ECRgTab[i].ECRAds; 
 			ECFAds = ECRgTab[i].ECFAds;
 	
 			if( ECEAds == ECRgAds ) break;				//×ÜµçÁ¿

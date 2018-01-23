@@ -261,6 +261,74 @@ unsigned long SetFailVoltage(unsigned short Devads)				//ATChk
 
 }
 
+
+void SetIDefault(unsigned short Devads)
+{
+  short RegAds,EpAds;
+  unsigned char Buff[6];
+  for( RegAds=PgainA;RegAds<=QgainC;RegAds++ )
+  {
+#if ( NEW7022E == YesCheck )
+    EpAds = GetATT7022ECalibDataEAddr( RegAds );
+#else
+    EpAds = RegAds * 3;
+#endif
+    EpAds += E2P_PGLEN;
+    EpAds -= (0x100*Devads); //10.07.30
+    Buff[0]=0x2e;
+    Buff[1]=0xf2;
+   //Buff[0]=0;
+   //Buff[1]=0;
+    E2P_WData( EpAds,Buff,2);	
+  }
+  
+  for( RegAds=SgainA;RegAds<=SgainC;RegAds++ )
+  {
+#if ( NEW7022E == YesCheck )
+    EpAds = GetATT7022ECalibDataEAddr( RegAds );
+#else
+    EpAds = RegAds * 3;
+#endif
+    EpAds += E2P_PGLEN;
+    EpAds -= (0x100*Devads); //10.07.30
+    Buff[0]=0x8f;
+    Buff[1]=0xf8;
+   //Buff[0]=0;
+   //Buff[1]=0;
+    E2P_WData( EpAds,Buff,2);	
+  }
+  for( RegAds=IgainA;RegAds<=IgainC;RegAds++ )
+  {
+#if ( NEW7022E == YesCheck )
+    EpAds = GetATT7022ECalibDataEAddr( RegAds );
+#else
+    EpAds = RegAds * 3;
+#endif
+    EpAds += E2P_PGLEN;
+    EpAds -= (0x100*Devads); //10.07.30
+    Buff[0]=0xee;
+    Buff[1]=0xF1;//0xEE;
+    //Buff[0]=0;
+    //Buff[1]=0;
+    E2P_WData( EpAds,Buff,2);	
+  }
+  for( RegAds=UgainA;RegAds<=UgainC;RegAds++ )
+  {
+#if ( NEW7022E == YesCheck )
+    EpAds = GetATT7022ECalibDataEAddr( RegAds );
+#else
+    EpAds = RegAds * 3;
+#endif
+    EpAds += E2P_PGLEN;
+    EpAds -= (0x100*Devads); //10.07.30
+  Buff[0]=0xFA;
+   Buff[1]=0xFE;
+   // Buff[0]=0;
+   // Buff[1]=0;
+    E2P_WData( EpAds,Buff,2);	
+  }
+}
+
 void ATT7022Init(unsigned short Devads)
 {
   unsigned char Buff[6];
@@ -293,6 +361,7 @@ void ATT7022Init(unsigned short Devads)
   udelay(1000); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
   udelay(1000);
+  SetIDefault(Devads);//zzltest
   HFConstHL = MSpec.R7022E_HFConst;	//新国网		//13.08.30
   
   *(Point+3) =0;
@@ -828,8 +897,9 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
 //LValue /= NConst;
 
 //LValue *= A100Ib;									//新国网	//13.08.30
-    //LValue *= MSpec.RBaseCurrent;						//新国网	//13.08.30
-    //LValue /= 245760;	//2^13*30=8192*30=245760  
+    LValue *= MSpec.RBaseCurrent;						//新国网	//13.08.30
+    LValue /= 16384;
+    //  LValue /= 245760;	//2^13*30=8192*30=245760  
     Value = LValue;
 //Value = ( Value * 10000 ) / 8192;
 //Value = ( Value * 625 ) / 512;
@@ -873,7 +943,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   default: 
     break;
   }
-  if( Value < 100 ) Value = 0;
+  if( Value < 50 ) Value = 0;
 	//Long_BCD4( Point, (unsigned long)Value );
 	//Temp = *Point;
 	//RAM_Write( Point, Point+1, 3 );
