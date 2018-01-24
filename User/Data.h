@@ -375,7 +375,7 @@
 #define ECUnitNum	11		//电量计量项数
 #define MDUnitNum	5		//需量计量项数			//反向需量不计
 #elif (MeterPhase == SinglePhase) //单相
-#define ECUnitNum	32		//电量计量项数
+#define ECUnitNum	64		//电量计量项数
 #define MDUnitNum	5		//需量计量项数			//反向需量不计
 #endif
 

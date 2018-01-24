@@ -395,10 +395,10 @@ void EC_MeasA(void)
     }
     if(*ECRamBufAdsPtr>=Ps2)
     {
-      *ECRAds += 1;//*ECRamBufAdsPtr;
+      *ECRAds += (*ECRamBufAdsPtr/Ps2);//*ECRamBufAdsPtr;
       ECEAds = ECRgTab[i].ECEAds;
       E2P_WData(ECEAds,(unsigned char*)ECRAds,4);
-      *ECRamBufAdsPtr -= Ps2;
+      *ECRamBufAdsPtr %= Ps2;
       *ECRamBufChkAdsPtr = ChkNum((unsigned char*)ECRamBufAdsPtr,2);
     }
   }
@@ -434,6 +434,7 @@ void ProcHalfSec(void)
 {
   int i;
   unsigned int tmp_p;
+  short Quad;
   Flag.Clk &= ~F_HalfSec;
   if((Flag.Power & F_PwrUp) == 0)
       return;
@@ -457,15 +458,21 @@ void ProcHalfSec(void)
     ATT7022RdReg(ATQZ,(unsigned char*)&tmp_p,i);
     tmp_p &= 0xffffff;
     if(tmp_p)
-    if(SM.State[i]&0x2000)
     {
-      ECP.PL_CumQn[i] += tmp_p;
-      ECP.PL_ChkQn[i]=ChkNum((unsigned char*)&ECP.PL_CumQn[i],2);
-    }
-    else
-    {
-      ECP.PL_CumQp[i] += tmp_p;
-      ECP.PL_ChkQp[i]=ChkNum((unsigned char*)&ECP.PL_CumQp[i],2);
+      if(SM.State[i]&0x2000)
+      {
+        ECP.PL_CumQn[i] += tmp_p;
+        ECP.PL_ChkQn[i]=ChkNum((unsigned char*)&ECP.PL_CumQn[i],2);
+      }
+      else
+      {
+        ECP.PL_CumQp[i] += tmp_p;
+        ECP.PL_ChkQp[i]=ChkNum((unsigned char*)&ECP.PL_CumQp[i],2);
+      }
+      Quad=GetMQuad((SM.State[i]>>12)&0x3,0);
+      //Quad = (SM.State[i]>>12)&0x3;
+      ECP.PL_CumQ[i][Quad] += tmp_p;
+      ECP.PL_ChkQ[i][Quad]=ChkNum((unsigned char*)&ECP.PL_CumQ[i][Quad],2);
     }
   }
   EC_MeasA();
@@ -517,6 +524,7 @@ void ProcSec(void)
 #endif    
     for(i=0;i<8;++i)
     {
+      ATT7022RdReg(PFlag,(unsigned char*)&(SM.PQFlag[i]),i);
 #if 0      
       Energy_Data[i].Pa = GetPhasePW(ATPWPA,i);
       Energy_Data[i].Pb = GetPhasePW(ATPWPB,i);
@@ -527,6 +535,22 @@ void ProcSec(void)
       Read_ATTValue(ATPWPB,&Energy_Data[i].Pb,i);
       Read_ATTValue(ATPWPC,&Energy_Data[i].Pc,i);
       Read_ATTValue(ATPWPZ,&Energy_Data[i].Pt,i);
+      if(SM.PQFlag[i]&0x1)
+      {
+        Energy_Data[i].Pa *=-1;
+      }
+      if(SM.PQFlag[i]&0x2)
+      {
+        Energy_Data[i].Pb *=-1;
+      }
+      if(SM.PQFlag[i]&0x4)
+      {
+        Energy_Data[i].Pc *=-1;
+      }
+      if(SM.PQFlag[i]&0x8)
+      {
+        Energy_Data[i].Pt *=-1;
+      }
 #endif      
       Real_Data[i].Pa = Energy_Data[i].Pa;
       Real_Data[i].Pb = Energy_Data[i].Pb;
@@ -542,6 +566,22 @@ void ProcSec(void)
       Read_ATTValue(ATPWQB,&Real_Data[i].Qb,i);
       Read_ATTValue(ATPWQC,&Real_Data[i].Qc,i);
       Read_ATTValue(ATPWQZ,&Real_Data[i].Qt,i);
+      if(SM.PQFlag[i]&0x10)
+      {
+        Real_Data[i].Qa *=-1;
+      }
+      if(SM.PQFlag[i]&0x20)
+      {
+        Real_Data[i].Qb *=-1;
+      }
+      if(SM.PQFlag[i]&0x40)
+      {
+        Real_Data[i].Qc *=-1;
+      }
+      if(SM.PQFlag[i]&0x80)
+      {
+        Real_Data[i].Qt *=-1;
+      }
 #endif      
       Read_ATTValue(ATPWSA,&Real_Data[i].Sa,i);
       Read_ATTValue(ATPWSB,&Real_Data[i].Sb,i);
@@ -714,7 +754,7 @@ void main(void)
         E2P_WData(ShrpdRecord_Time,flash_id,8);
         E2P_WData(MonthdRecord_Time,flash_id,8);
 #endif
-     //   EC_ClearA();
+       // EC_ClearA();
         Read_E2R();
         for(i=0;i<8;i++)
         {

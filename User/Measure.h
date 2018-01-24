@@ -159,7 +159,7 @@
 #define ATFstCntA	0x39		//新国网	//13.12.28
 #define ATFstCntB	0x3A		//新国网	//13.12.28
 #define ATFstCntC	0x3B		//新国网	//13.12.28
-
+#define PFlag		0x3D
 #define ATChkSum1	0x3E		//ATChk
 
 #if ( NEW7022E == YesCheck )

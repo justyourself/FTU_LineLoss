@@ -37,7 +37,7 @@ static int m_Channel_no;
 int Assamble_XmlFormat(int sect,char *In,char *Out)
 {
   int Len=0,i;
-  unsigned long l_val;
+  long l_val;
   float f_val;
   char tmp[64];
   sprintf(Out,"\t<DataRec sect=\"%d\" tm=\"%04d%02d%02d_%02d%02d%02d\">\r\n",sect,2000+In[5],In[4],In[3],In[2],In[1],In[0]);
@@ -281,10 +281,10 @@ int Send_XmlDataType3(char * buf)
     return byMsgNum;
 }
                          
-unsigned long GetYc(unsigned short ycno)
+long GetYc(unsigned short ycno)
 {
-  unsigned long *Ptr;
-  Ptr=(unsigned long*)&Real_Data[ycno/23];
+  long *Ptr;
+  Ptr=(long*)&Real_Data[ycno/23];
   return Ptr[ycno%23];
 }
 short GetDd(unsigned short kwhno,unsigned char *buf)
@@ -935,7 +935,7 @@ u8 OrgnizeReadDataMsg(u8* lpby)
 	//int wYxTNo;
 	u8 i;
 	int wYcTNo;
-	int  iYcVal;
+	long  iYcVal;
 	//int wDdTNo;
 	int dwDdVal;
 	u8 byMsgNum = 1;

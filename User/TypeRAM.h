@@ -411,25 +411,13 @@ typedef struct
 	unsigned short PL_CumPn[8];				//当前反向有功电量脉冲计数器(2)
 	unsigned short PL_CumQp[8];				//当前正向无功电量脉冲计数器(2)
 	unsigned short PL_CumQn[8];				//当前反向无功电量脉冲计数器(2)
-	unsigned short PL_CumQ1;				//当前1象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ2;				//当前2象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ3;				//当前3象限无功电量脉冲计数器(2)
-	unsigned short PL_CumQ4;				//当前4象限无功电量脉冲计数器(2)
-	unsigned short PL_CumSp;				//当前正向视在电量脉冲计数器(2)
-	unsigned short PL_CumSn;				//当前反向视在电量脉冲计数器(2)
+        unsigned short PL_CumQ[8][4];				//当前4象限无功电量脉冲计数器(2)
 
 	unsigned char PL_ChkPp[8];				//当前正向有功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkPn[8];				//当前反向有功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkQp[8];				//当前正向无功电量脉冲计数器校验和(1)
 	unsigned char PL_ChkQn[8];				//当前反向无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ1;				//当前1象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ2;				//当前2象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ3;				//当前3象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkQ4;				//当前4象限无功电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSp;				//当前正向视在电量脉冲计数器校验和(1)
-	unsigned char PL_ChkSn;				//当前反向视在电量脉冲计数器校验和(1)
-	unsigned short PL_CumPp_Dis;		//当前正向有功电量脉冲计数器--显示进度条用
-	unsigned short PL_CumPn_Dis;		//当前反向有功电量脉冲计数器--显示进度条用
+        unsigned char PL_ChkQ[8][4];				//当前4象限无功电量脉冲计数器校验和(1)
 
 }ECPULSE;					//180字节
 
@@ -873,16 +861,16 @@ typedef struct
   unsigned long	Ub; 			//B相电压(4)
   unsigned long	Uc; 			//C相电压(4)
   
-  unsigned long	Pa; 					//A相有功功率(4)	
-  unsigned long	Pb; 					//B相有功功率(4)	
-  unsigned long	Pc; 					//C相有功功率(4)	
-  unsigned long	Pt; 					//合相有功功率(4)
+  signed long	        Pa; 					//A相有功功率(4)	
+  signed long	        Pb; 					//B相有功功率(4)	
+  signed long	        Pc; 					//C相有功功率(4)	
+  signed long	        Pt; 					//合相有功功率(4)
   
   
-  unsigned long	Qa; 					//A相无功功率(4)	
-  unsigned long	Qb; 					//B相无功功率(4)	
-  unsigned long	Qc; 					//C相无功功率(4)	
-  unsigned long	Qt; 					//合相无功功率(4)
+  signed long	        Qa; 					//A相无功功率(4)	
+  signed long	        Qb; 					//B相无功功率(4)	
+  signed long	        Qc; 					//C相无功功率(4)	
+  signed long	        Qt; 					//合相无功功率(4)
   
   
   unsigned long	Sa; 					//A相视在功率(4)	
@@ -911,10 +899,10 @@ typedef struct
   unsigned long	Qn; 					//反向无功
   unsigned long	Q2; 					//2象限
   unsigned long	Q3; 					//3象限
-  unsigned long	Pa; 					//A相有功功率(4)	
-  unsigned long	Pb; 					//B相有功功率(4)	
-  unsigned long	Pc; 					//C相有功功率(4)	
-  unsigned long	Pt; 					//合相有功功率(4)
+  signed   long	Pa; 					//A相有功功率(4)	
+  signed   long	Pb; 					//B相有功功率(4)	
+  signed   long	Pc; 					//C相有功功率(4)	
+  signed   long	Pt; 					//合相有功功率(4)
 }ENERGY;
 
 //	Clock Timer Variable
@@ -1392,6 +1380,7 @@ typedef struct
   unsigned int State[8];
   unsigned int PulseWidthCnt[8];
   unsigned int SumPluseECP0[8];
+  unsigned int PQFlag[8];
   unsigned char Delay30Min;
   unsigned char Delay60Sec;
 } SRAM;

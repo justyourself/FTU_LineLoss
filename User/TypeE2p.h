@@ -42,8 +42,40 @@
 #define	CMon_EC_Pn7                     CMon_EC_Pp7+5
 #define CMon_EC_Qp7                     CMon_EC_Pn7+5
 #define CMon_EC_Qn7                     CMon_EC_Qp7+5
+#define CMon_EC_Q01                     CMon_EC_Qn7+5
+#define	CMon_EC_Q02                     CMon_EC_Q01+5
+#define CMon_EC_Q03                     CMon_EC_Q02+5
+#define CMon_EC_Q04                     CMon_EC_Q03+5
+#define CMon_EC_Q11                     CMon_EC_Q04+5
+#define	CMon_EC_Q12                     CMon_EC_Q11+5
+#define CMon_EC_Q13                     CMon_EC_Q12+5
+#define CMon_EC_Q14                     CMon_EC_Q13+5
+#define CMon_EC_Q21                     CMon_EC_Q14+5
+#define	CMon_EC_Q22                     CMon_EC_Q21+5
+#define CMon_EC_Q23                     CMon_EC_Q22+5
+#define CMon_EC_Q24                     CMon_EC_Q23+5
+#define CMon_EC_Q31                     CMon_EC_Q24+5
+#define	CMon_EC_Q32                     CMon_EC_Q31+5
+#define CMon_EC_Q33                     CMon_EC_Q32+5
+#define CMon_EC_Q34                     CMon_EC_Q33+5
+#define CMon_EC_Q41                     CMon_EC_Q34+5
+#define	CMon_EC_Q42                     CMon_EC_Q41+5
+#define CMon_EC_Q43                     CMon_EC_Q42+5
+#define CMon_EC_Q44                     CMon_EC_Q43+5
+#define CMon_EC_Q51                     CMon_EC_Q44+5
+#define	CMon_EC_Q52                     CMon_EC_Q51+5
+#define CMon_EC_Q53                     CMon_EC_Q52+5
+#define CMon_EC_Q54                     CMon_EC_Q53+5
+#define CMon_EC_Q61                     CMon_EC_Q54+5
+#define	CMon_EC_Q62                     CMon_EC_Q61+5
+#define CMon_EC_Q63                     CMon_EC_Q62+5
+#define CMon_EC_Q64                     CMon_EC_Q63+5
+#define CMon_EC_Q71                     CMon_EC_Q64+5
+#define	CMon_EC_Q72                     CMon_EC_Q71+5
+#define CMon_EC_Q73                     CMon_EC_Q72+5
+#define CMon_EC_Q74                     CMon_EC_Q73+5
 
-#define	ClockAdj			 CMon_EC_Qn7+5				//（2）//结束地址:0x088D
+#define	ClockAdj			 CMon_EC_Q74+5				//（2）//结束地址:0x088D
 
 //事件参数均改为HEX码
 #define	EPhFail_Valve		          ClockAdj+6				//失压起始阀值(3)			yyy.y V 

@@ -1334,16 +1334,16 @@ void FeeECPulseAdd( unsigned short* PL_Cum, unsigned char* PL_Chk, unsigned char
 
 short GetMQuad( unsigned char PWFlag, short Reg )
 {
-    short Quad=1;
+    short Quad=0;
         
 //	PWFlag = PWFlag >> Reg;	
-	PWFlag &= 0x11;
+	PWFlag &= 0x3;
 	switch( PWFlag )
 	{
-		case 0: Quad = 1; break;	
-		case 0x10: Quad = 2; break;	
-		case 0x11: Quad = 3; break;	
-		case 0x01: Quad = 4; break;	
+		case 0: Quad = 0; break;	
+		case 0x1: Quad = 1; break;	
+		case 0x2: Quad = 3; break;	
+		case 0x3: Quad = 2; break;	
 		default: break;
 	}	
 	return 	Quad;
