@@ -1031,6 +1031,13 @@ typedef struct
     unsigned char ItemNo;				// œ‘ æœÓ–Ú∫≈
 
 } DISKEY;
+
+
+typedef struct
+{
+    unsigned short E2_PTR;
+    unsigned short E2_ADDR;
+}EVTPARALIST;
 /*
 typedef struct
 {
@@ -1381,6 +1388,8 @@ typedef struct
   unsigned int PulseWidthCnt[8];
   unsigned int SumPluseECP0[8];
   unsigned int PQFlag[8];
+  unsigned int PQFlag_b[8];
+  unsigned char P_Time[8][4];
   unsigned char Delay30Min;
   unsigned char Delay60Sec;
 } SRAM;

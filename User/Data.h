@@ -723,5 +723,7 @@ extern  const short DayTab[13];
 extern  const unsigned short Crc16tab[256];
 extern REAL            Real_Data[8];
 extern ENERGY          Energy_Data[8];
+extern const EVTPARALIST s_PnEvt[];
+extern const EVTPARALIST s_PtEvt[]; 
 #endif
 

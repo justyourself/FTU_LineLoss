@@ -22,8 +22,66 @@
 #include "Initial.h"
 #include "serial.h"
 #include "IEC101.h"
-#
 
+//第一个字节指针
+//第二个字节数量
+void Pn_Event_Save(int ch,int phase,unsigned char flag)
+{
+  unsigned short m_e2_ptr,m_e2_buf,year;
+  unsigned char ptr_buf[4],tmp_buf[48];
+  MoveCurrentTimeBCD_Hex();
+  tmp_buf[0]=Clk.SecH;
+  tmp_buf[1]=Clk.MinH;
+  tmp_buf[2]=Clk.HourH;
+  tmp_buf[3]=Clk.DayH;
+  tmp_buf[4]=Clk.Month;
+  year = Clk.YearH;
+  year = year*256 + Clk.YearL;
+  tmp_buf[5]=year-2000;
+  memcpy(tmp_buf+6,&Energy_Data[ch],32);
+  m_e2_ptr = s_PnEvt[ch*3+phase].E2_PTR;
+  m_e2_buf = s_PnEvt[ch*3+phase].E2_ADDR;
+  E2P_RData(ptr_buf,m_e2_ptr,3);
+  
+  ptr_buf[0] %=10;
+  if(flag)
+  {
+    E2P_PWData(m_e2_buf+ptr_buf[0]*80,tmp_buf,38);
+    if(ptr_buf[1]<10)
+      ptr_buf[1]++;
+  }
+  else
+  {
+    E2P_PWData(m_e2_buf+ptr_buf[0]*80+40,tmp_buf,38);
+    ptr_buf[0]++;
+  }
+  E2P_WData(m_e2_ptr,ptr_buf,3);
+}
+
+void Pt_Event_Save(int ch)
+{
+  unsigned short m_e2_ptr,m_e2_buf,year;
+  unsigned char ptr_buf[4],tmp_buf[48];
+  MoveCurrentTimeBCD_Hex();
+  tmp_buf[0]=Clk.SecH;
+  tmp_buf[1]=Clk.MinH;
+  tmp_buf[2]=Clk.HourH;
+  tmp_buf[3]=Clk.DayH;
+  tmp_buf[4]=Clk.Month;
+  year = Clk.YearH;
+  year = year*256 + Clk.YearL;
+  tmp_buf[5]=year-2000;
+  memcpy(tmp_buf+6,&Energy_Data[ch],32);
+  m_e2_ptr = s_PtEvt[ch].E2_PTR;
+  m_e2_buf = s_PtEvt[ch].E2_ADDR;
+  E2P_RData(ptr_buf,m_e2_ptr,3);
+  ptr_buf[0] %=10;
+  E2P_PWData(m_e2_buf+ptr_buf[0]*40,tmp_buf,38);
+  if(ptr_buf[1]<10)
+      ptr_buf[1]++;
+  ptr_buf[0]++;
+  E2P_WData(m_e2_ptr,ptr_buf,3);
+}
 
 short Save_Data(unsigned char *Time_buf)
 {
@@ -488,7 +546,8 @@ void ProcSec(void)
 {
   char Buff[8];
   char* Point;
-  int i;
+  int i,j,flag_p;
+  signed long *si_val;
 
   Flag.Clk &= ~F_Sec;
   Point = Buff;
@@ -598,6 +657,45 @@ void ProcSec(void)
       Read_ATTValue(ATFactorB,&Real_Data[i].Pfb,i);
       Read_ATTValue(ATFactorC,&Real_Data[i].Pfc,i);
       Read_ATTValue(ATFactorZ,&Real_Data[i].Pft,i);
+    }
+    for(i=0;i<8;++i)
+    {
+      flag_p = SM.PQFlag[i]^SM.PQFlag_b[i];
+      SM.PQFlag_b[i]=SM.PQFlag[i];
+      if((flag_p&0xf))
+      {
+        si_val = &Real_Data[i].Pa;
+        for(j=0;j<4;++j)
+        {
+          if(flag_p&(1<<j))
+          {
+            if(abs(si_val[j])>10)
+            {
+              SM.P_Time[i][j]=60;
+            }
+          }
+        }
+      }
+      for(j=0;j<3;++j) //功率方向
+      {
+        if(SM.P_Time[i][j])
+        {
+          --SM.P_Time[i][j];
+          if(SM.P_Time[i][j]==0)
+          {
+            Pn_Event_Save(i,j,SM.PQFlag[i]&(1<<j));
+          }
+        }
+      }
+      
+      if(SM.P_Time[i][3]) //潮流
+      {
+        --SM.P_Time[i][3];
+        if(SM.P_Time[i][3]==0)
+        {
+            Pt_Event_Save(i);
+        }
+      }
     }
 #if 0    
     if(SM.TestDisCnt==0)

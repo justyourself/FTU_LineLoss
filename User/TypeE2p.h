@@ -9,7 +9,6 @@
 // 2：历史最近1-12个月的所有电量、需量及需量发生时间
 // 3：节假日、周休日、季节、时段等电表参数
 // 4：轮显项等参数
-//校表参数 放在前100字节
 #define CMon_EC_Pp0                     0
 #define	CMon_EC_Pn0                     CMon_EC_Pp0+5
 #define CMon_EC_Qp0                     CMon_EC_Pn0+5
@@ -73,13 +72,13 @@
 #define CMon_EC_Q71                     CMon_EC_Q64+5
 #define	CMon_EC_Q72                     CMon_EC_Q71+5
 #define CMon_EC_Q73                     CMon_EC_Q72+5
-#define CMon_EC_Q74                     CMon_EC_Q73+5
+#define CMon_EC_Q74                     CMon_EC_Q73+5  //结束地址:0x0140
 
-#define	ClockAdj			 CMon_EC_Q74+5				//（2）//结束地址:0x088D
+#define	ClockAdj			 CMon_EC_Q74+5	//（2）//结束地址:0x088D
 
 //事件参数均改为HEX码
-#define	EPhFail_Valve		          ClockAdj+6				//失压起始阀值(3)			yyy.y V 
-#define AT7022ChkSum		          EPhFail_Valve+7				//7022校表数据校验和(4)		//ATChk		//V1000
+#define	EPhFail_Valve		          ClockAdj+6		          //失压起始阀值(3)			yyy.y V 
+#define AT7022ChkSum		          EPhFail_Valve+7		//7022校表数据校验和(4)		//ATChk		//V1000
 #define AT7022ChkSum2		          AT7022ChkSum+6		//7022e校表数据校验和2(4)		//ATChk		//V1000
 
 #define IEC_LINK_ADDR                    ClockAdj+6      //2
@@ -89,8 +88,54 @@
 #define	FrzdRecord_Time                  RandRecord_Time+10  //日冻结
 #define	ShrpdRecord_Time                 FrzdRecord_Time+10 //整点冻结
 #define	MonthdRecord_Time                ShrpdRecord_Time+10  //考核日冻结
-#define	EventdRecord_Time                MonthdRecord_Time+10
 
+#define	CH0_PAN_EVT_PT                   MonthdRecord_Time+10
+#define	CH0_PBN_EVT_PT                   CH0_PAN_EVT_PT+3
+#define	CH0_PCN_EVT_PT                   CH0_PBN_EVT_PT+3
+#define	CH0_PTD_EVT_PT                   CH0_PCN_EVT_PT+3
+#define	CH0_CLR_EVT_PT                   CH0_PCN_EVT_PT+3
+
+#define	CH1_PAN_EVT_PT                   CH0_CLR_EVT_PT+3
+#define	CH1_PBN_EVT_PT                   CH1_PAN_EVT_PT+3
+#define	CH1_PCN_EVT_PT                   CH1_PBN_EVT_PT+3
+#define	CH1_PTD_EVT_PT                   CH1_PCN_EVT_PT+3
+#define	CH1_CLR_EVT_PT                   CH1_PCN_EVT_PT+3
+
+#define	CH2_PAN_EVT_PT                   CH1_CLR_EVT_PT+3
+#define	CH2_PBN_EVT_PT                   CH2_PAN_EVT_PT+3
+#define	CH2_PCN_EVT_PT                   CH2_PBN_EVT_PT+3
+#define	CH2_PTD_EVT_PT                   CH2_PCN_EVT_PT+3
+#define	CH2_CLR_EVT_PT                   CH2_PCN_EVT_PT+3
+
+#define	CH3_PAN_EVT_PT                   CH2_CLR_EVT_PT+3
+#define	CH3_PBN_EVT_PT                   CH3_PAN_EVT_PT+3
+#define	CH3_PCN_EVT_PT                   CH3_PBN_EVT_PT+3
+#define	CH3_PTD_EVT_PT                   CH3_PCN_EVT_PT+3
+#define	CH3_CLR_EVT_PT                   CH3_PCN_EVT_PT+3
+
+#define	CH4_PAN_EVT_PT                   CH3_CLR_EVT_PT+3
+#define	CH4_PBN_EVT_PT                   CH4_PAN_EVT_PT+3
+#define	CH4_PCN_EVT_PT                   CH4_PBN_EVT_PT+3
+#define	CH4_PTD_EVT_PT                   CH4_PCN_EVT_PT+3
+#define	CH4_CLR_EVT_PT                   CH4_PCN_EVT_PT+3
+
+#define	CH5_PAN_EVT_PT                   CH4_CLR_EVT_PT+3
+#define	CH5_PBN_EVT_PT                   CH5_PAN_EVT_PT+3
+#define	CH5_PCN_EVT_PT                   CH5_PBN_EVT_PT+3
+#define	CH5_PTD_EVT_PT                   CH5_PCN_EVT_PT+3
+#define	CH5_CLR_EVT_PT                   CH5_PCN_EVT_PT+3
+
+#define	CH6_PAN_EVT_PT                   CH5_CLR_EVT_PT+3
+#define	CH6_PBN_EVT_PT                   CH6_PAN_EVT_PT+3
+#define	CH6_PCN_EVT_PT                   CH6_PBN_EVT_PT+3
+#define	CH6_PTD_EVT_PT                   CH6_PCN_EVT_PT+3
+#define	CH6_CLR_EVT_PT                   CH6_PCN_EVT_PT+3
+
+#define	CH7_PAN_EVT_PT                   CH6_CLR_EVT_PT+3
+#define	CH7_PBN_EVT_PT                   CH7_PAN_EVT_PT+3
+#define	CH7_PCN_EVT_PT                   CH7_PBN_EVT_PT+3
+#define	CH7_PTD_EVT_PT                   CH7_PCN_EVT_PT+3
+#define	CH7_CLR_EVT_PT                   CH7_PCN_EVT_PT+3
 
 #define ErrorRegAddr			E2P_PGLEN-0x800
 
@@ -106,7 +151,56 @@
 
 #define MONTH_DATA_ADDR                  0
 #define RAND_DATA_ADDR                   0x1680
-#define E2END_DATA_ADDR                 (RAND_DATA_ADDR+0x05A0)
+
+#define CH0_PAN_EVT_ADDR                RAND_DATA_ADDR+0x05A0
+#define CH0_PBN_EVT_ADDR                CH0_PAN_EVT_ADDR+800
+#define CH0_PCN_EVT_ADDR                CH0_PBN_EVT_ADDR+800
+#define CH0_PTD_EVT_ADDR                CH0_PCN_EVT_ADDR+800
+#define CH0_CLR_ADDR                    CH0_PTD_EVT_ADDR+400
+
+#define CH1_PAN_EVT_ADDR                CH0_CLR_ADDR+400
+#define CH1_PBN_EVT_ADDR                CH1_PAN_EVT_ADDR+800
+#define CH1_PCN_EVT_ADDR                CH1_PBN_EVT_ADDR+800
+#define CH1_PTD_EVT_ADDR                CH1_PCN_EVT_ADDR+800
+#define CH1_CLR_ADDR                    CH1_PTD_EVT_ADDR+400
+
+#define CH2_PAN_EVT_ADDR                CH1_CLR_ADDR+400
+#define CH2_PBN_EVT_ADDR                CH2_PAN_EVT_ADDR+800
+#define CH2_PCN_EVT_ADDR                CH2_PBN_EVT_ADDR+800
+#define CH2_PTD_EVT_ADDR                CH2_PCN_EVT_ADDR+800
+#define CH2_CLR_ADDR                    CH2_PTD_EVT_ADDR+400
+
+#define CH3_PAN_EVT_ADDR                CH2_CLR_ADDR+400
+#define CH3_PBN_EVT_ADDR                CH3_PAN_EVT_ADDR+800
+#define CH3_PCN_EVT_ADDR                CH3_PBN_EVT_ADDR+800
+#define CH3_PTD_EVT_ADDR                CH3_PCN_EVT_ADDR+800
+#define CH3_CLR_ADDR                    CH3_PTD_EVT_ADDR+400
+
+#define CH4_PAN_EVT_ADDR                CH3_CLR_ADDR+400
+#define CH4_PBN_EVT_ADDR                CH4_PAN_EVT_ADDR+800
+#define CH4_PCN_EVT_ADDR                CH4_PBN_EVT_ADDR+800
+#define CH4_PTD_EVT_ADDR                CH4_PCN_EVT_ADDR+800
+#define CH4_CLR_ADDR                    CH4_PTD_EVT_ADDR+400
+
+#define CH5_PAN_EVT_ADDR                CH4_CLR_ADDR+400
+#define CH5_PBN_EVT_ADDR                CH5_PAN_EVT_ADDR+800
+#define CH5_PCN_EVT_ADDR                CH5_PBN_EVT_ADDR+800
+#define CH5_PTD_EVT_ADDR                CH5_PCN_EVT_ADDR+800
+#define CH5_CLR_ADDR                    CH5_PTD_EVT_ADDR+400
+
+#define CH6_PAN_EVT_ADDR                CH5_CLR_ADDR+400
+#define CH6_PBN_EVT_ADDR                CH6_PAN_EVT_ADDR+800
+#define CH6_PCN_EVT_ADDR                CH6_PBN_EVT_ADDR+800
+#define CH6_PTD_EVT_ADDR                CH6_PCN_EVT_ADDR+800
+#define CH6_CLR_ADDR                    CH6_PTD_EVT_ADDR+400
+
+#define CH7_PAN_EVT_ADDR                CH6_CLR_ADDR+400
+#define CH7_PBN_EVT_ADDR                CH7_PAN_EVT_ADDR+800
+#define CH7_PCN_EVT_ADDR                CH7_PBN_EVT_ADDR+800
+#define CH7_PTD_EVT_ADDR                CH7_PCN_EVT_ADDR+800
+#define CH7_CLR_ADDR                    CH7_PTD_EVT_ADDR+400
+
+#define E2END_DATA_ADDR                 (CH7_CLR_ADDR+400)
 
 
 #define ONE_RECORD_LEN                   54
@@ -170,7 +264,7 @@
 #define Load_profile2Page				Load_profile1Page+40				//负荷曲线1首页码(20)	
 #define PowerQuality_profilePage			Load_profile2Page+6				//负荷曲线2首页码(200)		
 
-#define Profile_Page_end						PowerQuality_profilePage+40
+#define Profile_Page_end				PowerQuality_profilePage+40
 
 #define GeneralMonCurveSta		Profile_Page_end		//0
 #define GeneralMonCurveEnd		Profile_Page_end+0x10000		//64K  历史数据范围，

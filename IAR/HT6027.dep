@@ -6,328 +6,401 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</file>
-      <file>$PROJ_DIR$\..\User\main.c</file>
-      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x3x.s</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6x3x_emu.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</file>
-      <file>$PROJ_DIR$\..\User\Time.c</file>
-      <file>$PROJ_DIR$\..\User\General.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</file>
-      <file>$PROJ_DIR$\..\User\ATT7022E.C</file>
-      <file>$PROJ_DIR$\..\User\IEC101.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_flash.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</file>
-      <file>$PROJ_DIR$\..\User\Flash_Data.c</file>
-      <file>$PROJ_DIR$\..\User\data.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_gpio.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_aes&amp;rand.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_tbs.lst</file>
       <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_spi.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</file>
+      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x3x.s</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_pmu.c</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</file>
+      <file>$PROJ_DIR$\..\User\main.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</file>
       <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_exti.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_flash.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_gpio.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6x3x_emu.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</file>
       <file>$PROJ_DIR$\..\User\interrupt.c</file>
+      <file>$PROJ_DIR$\..\User\E2PROM.c</file>
+      <file>$PROJ_DIR$\..\User\IEC101.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\IECComm.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\Ram.o</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_uart&amp;7816.c</file>
+      <file>$PROJ_DIR$\..\User\ATT7022E.C</file>
+      <file>$PROJ_DIR$\..\User\data.c</file>
+      <file>$PROJ_DIR$\..\User\initial.c</file>
+      <file>$PROJ_DIR$\..\User\Flash_Data.c</file>
       <file>$PROJ_DIR$\..\User\Measure.c</file>
       <file>$PROJ_DIR$\..\User\power.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_uart&amp;7816.c</file>
-      <file>$PROJ_DIR$\..\User\Ram.c</file>
-      <file>$PROJ_DIR$\..\User\initial.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_pmu.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</file>
-      <file>$PROJ_DIR$\..\User\E2PROM.c</file>
-      <file>$PROJ_DIR$\..\User\serial.c</file>
-      <file>$PROJ_DIR$\Debug\List\Flash_Data.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\core_cm0.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cmFunc.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Time.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\initial.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\gprs.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\Ram.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\Flash_Data.o</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht501x_emu.h</file>
+      <file>$PROJ_DIR$\..\User\General.c</file>
       <file>$PROJ_DIR$\Debug\Obj\ht6xxx_cmu.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tdes&amp;rand.o</file>
-      <file>$PROJ_DIR$\Debug\List\ht501x_emu.lst</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_reset.h</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_tdes&amp;rand.lst</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_dma.h</file>
-      <file>$PROJ_DIR$\Debug\List\ht501x_keyscan.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_aes&amp;rand.o</file>
-      <file>$PROJ_DIR$\..\User\IEC101.h</file>
-      <file>$PROJ_DIR$\Debug\List\ATT7022E.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\IECComm.pbi</file>
-      <file>$PROJ_DIR$\HT6X2X.icf</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_rtc.h</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_dma.lst</file>
-      <file>$PROJ_DIR$\..\User\Demand.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_iic.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\data.o</file>
-      <file>$PROJ_DIR$\..\User\ECProcess.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tbs.o</file>
-      <file>$PROJ_DIR$\..\User\Data.h</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_uart&amp;7816.lst</file>
-      <file>$PROJ_DIR$\Debug\List\main.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6x3x_emu.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_pmu.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\General.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_lcd.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_timer.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\IECComm.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\system_ht6xxx.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\initial.lst</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</file>
+      <file>$PROJ_DIR$\..\User\Ram.c</file>
+      <file>$PROJ_DIR$\..\User\serial.c</file>
+      <file>$PROJ_DIR$\..\User\Time.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_uart&amp;7816.pbi</file>
       <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
       <file>$PROJ_DIR$\..\User\Display.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\Flash_Data.o</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_tbs.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_aes&amp;rand.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\Measure.pbi</file>
-      <file>$PROJ_DIR$\..\User\DLT698.h</file>
       <file>$PROJ_DIR$\Debug\List\General.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\Measure.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\system_ht6xxx.pbi</file>
       <file>$PROJ_DIR$\..\User\Rscomm.h</file>
       <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_lcd.o</file>
       <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_cmu.h</file>
-      <file>$PROJ_DIR$\..\User\GetMeterData.h</file>
       <file>$PROJ_DIR$\Debug\Obj\ht501x_keyscan.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\ht6xxx_spi.o</file>
       <file>$PROJ_DIR$\Debug\Obj\ht6xxx_dma.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_reset.o</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht501x_emu.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_uart&amp;7816.pbi</file>
-      <file>$PROJ_DIR$\..\User\ActCalendar.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_lcd.o</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_rtc.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\HT6027.pbd</file>
-      <file>$PROJ_DIR$\..\User\Parameter.h</file>
-      <file>$PROJ_DIR$\..\User\Measure.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_exti.o</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_aes&amp;rand.lst</file>
+      <file>$PROJ_DIR$\..\User\GetMeterData.h</file>
       <file>$PROJ_DIR$\..\User\TypeFlash.h</file>
+      <file>$PROJ_DIR$\..\User\DLT698.h</file>
+      <file>$PROJ_DIR$\Debug\List\initial.lst</file>
+      <file>$PROJ_DIR$\..\User\Parameter.h</file>
       <file>$PROJ_DIR$\..\User\TypeE2p.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\startup_ht6x1x.o</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\core_cm0.o</file>
-      <file>$PROJ_DIR$\Debug\Exe\HT6015_GPRS.out</file>
-      <file>$PROJ_DIR$\Debug\Obj\General.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_aes&amp;rand.h</file>
-      <file>$TOOLKIT_DIR$\lib\dl6M_tln.a</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_gpio.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\ht6x3x_emu.lst</file>
-      <file>$PROJ_DIR$\Debug\List\Ram.lst</file>
-      <file>$PROJ_DIR$\..\User\DisconnectControl.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_aes&amp;rand.lst</file>
+      <file>$PROJ_DIR$\..\User\ActCalendar.h</file>
       <file>$PROJ_DIR$\Debug\Obj\interrupt.pbi</file>
-      <file>$PROJ_DIR$\..\User\Interrupt.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_aes&amp;rand.h</file>
       <file>$PROJ_DIR$\Debug\List\interrupt.lst</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_reset.lst</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_uart&amp;7816.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\initial.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.h</file>
-      <file>$PROJ_DIR$\..\User\gprs.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\Measure.o</file>
-      <file>$PROJ_DIR$\Debug\Exe\HT6027_Line.out</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_timer.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\system_ht6xxx.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht501x_emu.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cmInstr.h</file>
-      <file>$PROJ_DIR$\..\User\Power.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tdes&amp;rand.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_rtc.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\E2PROM.o</file>
-      <file>$PROJ_DIR$\Debug\List\Measure.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\Time.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_dma.pbi</file>
-      <file>$PROJ_DIR$\..\User\gprs.h</file>
-      <file>$PROJ_DIR$\..\User\RemoteComm.h</file>
-      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
-      <file>$PROJ_DIR$\Debug\Obj\serial.o</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_gpio.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_iic.o</file>
-      <file>$PROJ_DIR$\Debug\List\data.lst</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\ht6xxx.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\power.o</file>
-      <file>$PROJ_DIR$\..\User\GPRSModule.c</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmFunc.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_rtc.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_reset.pbi</file>
-      <file>$PROJ_DIR$\Debug\Exe\HT6027_Line.bin</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$PROJ_DIR$\..\User\Time.h</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_lcd.h</file>
-      <file>$PROJ_DIR$\..\User\ESAM.h</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmInstr.h</file>
-      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm0.h</file>
-      <file>$PROJ_DIR$\..\User\TypeMeter.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_gpio.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\E2PROM.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_pmu.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\gprs.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_pmu.o</file>
-      <file>$PROJ_DIR$\..\User\ATT7022E.H</file>
-      <file>$PROJ_DIR$\Debug\Obj\data.pbi</file>
-      <file>$PROJ_DIR$\..\User\IECComm.c</file>
-      <file>$PROJ_DIR$\Debug\List\system_ht6xxx.lst</file>
-      <file>$PROJ_DIR$\..\User\Device.h</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_tbs.h</file>
-      <file>$PROJ_DIR$\..\User\FileSystem.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_flash.o</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_iic.h</file>
-      <file>$PROJ_DIR$\..\User\IECComm.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_uart&amp;7816.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\HT6027.pbd</file>
+      <file>$PROJ_DIR$\..\User\Measure.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\General.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_exti.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_reset.o</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_rtc.lst</file>
+      <file>$PROJ_DIR$\Debug\Exe\HT6015_GPRS.out</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\interrupt.o</file>
+      <file>$PROJ_DIR$\..\User\ApplComm.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_pmu.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_cmu.lst</file>
+      <file>$PROJ_DIR$\Debug\List\Time.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_spi.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_exti.h</file>
+      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x1x.s</file>
+      <file>$PROJ_DIR$\Debug\Obj\power.pbi</file>
+      <file>$TOOLKIT_DIR$\lib\m6M_tl.a</file>
+      <file>$PROJ_DIR$\Debug\List\serial.lst</file>
+      <file>$PROJ_DIR$\Debug\List\startup_ht6x3x.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_flash.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\xtgmath.h</file>
+      <file>$TOOLKIT_DIR$\lib\rt6M_tl.a</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_lcd.lst</file>
+      <file>$PROJ_DIR$\..\User\COSEMComm.h</file>
+      <file>$PROJ_DIR$\..\User\serial.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ATT7022E.o</file>
+      <file>$PROJ_DIR$\Debug\List\core_cm0.lst</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$PROJ_DIR$\..\User\Freeze.h</file>
       <file>$PROJ_DIR$\Debug\Obj\Ram.pbi</file>
       <file>$PROJ_DIR$\Debug\List\IEC101.lst</file>
-      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
-      <file>$TOOLKIT_DIR$\config\flashloader\Hitrendtech\HT6X3X.icf</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_lcd.lst</file>
-      <file>$PROJ_DIR$\Debug\List\core_cm0.lst</file>
-      <file>$PROJ_DIR$\..\User\COSEMComm.h</file>
-      <file>$PROJ_DIR$\..\User\PhaseEvent.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\startup_ht6x3x.o</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_spi.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_cmu.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\xtgmath.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\interrupt.o</file>
-      <file>$PROJ_DIR$\..\User\Event.h</file>
       <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6x3x_emu.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_spi.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\serial.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\power.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_exti.h</file>
-      <file>$PROJ_DIR$\Debug\List\startup_ht6x3x.lst</file>
-      <file>$TOOLKIT_DIR$\lib\m6M_tl.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
-      <file>$PROJ_DIR$\Debug\List\Time.lst</file>
-      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x1x.s</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_flash.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_pmu.h</file>
-      <file>$TOOLKIT_DIR$\lib\rt6M_tl.a</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_cmu.lst</file>
-      <file>$PROJ_DIR$\..\User\ApplComm.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_exti.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\Flash_Data.pbi</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\ht6xxx_lib.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht501x_keyscan.o</file>
-      <file>$PROJ_DIR$\Debug\List\E2PROM.lst</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_iic.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_cmu.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\startup_ht6x3x.o</file>
+      <file>$TOOLKIT_DIR$\config\flashloader\Hitrendtech\HT6X3X.icf</file>
+      <file>$PROJ_DIR$\..\User\PhaseEvent.h</file>
+      <file>$PROJ_DIR$\..\User\Event.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+      <file>$PROJ_DIR$\..\User\Port.h</file>
       <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_timer.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\ht6xxx_lib.h</file>
+      <file>$PROJ_DIR$\..\User\Mem.h</file>
+      <file>$PROJ_DIR$\Debug\List\E2PROM.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\serial.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_flash.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht501x_keyscan.o</file>
+      <file>$PROJ_DIR$\..\User\ProfileGeneric.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\Flash_Data.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_iic.lst</file>
       <file>$PROJ_DIR$\..\User\General.h</file>
       <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_flash.h</file>
       <file>$PROJ_DIR$\Debug\Obj\ht501x_emu.o</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_flash.lst</file>
-      <file>$PROJ_DIR$\..\User\ProfileGeneric.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ATT7022E.o</file>
-      <file>$PROJ_DIR$\..\User\Freeze.h</file>
-      <file>$PROJ_DIR$\..\User\serial.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\serial.pbi</file>
-      <file>$PROJ_DIR$\Debug\List\power.lst</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_gpio.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\ATT7022E.pbi</file>
-      <file>$PROJ_DIR$\..\User\Mem.h</file>
-      <file>$PROJ_DIR$\..\User\Port.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\IEC101.o</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\startup_ht6x2x.o</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_spi.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tbs.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.o</file>
-      <file>$PROJ_DIR$\..\User\TypeFRAM.H</file>
-      <file>$PROJ_DIR$\Debug\Exe\HT6015_GPRS.bin</file>
-      <file>$PROJ_DIR$\..\User\TypeRAM.h</file>
-      <file>$PROJ_DIR$\Debug\List\ht6xxx_exti.lst</file>
-      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
-      <file>$PROJ_DIR$\..\User\Initial.h</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht501x_keyscan.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\GPRSModule.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_timer.o</file>
-      <file>$PROJ_DIR$\..\User\cpucard.h</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_tdes&amp;rand.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\GPRSModule.pbi</file>
       <file>$PROJ_DIR$\..\User\IOClass.h</file>
       <file>$PROJ_DIR$\Debug\List\startup_ht6x2x.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\GPRSModule.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.o</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_spi.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_gpio.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\IEC101.o</file>
+      <file>$PROJ_DIR$\..\User\TypeFRAM.H</file>
+      <file>$PROJ_DIR$\Debug\List\power.lst</file>
+      <file>$PROJ_DIR$\Debug\Exe\HT6015_GPRS.bin</file>
+      <file>$PROJ_DIR$\..\User\Initial.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\startup_ht6x2x.o</file>
+      <file>$PROJ_DIR$\..\User\TypeRAM.h</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ATT7022E.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tbs.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\initial.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\core_cm0.pbi</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_tdes&amp;rand.h</file>
+      <file>$PROJ_DIR$\Debug\List\Flash_Data.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\gprs.o</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht501x_keyscan.h</file>
       <file>$PROJ_DIR$\..\User\NewEventList.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\IEC101.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_timer.o</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cmFunc.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\GPRSModule.o</file>
+      <file>$PROJ_DIR$\..\User\cpucard.h</file>
       <file>$PROJ_DIR$\Debug\Obj\ht6x3x_emu.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\Time.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\IEC101.pbi</file>
+      <file>$TOOLKIT_DIR$\lib\dl6M_tln.a</file>
+      <file>$PROJ_DIR$\..\User\Power.h</file>
+      <file>$PROJ_DIR$\..\User\gprs.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\Measure.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tdes&amp;rand.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_aes&amp;rand.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_rtc.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_gpio.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\core_cm0.o</file>
+      <file>$PROJ_DIR$\Debug\List\Ram.lst</file>
+      <file>$PROJ_DIR$\Debug\List\ht6x3x_emu.lst</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_uart&amp;7816.h</file>
+      <file>$PROJ_DIR$\..\User\DisconnectControl.h</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cmInstr.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_reset.lst</file>
+      <file>$PROJ_DIR$\..\User\Interrupt.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$PROJ_DIR$\Debug\Exe\HT6027_Line.out</file>
+      <file>$PROJ_DIR$\Debug\Obj\E2PROM.o</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_dma.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_timer.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\Measure.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\data.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\system_ht6xxx.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht501x_emu.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_uart&amp;7816.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\initial.pbi</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.h</file>
+      <file>$PROJ_DIR$\..\User\IEC101.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_tdes&amp;rand.lst</file>
+      <file>$PROJ_DIR$\Debug\List\ht501x_emu.lst</file>
+      <file>$PROJ_DIR$\..\User\ECProcess.h</file>
+      <file>$PROJ_DIR$\HT6X2X.icf</file>
+      <file>$PROJ_DIR$\Debug\Obj\startup_ht6x1x.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_iic.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tdes&amp;rand.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6x3x_emu.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\IECComm.pbi</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_dma.h</file>
+      <file>$PROJ_DIR$\Debug\List\ATT7022E.lst</file>
+      <file>$PROJ_DIR$\Debug\List\ht501x_keyscan.lst</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_rtc.h</file>
+      <file>$PROJ_DIR$\..\User\Demand.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_reset.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_iic.pbi</file>
+      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_timer.lst</file>
+      <file>$PROJ_DIR$\..\User\Device.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_pmu.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\data.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$PROJ_DIR$\..\User\TypeMeter.h</file>
+      <file>$PROJ_DIR$\Debug\List\system_ht6xxx.lst</file>
+      <file>$PROJ_DIR$\..\User\FileSystem.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_lcd.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_tbs.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\General.o</file>
+      <file>$PROJ_DIR$\..\User\Data.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_uart&amp;7816.lst</file>
+      <file>$PROJ_DIR$\Debug\List\main.lst</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$PROJ_DIR$\..\User\ATT7022E.H</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmInstr.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_pmu.o</file>
+      <file>$PROJ_DIR$\..\User\IECComm.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\Time.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_flash.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_gpio.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\power.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\E2PROM.pbi</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_lcd.h</file>
+      <file>$PROJ_DIR$\..\User\ESAM.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_pmu.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\gprs.pbi</file>
+      <file>$PROJ_DIR$\..\User\IECComm.c</file>
+      <file>$PROJ_DIR$\..\User\gprs.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_tbs.h</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\inc\ht6xxx_gpio.h</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm0.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_dma.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_iic.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_rtc.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\serial.o</file>
+      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+      <file>$PROJ_DIR$\..\User\RemoteComm.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_reset.pbi</file>
+      <file>$PROJ_DIR$\Debug\Exe\HT6027_Line.bin</file>
+      <file>$PROJ_DIR$\..\User\GPRSModule.c</file>
+      <file>$PROJ_DIR$\..\User\Time.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\ht6xxx_exti.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_spi.lst</file>
+      <file>$PROJ_DIR$\Debug\List\data.lst</file>
+      <file>$TOOLKIT_DIR$\CMSIS\Include\core_cmFunc.h</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\ht6xxx.h</file>
+      <file>$PROJ_DIR$\Debug\List\ht6xxx_exti.lst</file>
+      <file>$PROJ_DIR$\Debug\List\PhaseEvent.lst</file>
+      <file>$PROJ_DIR$\..\User\PhaseEvent.C</file>
+      <file>$PROJ_DIR$\Debug\Obj\PhaseEvent.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\PhaseEvent.o</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</name>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_spi.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 171 132</file>
+          <name>BICOMP</name>
+          <file> 81</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 80</file>
+          <name>ICCARM</name>
+          <file> 250 54</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 149 233 156 64 192 72 91 76 82 210 134 202 182 38 127</file>
+          <name>BICOMP</name>
+          <file> 126 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 149 233 156 64 192 72 91 76 82 210 134 202 182 38 127</file>
+          <name>ICCARM</name>
+          <file> 126 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</name>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 185 112</file>
+          <name>BICOMP</name>
+          <file> 178</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 37</file>
+          <name>ICCARM</name>
+          <file> 184 121</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 156 64 192 72 91 76 82 210</file>
+          <name>BICOMP</name>
+          <file> 36 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 156 64 192 72 91 76 82 210</file>
+          <name>ICCARM</name>
+          <file> 36 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\User\main.c</name>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 68 237</file>
+          <name>BICOMP</name>
+          <file> 238</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 74</file>
+          <name>ICCARM</name>
+          <file> 172 55</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 61 64 75 192 72 91 76 82 210 191 59 111 242 58 176 46 149 233 156 134 202 182 38 162 240 109 213 92 199 219 146 177 158 206 55 235 173 217 125 248 115 48 98 244 195 231 238 108 66 105 122 218 157 230 135 243 225 51</file>
+          <name>BICOMP</name>
+          <file> 193 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
         <tool>
+          <name>ICCARM</name>
+          <file> 193 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</name>
+      <outputs>
+        <tool>
           <name>BICOMP</name>
-          <file> 61 64 75 192 72 91 76 82 210 191 59 111 242 58 176 46 149 233 156 134 202 182 38 162 240 109 213 92 199 219 146 177 158 206 55 235 173 217 125 248 115 48 98 244 195 231 238 108 66 105 122 218 157 230 135 243 225 51</file>
+          <file> 245</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 167 72</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 198 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 198 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 137</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1 214</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 235 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 235 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 157</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 183 190</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 141 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 141 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
     </file>
@@ -336,1019 +409,30 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 188 200</file>
+          <file> 103 88</file>
         </tool>
       </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 45 220</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 133</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 98 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 98 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6x3x_emu.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 118 69</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 254</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 195 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 195 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 49 214</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 94</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 244 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 244 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 107 50</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 86</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 115 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 115 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 208 43</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 190</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 92 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 92 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\Time.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 203 140</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 39</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 240 109 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 88 209 186 172 83 194 224 178 104 187 159 250 252 174 105 66 218 230 243 157 231 135</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 240 109 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 88 209 186 172 83 194 224 178 104 187 159 250 252 174 105 66 218 230 243 157 231 135</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\General.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 89 73</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 114</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 109 162 240 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 105 238 108 66 218 230 231 83 243 157 135 61 75 191 63 100 57 222 178</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 109 162 240 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 105 238 108 66 218 230 231 83 243 157 135 61 75 191 63 100 57 222 178</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 47 44</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 136</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 248 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 248 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\ATT7022E.C</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 52 223</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 229</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 240 109 238 108 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 88 209 186 172 83 194 224 178 104 187 159 250 252 174 105 231 66 218 230 135 90 61 75 191 168</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 240 109 238 108 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 88 209 186 172 83 194 224 178 104 187 159 250 252 174 105 231 66 218 230 135 90 61 75 191 168</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\IEC101.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 181 232</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 253</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 58 64 192 72 91 76 82 210 111 176 59 242 225 213 149 233 156 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 51 240 162 66 105</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 58 64 192 72 91 76 82 210 111 176 59 242 225 213 149 233 156 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 51 240 162 66 105</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_flash.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 221 175</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 205</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 219 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 219 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 78 246</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 131</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 217 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 217 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\Flash_Data.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 36 84</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 212</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 149 233 156 64 192 72 91 76 82 210 134 202 182 38 213 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 231 218 230 240 162</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 149 233 156 64 192 72 91 76 82 210 134 202 182 38 213 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 231 218 230 240 162</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\data.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 148 62</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 169</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 240 162 238 66 105 109</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 240 162 238 66 105 109</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 56 96</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 141</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 48 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 48 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 216 147</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 60</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 177 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 177 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_gpio.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 228 163</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 117</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 146 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 146 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_spi.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 189 95</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 196</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 235 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 235 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_exti.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 241 106</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 211</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 199 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 199 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\interrupt.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 123 193</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 121</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 109 240 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 105 231 66 218 122 222 83 247 243 230 157 120 93</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 109 240 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 105 231 66 218 122 222 83 247 243 230 157 120 93</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\Measure.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 139 129</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 87</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 109 240 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 238 66 105 218 230 231 83 243 157 135 63 186 61 75 191</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 109 240 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 238 66 105 218 230 231 83 243 157 135 63 186 61 75 191</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\power.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 227 150</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 198</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 109 105 240 238 66 218 230 231 83 135 178 149 233 156 64 192 72 91 76 82 210 134 202 182 38 243 157 222 63</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 109 105 240 238 66 218 230 231 83 135 178 149 233 156 64 192 72 91 76 82 210 134 202 182 38 243 157 222 63</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_uart&amp;7816.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 67 179</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 99</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 125 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 125 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\Ram.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 119 42</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 180</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 218</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 218</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\initial.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 81 40</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 126</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 240 238 109 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 88 209 186 172 83 194 224 178 104 187 159 250 252 174 105 231 108 66 122 218 157 230 135 243 143 57 63</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 240 238 109 213 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 88 209 186 172 83 194 224 178 104 187 159 250 252 174 105 231 108 66 122 218 157 230 135 243 143 57 63</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_pmu.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 165 167</file>
+          <name>BICOMP</name>
+          <file> 207</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 70</file>
+          <name>ICCARM</name>
+          <file> 231 222</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 206 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
-          <file> 206 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
+          <file> 78 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</name>
-      <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 102 153</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 137</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 55 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 55 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 124 97</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 154</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 46 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 46 149 233 156 64 192 72 91 76 82 210 134 202 182 38 92</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 184 101</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 77</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 158 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 158 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 85 65</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 236</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 173 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 173 149 233 156 64 192 72 91 76 82 210 134 202 182 38</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\E2PROM.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 215 138</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 164</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 58 64 192 72 91 76 82 210 111 176 146 149 233 156 134 202 182 38 46 218 240 162 231 66 105 109</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 58 64 192 72 91 76 82 210 111 176 146 149 233 156 134 202 182 38 46 218 240 162 231 66 105 109</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\serial.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 197 145</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 226</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 58 64 192 72 91 76 82 210 111 176 213 149 233 156 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 225</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 58 64 192 72 91 76 82 210 111 176 213 149 233 156 134 202 182 38 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 195 225</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 130</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 234 251</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Exe\HT6015_GPRS.out</name>
-      <outputs>
-        <tool>
-          <name>OBJCOPY</name>
-          <file> 239</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 54 112 62 138 73 41 245 220 214 50 43 96 106 175 163 147 101 167 97 153 95 65 44 246 179 79 40 193 237 150 42 145 110 132 140 144 207 201 116</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\gprs.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 41</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 166</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 156 64 192 72 91 76 82 210 58 111 176 231 225 213 149 161 160 202 182 152 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 142</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 156 64 192 72 91 76 82 210 58 111 176 231 225 213 149 161 160 202 182 152 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 142</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Exe\HT6027_Line.out</name>
-      <outputs>
-        <tool>
-          <name>OBJCOPY</name>
-          <file> 155</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 183 223 112 62 138 84 73 220 214 69 50 43 96 106 175 163 147 101 167 97 153 95 65 44 246 179 232 40 193 237 129 150 42 145 188 132 140 144 207 201 116</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\GPRSModule.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 245</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 249</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 142 156 64 192 72 91 76 82 210 240 162 66 105 178 149 161 160 202 182 152 186 230 222 231</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 142 156 64 192 72 91 76 82 210 240 162 66 105 178 149 161 160 202 182 152 186 230 222 231</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\IECComm.c</name>
-      <outputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 79</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 53</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 109 240 213 149 161 156 64 192 72 91 76 82 210 160 202 182 152 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 105 231 108 66 218 230 178 122 157 135 243 209 186</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 109 240 213 149 161 156 64 192 72 91 76 82 210 160 202 182 152 92 199 219 146 177 158 206 46 55 235 173 217 125 248 115 48 98 244 105 231 108 66 218 230 178 122 157 135 243 209 186</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x1x.s</name>
-      <outputs>
-        <tool>
-          <name>AARM</name>
-          <file> 110</file>
-        </tool>
-      </outputs>
-    </file>
-  </configuration>
-  <configuration>
-    <name>Release</name>
-    <outputs>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</file>
-      <file>$PROJ_DIR$\..\User\main.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</file>
-      <file>$PROJ_DIR$\..\User\Time.c</file>
-      <file>$PROJ_DIR$\..\User\General.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</file>
-      <file>$PROJ_DIR$\..\User\IEC101.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_flash.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</file>
-      <file>$PROJ_DIR$\..\User\Flash_Data.c</file>
-      <file>$PROJ_DIR$\..\User\data.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_gpio.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_spi.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_exti.c</file>
-      <file>$PROJ_DIR$\..\User\interrupt.c</file>
-      <file>$PROJ_DIR$\..\User\power.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_uart&amp;7816.c</file>
-      <file>$PROJ_DIR$\..\User\Ram.c</file>
-      <file>$PROJ_DIR$\..\User\initial.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_pmu.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</file>
-      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</file>
-      <file>$PROJ_DIR$\..\User\E2PROM.c</file>
-      <file>$PROJ_DIR$\..\User\serial.c</file>
-      <file>$PROJ_DIR$\..\User\IEC101.h</file>
-      <file>$PROJ_DIR$\..\User\Demand.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
-      <file>$PROJ_DIR$\..\User\ECProcess.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$PROJ_DIR$\..\User\Data.h</file>
-      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
-      <file>$PROJ_DIR$\..\User\Display.h</file>
-      <file>$PROJ_DIR$\..\User\DLT698.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
-      <file>$PROJ_DIR$\..\User\GetMeterData.h</file>
-      <file>$PROJ_DIR$\..\User\ActCalendar.h</file>
-      <file>$PROJ_DIR$\..\User\Parameter.h</file>
-      <file>$PROJ_DIR$\..\User\Measure.h</file>
-      <file>$PROJ_DIR$\..\User\TypeFlash.h</file>
-      <file>$PROJ_DIR$\..\User\TypeE2p.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$PROJ_DIR$\..\User\DisconnectControl.h</file>
-      <file>$PROJ_DIR$\..\User\Interrupt.h</file>
-      <file>$PROJ_DIR$\..\User\Power.h</file>
-      <file>$PROJ_DIR$\..\User\RemoteComm.h</file>
-      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\ht6xxx.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$PROJ_DIR$\..\User\Time.h</file>
-      <file>$PROJ_DIR$\..\User\ESAM.h</file>
-      <file>$PROJ_DIR$\..\User\TypeMeter.h</file>
-      <file>$PROJ_DIR$\..\User\Device.h</file>
-      <file>$PROJ_DIR$\..\User\FileSystem.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-      <file>$PROJ_DIR$\..\User\IECComm.h</file>
-      <file>$PROJ_DIR$\..\User\COSEMComm.h</file>
-      <file>$PROJ_DIR$\..\User\PhaseEvent.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xtgmath.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$PROJ_DIR$\..\User\Event.h</file>
-      <file>$PROJ_DIR$\..\User\ApplComm.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$PROJ_DIR$\..\User\General.h</file>
-      <file>$PROJ_DIR$\..\User\ProfileGeneric.h</file>
-      <file>$PROJ_DIR$\..\User\Freeze.h</file>
-      <file>$PROJ_DIR$\..\User\serial.h</file>
-      <file>$PROJ_DIR$\..\User\Mem.h</file>
-      <file>$PROJ_DIR$\..\User\Port.h</file>
-      <file>$PROJ_DIR$\..\User\TypeFRAM.H</file>
-      <file>$PROJ_DIR$\..\User\TypeRAM.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
-      <file>$PROJ_DIR$\..\User\Initial.h</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_tdes&amp;rand.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_dma.pbi</file>
-      <file>$PROJ_DIR$\..\User\cpucard.h</file>
-      <file>$PROJ_DIR$\Release\Obj\E2PROM.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\system_ht6xxx.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_exti.pbi</file>
-      <file>$PROJ_DIR$\..\User\IOClass.h</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_pmu.pbi</file>
-      <file>$PROJ_DIR$\..\User\NewEventList.h</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_iic.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\initial.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\core_cm0.o</file>
-      <file>$PROJ_DIR$\Release\Obj\IEC101.o</file>
-      <file>$PROJ_DIR$\Release\Obj\ht501x_emu.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\interrupt.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\IEC101.pbi</file>
-      <file>$PROJ_DIR$\Release\Exe\HT6027.out</file>
-      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_tbs.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_cmu.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_aes&amp;rand.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\startup_ht6x2x.o</file>
-      <file>$PROJ_DIR$\Release\Obj\data.o</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_reset.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_rtc.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_lcd.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_flash.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\power.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_spi.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_gpio.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\Ram.o</file>
-      <file>$PROJ_DIR$\Release\Obj\Flash_Data.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\serial.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_timer.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\Ram.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht501x_keyscan.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\ht6xxx_uart&amp;7816.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\Time.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\core_cm0.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\General.pbi</file>
-      <file>$PROJ_DIR$\Release\Obj\data.pbi</file>
-    </outputs>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 89</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 59</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 59 60 38 71 41 47 43 44 74</file>
+          <file> 78 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
     </file>
@@ -1356,22 +440,45 @@
       <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 96</file>
+          <name>BICOMP</name>
+          <file> 140</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 123</file>
+          <name>ICCARM</name>
+          <file> 96 161</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 60 38 71 41 47 43 44 74</file>
+          <name>BICOMP</name>
+          <file> 240 219 97 201 50 209 44 75</file>
         </tool>
         <tool>
+          <name>ICCARM</name>
+          <file> 240 219 97 201 50 209 44 75</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</name>
+      <outputs>
+        <tool>
           <name>BICOMP</name>
-          <file> 60 38 71 41 47 43 44 74</file>
+          <file> 48</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 211 176</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 253 135 240 219 97 201 50 209 44 75 166 82 107 147 181</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 253 135 240 219 97 201 50 209 44 75 166 82 107 147 181</file>
         </tool>
       </inputs>
     </file>
@@ -1380,123 +487,67 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 102</file>
+          <file> 202</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 218 125</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 36 38 42 71 41 47 43 44 74 70 35 54 83 34 66 63 82 53</file>
+          <name>BICOMP</name>
+          <file> 188 219 206 97 201 50 209 44 75 90 177 71 138 169 205 198 253 135 240 166 82 107 147 210 134 61 110 52 83 120 236 189 229 78 196 126 235 109 164 141 65 193 36 144 101 108 129 57 216 68 168 119 248 111 154 132 94 182</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 36 38 42 71 41 47 43 44 74 70 35 54 83 34 66 63 82 53 80 81 52 39 51 56 75 61 79 57 78</file>
+          <name>ICCARM</name>
+          <file> 188 219 206 97 201 50 209 44 75 90 177 71 138 169 205 198 253 135 240 166 82 107 147 210 134 61 110 52 83 120 236 189 229 78 196 126 235 109 164 141 65 193 36 144 101 108 129 57 216 68 168 119 248 111 154 132 94 182</file>
         </tool>
       </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 98</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 120</file>
-        </tool>
-      </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105</file>
+          <file> 0</file>
         </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</name>
-      <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 104</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\Time.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 122</file>
+          <name>ICCARM</name>
+          <file> 62 158</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 63 82 53</file>
+          <name>BICOMP</name>
+          <file> 65 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 63 82 53 46 73 68 64 45 72 77 67 50 69 62 91 93 65 51 39 75 79 84 61 80 57</file>
+          <name>ICCARM</name>
+          <file> 65 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\User\General.c</name>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_exti.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 124</file>
+          <file> 249</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 254 70</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 53 63 82</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
-          <file> 53 63 82 51 81 52 39 75 79 80 45 84 61 57 36 38 42 71 41 47 43 44 74 70 37 49 33 76 67</file>
+          <file> 83 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 85</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\IEC101.c</name>
-      <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 97</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 100</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 32 82 63 39 51</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 32 82 63 39 51</file>
+          <file> 83 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
     </file>
@@ -1505,137 +556,251 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 111</file>
+          <file> 89</file>
         </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</name>
-      <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 118</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\Flash_Data.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 116</file>
+          <name>ICCARM</name>
+          <file> 114 225</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 80</file>
+          <file> 120 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 120 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\User\data.c</name>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 107</file>
+          <name>BICOMP</name>
+          <file> 102</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 125</file>
+          <name>ICCARM</name>
+          <file> 79 38</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 82 63 81 39 51 53</file>
+          <name>BICOMP</name>
+          <file> 52 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 82 63 81 39 51 53</file>
+          <name>ICCARM</name>
+          <file> 52 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
         </tool>
       </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 86</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 94</file>
-        </tool>
-      </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_gpio.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 114</file>
+          <file> 160</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 127 226</file>
         </tool>
       </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 236 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 236 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_spi.c</name>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 113</file>
+          <file> 199</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 118 239</file>
         </tool>
       </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 189 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 189 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_exti.c</name>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6x3x_emu.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 90</file>
+          <file> 150</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 163 191</file>
         </tool>
       </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 101 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 101 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 213</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 92 51</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 229 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 229 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 53</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 195 115</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 144 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 144 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 159</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 73 241</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 196 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 196 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\..\User\interrupt.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 99</file>
+          <file> 64</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 66 76</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 63 53 82</file>
+          <name>BICOMP</name>
+          <file> 210 61 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 68 108 216 119 168 116 45 149 132 111 248 165 56</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 63 53 82 51 80 39 75 56 76 45 87 84 79 61 55 48</file>
+          <name>ICCARM</name>
+          <file> 210 61 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 68 108 216 119 168 116 45 149 132 111 248 165 56</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\User\power.c</name>
+      <name>$PROJ_DIR$\..\User\E2PROM.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 112</file>
+          <file> 228</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 112 171</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 63 53 51 82 81 39 75 79 80 45 57 67</file>
+          <name>BICOMP</name>
+          <file> 169 219 97 201 50 209 44 75 71 205 236 253 135 240 166 82 107 147 198 119 134 210 108 216 68 61</file>
         </tool>
         <tool>
+          <name>ICCARM</name>
+          <file> 169 219 97 201 50 209 44 75 71 205 236 253 135 240 166 82 107 147 198 119 134 210 108 216 68 61</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\IEC101.c</name>
+      <outputs>
+        <tool>
           <name>BICOMP</name>
-          <file> 63 53 51 82 81 39 75 79 80 45 57 67 84 61 76 37</file>
+          <file> 152</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 100 128</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 169 219 97 201 50 209 44 75 71 205 177 138 94 110 253 135 240 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 182 134 210 216 68</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 169 219 97 201 50 209 44 75 71 205 177 138 94 110 253 135 240 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 182 134 210 216 68</file>
         </tool>
       </inputs>
     </file>
@@ -1644,99 +809,228 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 121</file>
+          <file> 43</file>
         </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\Ram.c</name>
-      <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 115</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 119</file>
+          <file> 217 179</file>
         </tool>
       </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 164 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 164 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\ATT7022E.C</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 136</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 194 95</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 210 134 61 129 57 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 108 216 119 111 154 49 188 206 90 220</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 210 134 61 129 57 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 108 216 119 111 154 49 188 206 90 220</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\data.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 208</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 251 175</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 134 210 129 216 68 61</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 134 210 129 216 68 61</file>
+        </tool>
+      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\..\User\initial.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 95</file>
+          <file> 180</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 59 139</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 63 82 81 53</file>
+          <name>BICOMP</name>
+          <file> 210 134 129 61 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 108 57 216 168 119 248 111 154 132 244 197 185</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 63 82 81 53 46 73 68 64 45 72 77 67 50 69 62 91 93 65 51 80 52 39 56 75 61 79 57 84 58 33 37</file>
+          <name>ICCARM</name>
+          <file> 210 134 129 61 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 108 57 216 168 119 248 111 154 132 244 197 185</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_pmu.c</name>
+      <name>$PROJ_DIR$\..\User\Flash_Data.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 92</file>
+          <file> 117</file>
         </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</name>
-      <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 109</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 108</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 110</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 103</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\User\E2PROM.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 88</file>
+          <name>ICCARM</name>
+          <file> 142 35</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 82 63 80 39 51 53</file>
+          <file> 253 135 240 219 97 201 50 209 44 75 166 82 107 147 110 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 108 119 111 134 210</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 253 135 240 219 97 201 50 209 44 75 166 82 107 147 110 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 108 119 111 134 210</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Measure.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 47</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 174 156</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 210 61 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 129 216 68 119 111 108 45 132 248 154 185 93 188 206 90</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 210 61 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 129 216 68 119 111 108 45 132 248 154 185 93 188 206 90</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\power.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 85</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 130 227</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 210 61 68 134 129 216 119 111 108 45 154 223 253 135 240 219 97 201 50 209 44 75 166 82 107 147 132 248 116 185</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 210 61 68 134 129 216 119 111 108 45 154 223 253 135 240 219 97 201 50 209 44 75 166 82 107 147 132 248 116 185</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\General.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 69</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 46 215</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 61 210 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 68 129 57 216 119 111 108 45 132 248 154 188 206 90 185 63 197 116 223</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 61 210 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 68 129 57 216 119 111 108 45 132 248 154 188 206 90 185 63 197 116 223</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 173</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 146</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 109 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 109 253 135 240 219 97 201 50 209 44 75 166 82 107 147</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Ram.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 99</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 162 27</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 119</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 119</file>
         </tool>
       </inputs>
     </file>
@@ -1745,13 +1039,44 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 117</file>
+          <file> 113</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 87 242</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 78</file>
+          <file> 169 219 97 201 50 209 44 75 71 205 110 253 135 240 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 94</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 169 219 97 201 50 209 44 75 71 205 110 253 135 240 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 94</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Time.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 151</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 80 224</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 210 134 61 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 216 119 111 132 248 108 154</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 210 134 61 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 216 119 111 132 248 108 154</file>
         </tool>
       </inputs>
     </file>
@@ -1760,7 +1085,709 @@
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 101</file>
+          <file> 170</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\HT6015_GPRS.out</name>
+      <outputs>
+        <tool>
+          <name>OBJCOPY</name>
+          <file> 131</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 186 161 175 171 215 143 148 121 115 158 38 55 70 225 226 239 51 222 72 241 54 214 190 146 179 26 139 76 125 227 27 242 187 176 224 243 91 86 153</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x1x.s</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 187</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\gprs.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 232</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 143</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 240 219 97 201 50 209 44 75 169 71 205 108 94 110 253 237 221 82 107 252 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 234</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 240 219 97 201 50 209 44 75 169 71 205 108 94 110 253 237 221 82 107 252 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 234</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\HT6027_Line.out</name>
+      <outputs>
+        <tool>
+          <name>OBJCOPY</name>
+          <file> 246</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 104 95 161 175 171 35 215 121 115 191 158 38 55 70 225 226 239 51 222 72 241 54 214 190 146 179 128 139 76 125 156 227 27 242 103 176 224 243 91 86 153</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 133 123</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\IECComm.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 192</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 26</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 210 61 134 110 253 237 240 219 97 201 50 209 44 75 221 82 107 252 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 68 108 57 216 119 111 223 168 248 154 132 77 93</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 210 61 134 110 253 237 240 219 97 201 50 209 44 75 221 82 107 252 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 68 108 57 216 119 111 223 168 248 154 132 77 93</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\GPRSModule.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 124</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 148</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 234 240 219 97 201 50 209 44 75 134 210 216 68 223 253 237 221 82 107 252 93 111 116 108</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 234 240 219 97 201 50 209 44 75 134 210 216 68 223 253 237 221 82 107 252 93 111 116 108</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\PhaseEvent.C</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 257</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 255</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 210 61 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 108 57 216 119 111 168 248 154 132</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 210 61 134 110 253 135 240 219 97 201 50 209 44 75 166 82 107 147 52 83 120 236 189 229 78 198 196 126 235 109 164 141 65 193 36 144 101 58 77 93 204 45 106 98 223 60 105 230 122 145 212 68 108 57 216 119 111 168 248 154 132</file>
+        </tool>
+      </inputs>
+    </file>
+  </configuration>
+  <configuration>
+    <name>Release</name>
+    <outputs>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_spi.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_pmu.c</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</file>
+      <file>$PROJ_DIR$\..\User\main.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_exti.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_flash.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_gpio.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</file>
+      <file>$PROJ_DIR$\..\User\interrupt.c</file>
+      <file>$PROJ_DIR$\..\User\E2PROM.c</file>
+      <file>$PROJ_DIR$\..\User\IEC101.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_uart&amp;7816.c</file>
+      <file>$PROJ_DIR$\..\User\data.c</file>
+      <file>$PROJ_DIR$\..\User\initial.c</file>
+      <file>$PROJ_DIR$\..\User\Flash_Data.c</file>
+      <file>$PROJ_DIR$\..\User\power.c</file>
+      <file>$PROJ_DIR$\..\User\General.c</file>
+      <file>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</file>
+      <file>$PROJ_DIR$\..\User\Ram.c</file>
+      <file>$PROJ_DIR$\..\User\serial.c</file>
+      <file>$PROJ_DIR$\..\User\Time.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\..\User\Display.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\..\User\GetMeterData.h</file>
+      <file>$PROJ_DIR$\..\User\TypeFlash.h</file>
+      <file>$PROJ_DIR$\..\User\DLT698.h</file>
+      <file>$PROJ_DIR$\..\User\Parameter.h</file>
+      <file>$PROJ_DIR$\..\User\TypeE2p.h</file>
+      <file>$PROJ_DIR$\..\User\ActCalendar.h</file>
+      <file>$PROJ_DIR$\..\User\Measure.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\..\User\ApplComm.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\xtgmath.h</file>
+      <file>$PROJ_DIR$\..\User\COSEMComm.h</file>
+      <file>$PROJ_DIR$\..\User\serial.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$PROJ_DIR$\..\User\Freeze.h</file>
+      <file>$PROJ_DIR$\..\User\PhaseEvent.h</file>
+      <file>$PROJ_DIR$\..\User\Event.h</file>
+      <file>$PROJ_DIR$\..\User\Port.h</file>
+      <file>$PROJ_DIR$\..\User\Mem.h</file>
+      <file>$PROJ_DIR$\..\User\ProfileGeneric.h</file>
+      <file>$PROJ_DIR$\..\User\General.h</file>
+      <file>$PROJ_DIR$\..\User\IOClass.h</file>
+      <file>$PROJ_DIR$\..\User\TypeFRAM.H</file>
+      <file>$PROJ_DIR$\..\User\Initial.h</file>
+      <file>$PROJ_DIR$\..\User\TypeRAM.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$PROJ_DIR$\Release\Obj\IEC101.pbi</file>
+      <file>$PROJ_DIR$\..\User\NewEventList.h</file>
+      <file>$PROJ_DIR$\..\User\cpucard.h</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_tdes&amp;rand.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\initial.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\E2PROM.pbi</file>
+      <file>$PROJ_DIR$\Release\Exe\HT6027.out</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_dma.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\core_cm0.o</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_exti.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_pmu.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_iic.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht501x_emu.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\interrupt.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\system_ht6xxx.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_spi.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\Ram.o</file>
+      <file>$PROJ_DIR$\Release\Obj\power.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\IEC101.o</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_tbs.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_aes&amp;rand.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_lcd.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_gpio.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_cmu.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_rtc.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_reset.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\core_cm0.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_uart&amp;7816.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\data.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\startup_ht6x2x.o</file>
+      <file>$PROJ_DIR$\Release\Obj\Ram.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\Time.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\General.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_flash.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\data.o</file>
+      <file>$PROJ_DIR$\Release\Obj\ht6xxx_timer.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\ht501x_keyscan.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\Flash_Data.pbi</file>
+      <file>$PROJ_DIR$\Release\Obj\serial.pbi</file>
+      <file>$PROJ_DIR$\..\User\Power.h</file>
+      <file>$PROJ_DIR$\..\User\DisconnectControl.h</file>
+      <file>$PROJ_DIR$\..\User\Interrupt.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$PROJ_DIR$\..\User\IEC101.h</file>
+      <file>$PROJ_DIR$\..\User\ECProcess.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
+      <file>$PROJ_DIR$\..\User\Demand.h</file>
+      <file>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x2x.s</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\..\User\Device.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$PROJ_DIR$\..\User\TypeMeter.h</file>
+      <file>$PROJ_DIR$\..\User\FileSystem.h</file>
+      <file>$PROJ_DIR$\..\User\Data.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$PROJ_DIR$\..\User\IECComm.h</file>
+      <file>$PROJ_DIR$\..\User\ESAM.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$PROJ_DIR$\..\User\RemoteComm.h</file>
+      <file>$PROJ_DIR$\..\User\Time.h</file>
+      <file>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\ht6xxx.h</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_spi.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 76</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_emu.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 73</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_dma.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 68</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_reset.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 86</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tbs.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 80</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_tdes&amp;rand.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 64</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_pmu.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 71</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 87</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 69</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 122 119 48 111 34 115 32 43</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 122 119 48 111 34 115 32 43</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 75</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 125 122 119 48 111 34 115 32 43</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 125</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\main.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 94</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 108 119 114 48 111 34 115 32 43 45 105 42 60 104 113 116 59 39 52 57 36 118 41 103 55 124 53 101 47</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 108 119 114 48 111 34 115 32 43 45 105 42 60 104 113 116 59 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_aes&amp;rand.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 81</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_exti.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 70</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_flash.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 95</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_cmu.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 84</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_gpio.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 83</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_iic.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 72</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_lcd.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 82</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht501x_keyscan.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 98</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_rtc.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 85</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\interrupt.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 74</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 116 39 59 41 52 118 55 103 54 33 63 58 53 124 102 35</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 116 39 59</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\E2PROM.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 66</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 59 116 52 118 41 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\IEC101.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 61</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 79</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 106 59 116 118 41</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 106 59 116 118 41</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_uart&amp;7816.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 88</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\data.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 89</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 96</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 59 116 57 118 41 39</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 59 116 57 118 41 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\initial.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 65</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 116 59 57 39 37 44 46 112 33 51 49 120 38 50 121 56 62 117 41 52 36 118 103 55 124 53 101 58 123 109 107</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 116 59 57 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Flash_Data.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 99</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 52</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\power.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 78</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 116 39 41 59 57 118 55 53 52 33 101 120 58 124 54 107</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 116 39 41 59 57 118 55 53 52 33 101 120</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\General.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 93</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 39 116 59 41 57 36 118 55 53 52 33 58 124 101 108 119 114 48 111 34 115 32 43 45 107 40 109 54 120</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 39 116 59</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libraries\HT60xx_StdPeriph_Driver\src\ht6xxx_timer.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 97</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Ram.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 91</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 77</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\serial.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 100</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 47</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Time.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 92</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 116 59 39 37 44 46 112 33 51 49 120 38 50 121 56 62 117 41 118 55 53 58 124 52 101</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 116 59 39</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 67</file>
         </tool>
       </outputs>
     </file>
@@ -1769,7 +1796,7 @@
       <outputs>
         <tool>
           <name>AARM</name>
-          <file> 106</file>
+          <file> 90</file>
         </tool>
       </outputs>
     </file>
