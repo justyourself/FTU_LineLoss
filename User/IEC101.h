@@ -45,9 +45,9 @@ struct APP_STRUCT
   u8 byFunCode;
   u8 LinkFunCode;
   u8 byMsgNum;
-  u8 wFrameLen;
+  u16 wFrameLen;
   u8 *lpByBuf;
-  u8 byLinkBuf[256];
+  u8 byLinkBuf[320];
 };
 struct REAPP_STRUCT
 {
@@ -379,7 +379,7 @@ u8 OrgnizeYcOverMsg(void);
 u8 OrgnizeInitEndMsg(u8*);
 u8 OrgnizeReadDataMsg(u8* lpby);
 u8 OrgnizeSubChgMsg(void);
-u8 OrgnizeVarFrame(u8 *lpby,u8 byMsgNum,u8 byConField);
+u16 OrgnizeVarFrame(u8 *lpby,u8 byMsgNum,u8 byConField);
 u8 OrgnizeFixFrame(u8 *lpby,u8 byConField) ;
 void IEC101Process(void);
 short Read_LastData(int ch,unsigned char *buf);

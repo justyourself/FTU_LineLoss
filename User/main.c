@@ -38,24 +38,53 @@ void Pn_Event_Save(int ch,int phase,unsigned char flag)
   year = Clk.YearH;
   year = year*256 + Clk.YearL;
   tmp_buf[5]=year-2000;
-  memcpy(tmp_buf+6,&Energy_Data[ch],32);
+  
   m_e2_ptr = s_PnEvt[ch*3+phase].E2_PTR;
   m_e2_buf = s_PnEvt[ch*3+phase].E2_ADDR;
-  E2P_RData(ptr_buf,m_e2_ptr,3);
+  E2P_RData(ptr_buf,m_e2_ptr,2);
   
   ptr_buf[0] %=10;
   if(flag)
   {
-    E2P_PWData(m_e2_buf+ptr_buf[0]*80,tmp_buf,38);
+    memcpy(tmp_buf+6,&SM.PQNum[ch][phase],4);
+    memcpy(tmp_buf+10,&Energy_Data[ch],32);
+    E2P_PWData(m_e2_buf+ptr_buf[0]*84,tmp_buf,42);
     if(ptr_buf[1]<10)
       ptr_buf[1]++;
   }
   else
   {
-    E2P_PWData(m_e2_buf+ptr_buf[0]*80+40,tmp_buf,38);
+    memcpy(tmp_buf+6,&Energy_Data[ch],32);
+    E2P_PWData(m_e2_buf+ptr_buf[0]*84+44,tmp_buf,38);
     ptr_buf[0]++;
   }
-  E2P_WData(m_e2_ptr,ptr_buf,3);
+  E2P_WData(m_e2_ptr,ptr_buf,2);
+}
+
+int GetPn_Event_num(int ch,int phase)
+{
+  unsigned short m_e2_ptr;
+  unsigned char ptr_buf[4];
+  m_e2_ptr = s_PnEvt[ch*3+phase].E2_PTR;
+  E2P_RData(ptr_buf,m_e2_ptr,2);
+  return ptr_buf[1];
+}
+
+int GetPn_Event_Record(int ch,int phase,int No,unsigned char *buf)
+{
+  unsigned short m_e2_ptr,m_e2_buf;
+  int rec_ptr;
+  unsigned char ptr_buf[4];
+  m_e2_ptr = s_PnEvt[ch*3+phase].E2_PTR;
+  m_e2_buf = s_PnEvt[ch*3+phase].E2_ADDR;
+  E2P_RData(ptr_buf,m_e2_ptr,2);
+  if(ptr_buf[1]<10)
+    rec_ptr=No%10;
+  else
+    rec_ptr=(ptr_buf[0]+No)%10;
+  E2P_PRData(buf,m_e2_buf+rec_ptr*84,42);
+  E2P_PRData(buf+42,m_e2_buf+rec_ptr*84+44,38);
+  return ptr_buf[1];
 }
 
 void Pt_Event_Save(int ch)
@@ -71,16 +100,42 @@ void Pt_Event_Save(int ch)
   year = Clk.YearH;
   year = year*256 + Clk.YearL;
   tmp_buf[5]=year-2000;
-  memcpy(tmp_buf+6,&Energy_Data[ch],32);
+  memcpy(tmp_buf+6,&SM.PQNum[ch][3],4);
+  memcpy(tmp_buf+10,&Energy_Data[ch],32);
   m_e2_ptr = s_PtEvt[ch].E2_PTR;
   m_e2_buf = s_PtEvt[ch].E2_ADDR;
-  E2P_RData(ptr_buf,m_e2_ptr,3);
+  E2P_RData(ptr_buf,m_e2_ptr,2);
   ptr_buf[0] %=10;
-  E2P_PWData(m_e2_buf+ptr_buf[0]*40,tmp_buf,38);
+  E2P_PWData(m_e2_buf+ptr_buf[0]*44,tmp_buf,42);
   if(ptr_buf[1]<10)
       ptr_buf[1]++;
   ptr_buf[0]++;
-  E2P_WData(m_e2_ptr,ptr_buf,3);
+  E2P_WData(m_e2_ptr,ptr_buf,2);
+}
+
+int GetPt_Event_num(int ch)
+{
+  unsigned short m_e2_ptr;
+  unsigned char ptr_buf[4];
+  m_e2_ptr = s_PtEvt[ch].E2_PTR;
+  E2P_RData(ptr_buf,m_e2_ptr,2);
+  return ptr_buf[1];
+}
+
+int GetPt_Event_Record(int ch,int No,unsigned char *buf)
+{
+  unsigned short m_e2_ptr,m_e2_buf;
+  int rec_ptr;
+  unsigned char ptr_buf[4];
+  m_e2_ptr = s_PnEvt[ch].E2_PTR;
+  m_e2_buf = s_PnEvt[ch].E2_ADDR;
+  E2P_RData(ptr_buf,m_e2_ptr,2);
+  if(ptr_buf[1]<10)
+    rec_ptr=No%10;
+  else
+    rec_ptr=(ptr_buf[0]+No)%10;
+  E2P_PRData(buf,m_e2_buf+rec_ptr*44,42);
+  return ptr_buf[1];
 }
 
 short Save_Data(unsigned char *Time_buf)
@@ -105,7 +160,7 @@ short Save_Data(unsigned char *Time_buf)
 #else
   memcpy(tmp_buf,Time_buf,6);
 #endif  
-  for(i=0;i<8;++i)
+  for(i=0;i<MAX_CH_NUM;++i)
   {
     memcpy(tmp_buf+6,&Energy_Data[i],ONE_RECORD_LEN-6);
     DataFlash_Write(i*LOAD_RECORD_SIZE+rec_ptr*ONE_RECORD_SIZE,tmp_buf,0,DAY_DATA_ADDR,ONE_RECORD_LEN);
@@ -124,7 +179,7 @@ short Get_LoadData(int No,int ch,unsigned char *buf)
 {
   unsigned char Record_buf[12];
   int rec_ptr;
-  if(ch>8)
+  if(ch>MAX_CH_NUM)
     return 0;
   E2P_RData(Record_buf,LoadRecord_Time,8); //记录指针 秒、分、时、日、月、年
   
@@ -161,7 +216,7 @@ short Read_LastData(int ch,unsigned char *buf)
 {
   unsigned char Record_buf[12];
   int rec_ptr;
-  if(ch>8)
+  if(ch>MAX_CH_NUM)
     return 0;
   E2P_RData(Record_buf,LoadRecord_Time,8); //记录指针 秒、分、时、日、月、年
   rec_ptr = Record_buf[0];
@@ -184,7 +239,7 @@ short Save_DayData(unsigned char *Time_buf)
   rec_ptr = Record_buf[0];
   rec_ptr %=DAY_RECORD_NUM;
   memcpy(tmp_buf,Time_buf,6);  
-  for(i=0;i<8;++i)
+  for(i=0;i<MAX_CH_NUM;++i)
   {
     memcpy(tmp_buf+6,&Energy_Data[i],ONE_RECORD_LEN-6);
     DataFlash_Write(DAY_DATA_ADDR+i*LOAD_RECORD_SIZE+rec_ptr*ONE_RECORD_SIZE,tmp_buf,DAY_DATA_ADDR,HOUR_DATA_ADDR,ONE_RECORD_LEN);
@@ -203,7 +258,7 @@ short Get_DayData(int No,int ch,unsigned char *buf)
 {
   unsigned char Record_buf[12];
   int rec_ptr;
-  if(ch>8)
+  if(ch>MAX_CH_NUM)
     return 0;
   E2P_RData(Record_buf,FrzdRecord_Time,8); //记录指针 秒、分、时、日、月、年
   
@@ -247,10 +302,10 @@ short Save_HourData(unsigned char *Time_buf)
   rec_ptr += Record_buf[1]*256;
   rec_ptr %=HOUR_RECORD_NUM;
   memcpy(tmp_buf,Time_buf,6);  
-  for(i=0;i<8;++i)
+  for(i=0;i<MAX_CH_NUM;++i)
   {
     memcpy(tmp_buf+6,&Energy_Data[i],ONE_RECORD_LEN-6);
-    DataFlash_Write(DAY_DATA_ADDR+i*LOAD_RECORD_SIZE+rec_ptr*ONE_RECORD_SIZE,tmp_buf,DAY_DATA_ADDR,HOUR_DATA_ADDR,ONE_RECORD_LEN);
+    DataFlash_Write(HOUR_DATA_ADDR+i*LOAD_RECORD_SIZE+rec_ptr*ONE_RECORD_SIZE,tmp_buf,HOUR_DATA_ADDR,END_DATA_ADDR,ONE_RECORD_LEN);
   }
   rec_ptr++;
   if(rec_ptr>=HOUR_RECORD_NUM)
@@ -261,6 +316,28 @@ short Save_HourData(unsigned char *Time_buf)
   memcpy(Record_buf+3,tmp_buf,6);
   E2P_WData(ShrpdRecord_Time,Record_buf,9); 
   return 0;
+}
+
+short Get_HourData(int No,int ch,unsigned char *buf)
+{
+  unsigned char Record_buf[12];
+  int rec_ptr;
+  if(ch>MAX_CH_NUM)
+    return 0;
+  E2P_RData(Record_buf,ShrpdRecord_Time,8); //记录指针 秒、分、时、日、月、年
+  rec_ptr = Record_buf[0];
+  rec_ptr += Record_buf[1]*256;
+  if(Record_buf[2])
+  {
+    rec_ptr = (rec_ptr+No);
+  }
+  else
+  {
+    rec_ptr=No;
+  }
+  rec_ptr %=HOUR_RECORD_NUM;
+  Read_Flash(buf,HOUR_DATA_ADDR+ch*HOUR_RECORD_SIZE+rec_ptr*ONE_RECORD_SIZE,ONE_RECORD_LEN);
+  return ONE_RECORD_LEN;
 }
 
 int Hour_Record_Num()
@@ -291,7 +368,7 @@ short Save_MonthData(unsigned char *Time_buf)
   if(rec_ptr>=MONTH_RECORD_NUM)
     rec_ptr = 0;
   memcpy(tmp_buf,Time_buf,6);  
-  for(i=0;i<8;++i)
+  for(i=0;i<MAX_CH_NUM;++i)
   {
     memcpy(tmp_buf+6,&Energy_Data[i],E2ONE_RECORD_LEN-6);
     E2P_PWData(i*MONTH_RECORD_SIZE+rec_ptr*E2ONE_RECORD_SIZE,tmp_buf,E2ONE_RECORD_LEN);
@@ -354,7 +431,7 @@ short Save_RandData(unsigned char *Time_buf)
   if(rec_ptr>=RAND_RECORD_NUM)
     rec_ptr = 0;
   memcpy(tmp_buf,Time_buf,6);  
-  for(i=0;i<8;++i)
+  for(i=0;i<MAX_CH_NUM;++i)
   {
     memcpy(tmp_buf+6,&Energy_Data[i],E2ONE_RECORD_LEN-6);
     E2P_PWData(RAND_DATA_ADDR+i*RAND_RECORD_SIZE+rec_ptr*E2ONE_RECORD_SIZE,tmp_buf,E2ONE_RECORD_LEN);
@@ -372,7 +449,7 @@ short Get_RandData(int No,int ch,unsigned char *buf)
 {
   unsigned char Record_buf[12];
   int rec_ptr;
-  if(ch>8)
+  if(ch>MAX_CH_NUM)
     return 0;
   E2P_RData(Record_buf,RandRecord_Time,8); //记录指针 秒、分、时、日、月、年
   
@@ -473,6 +550,7 @@ void EC_ClearA(void)
     ECRAds = ECRgTab[i].ECRAds;
     ECEAds = ECRgTab[i].ECEAds;
     E2P_WData(ECEAds,tmpbuf,4);
+    *ECRAds = 0;
   }
 }
 void Read_E2R()
@@ -488,6 +566,19 @@ void Read_E2R()
   }
 }
 
+void Read_E2R1()
+{
+  int i;
+  unsigned short m_e2_ptr;
+  unsigned char ptr_buf[4];
+  memset(ptr_buf,0,8);
+  for( i=0;i<24;++i)
+  {
+    m_e2_ptr = s_PnEvt[i].E2_PTR;
+    E2P_WData(m_e2_ptr,ptr_buf,2);
+  }
+}
+
 void ProcHalfSec(void)
 {
   int i;
@@ -497,7 +588,7 @@ void ProcHalfSec(void)
   if((Flag.Power & F_PwrUp) == 0)
       return;
   HT_GPIO_BitsToggle(HT_GPIOB,GPIO_Pin_5);
-  for(i=0;i<8;++i)
+  for(i=0;i<MAX_CH_NUM;++i)
   {
     ATT7022RdReg(ATVoltFlag,(unsigned char*)&(SM.State[i]),i);
     ATT7022RdReg(ATPZ,(unsigned char*)&tmp_p,i);
@@ -565,7 +656,7 @@ void ProcSec(void)
        SM.TestDisCnt--;
     }
 #if 0    
-    for(Buff[0]=0;Buff[0]<8;++Buff[0])
+    for(Buff[0]=0;Buff[0]<MAX_CH_NUM;++Buff[0])
     {
      // Energy_Data[Buff[0]].Pn++;
       Energy_Data[Buff[0]].Pp = Buff[0];
@@ -581,7 +672,7 @@ void ProcSec(void)
       Real_Data[Buff[0]].Qa++;*/
     }
 #endif    
-    for(i=0;i<8;++i)
+    for(i=0;i<MAX_CH_NUM;++i)
     {
       ATT7022RdReg(PFlag,(unsigned char*)&(SM.PQFlag[i]),i);
 #if 0      
@@ -590,10 +681,10 @@ void ProcSec(void)
       Energy_Data[i].Pc = GetPhasePW(ATPWPC,i);
       Energy_Data[i].Pt = GetPhasePW(ATPWPZ,i);
 #else
-      Read_ATTValue(ATPWPA,&Energy_Data[i].Pa,i);
-      Read_ATTValue(ATPWPB,&Energy_Data[i].Pb,i);
-      Read_ATTValue(ATPWPC,&Energy_Data[i].Pc,i);
-      Read_ATTValue(ATPWPZ,&Energy_Data[i].Pt,i);
+      Read_ATTValue(ATPWPA,(unsigned char *)&Energy_Data[i].Pa,i);
+      Read_ATTValue(ATPWPB,(unsigned char *)&Energy_Data[i].Pb,i);
+      Read_ATTValue(ATPWPC,(unsigned char *)&Energy_Data[i].Pc,i);
+      Read_ATTValue(ATPWPZ,(unsigned char *)&Energy_Data[i].Pt,i);
       if(SM.PQFlag[i]&0x1)
       {
         Energy_Data[i].Pa *=-1;
@@ -621,10 +712,10 @@ void ProcSec(void)
       Real_Data[i].Qb = GetPhasePW(ATPWQB,i);
       Real_Data[i].Qt = GetPhasePW(ATPWQZ,i);
 #else
-      Read_ATTValue(ATPWQA,&Real_Data[i].Qa,i);
-      Read_ATTValue(ATPWQB,&Real_Data[i].Qb,i);
-      Read_ATTValue(ATPWQC,&Real_Data[i].Qc,i);
-      Read_ATTValue(ATPWQZ,&Real_Data[i].Qt,i);
+      Read_ATTValue(ATPWQA,(unsigned char *)&Real_Data[i].Qa,i);
+      Read_ATTValue(ATPWQB,(unsigned char *)&Real_Data[i].Qb,i);
+      Read_ATTValue(ATPWQC,(unsigned char *)&Real_Data[i].Qc,i);
+      Read_ATTValue(ATPWQZ,(unsigned char *)&Real_Data[i].Qt,i);
       if(SM.PQFlag[i]&0x10)
       {
         Real_Data[i].Qa *=-1;
@@ -642,23 +733,26 @@ void ProcSec(void)
         Real_Data[i].Qt *=-1;
       }
 #endif      
-      Read_ATTValue(ATPWSA,&Real_Data[i].Sa,i);
-      Read_ATTValue(ATPWSB,&Real_Data[i].Sb,i);
-      Read_ATTValue(ATPWSC,&Real_Data[i].Sc,i);
-      Read_ATTValue(ATPWSZ,&Real_Data[i].St,i);
-      Read_ATTValue(ATFreq,&Real_Data[i].AFreq,i);
-      Read_ATTValue(ATUrmsA,&Real_Data[i].Ua,i);
-      Read_ATTValue(ATUrmsB,&Real_Data[i].Ub,i);
-      Read_ATTValue(ATUrmsC,&Real_Data[i].Uc,i);
-      Read_ATTValue(ATIrmsA,&Real_Data[i].Ia,i);
-      Read_ATTValue(ATIrmsB,&Real_Data[i].Ib,i);
-      Read_ATTValue(ATIrmsC,&Real_Data[i].Ic,i);
-      Read_ATTValue(ATFactorA,&Real_Data[i].Pfa,i);
-      Read_ATTValue(ATFactorB,&Real_Data[i].Pfb,i);
-      Read_ATTValue(ATFactorC,&Real_Data[i].Pfc,i);
-      Read_ATTValue(ATFactorZ,&Real_Data[i].Pft,i);
+      Read_ATTValue(ATPWSA,(unsigned char *)&Real_Data[i].Sa,i);
+      Read_ATTValue(ATPWSB,(unsigned char *)&Real_Data[i].Sb,i);
+      Read_ATTValue(ATPWSC,(unsigned char *)&Real_Data[i].Sc,i);
+      Read_ATTValue(ATPWSZ,(unsigned char *)&Real_Data[i].St,i);
+      Read_ATTValue(ATFreq,(unsigned char *)&Real_Data[i].AFreq,i);
+      Read_ATTValue(ATUrmsA,(unsigned char *)&Real_Data[i].Ua,i);
+      Read_ATTValue(ATUrmsB,(unsigned char *)&Real_Data[i].Ub,i);
+      Read_ATTValue(ATUrmsC,(unsigned char *)&Real_Data[i].Uc,i);
+      Read_ATTValue(ATIrmsA,(unsigned char *)&Real_Data[i].Ia,i);
+      Read_ATTValue(ATIrmsB,(unsigned char *)&Real_Data[i].Ib,i);
+      Read_ATTValue(ATIrmsC,(unsigned char *)&Real_Data[i].Ic,i);
+      Read_ATTValue(ATFactorA,(unsigned char *)&Real_Data[i].Pfa,i);
+      Read_ATTValue(ATFactorB,(unsigned char *)&Real_Data[i].Pfb,i);
+      Read_ATTValue(ATFactorC,(unsigned char *)&Real_Data[i].Pfc,i);
+      Read_ATTValue(ATFactorZ,(unsigned char *)&Real_Data[i].Pft,i);
+      Read_ATTValue(ATAngleA,(unsigned char *)&SM.Angle_Ia[i],i);
+      Read_ATTValue(ATAngleB,(unsigned char *)&SM.Angle_Ib[i],i);
+      Read_ATTValue(ATAngleC,(unsigned char *)&SM.Angle_Ic[i],i);
     }
-    for(i=0;i<8;++i)
+    for(i=0;i<MAX_CH_NUM;++i)
     {
       flag_p = SM.PQFlag[i]^SM.PQFlag_b[i];
       SM.PQFlag_b[i]=SM.PQFlag[i];
@@ -669,7 +763,7 @@ void ProcSec(void)
         {
           if(flag_p&(1<<j))
           {
-            if(abs(si_val[j])>10)
+            if(abs(si_val[j])>40)
             {
               SM.P_Time[i][j]=60;
             }
@@ -798,10 +892,11 @@ void ProcDay(void)
 
 void main(void)
 {
-  unsigned short i;
+  unsigned int i;
   unsigned char flash_id[16];
   HT_FreeDog();
-  i = 5000;
+  //i = 5000;
+  i=E2END_DATA_ADDR;
   while(i--);
   fnTarget_Init();
  // Flag.BatState=0;
@@ -853,24 +948,25 @@ void main(void)
         E2P_WData(MonthdRecord_Time,flash_id,8);
 #endif
        // EC_ClearA();
+        //Read_E2R1();
         Read_E2R();
-        for(i=0;i<8;i++)
+        for(i=0;i<MAX_CH_NUM;i++)
         {
           ATT7022Init(i);	//Test
         }
         break;
       }	
-      if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))
-      {
-       // Flag.BatState=1;
-        //PwrDnInit();
-      }	
-    
+//      if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))
+//      {
+//       // Flag.BatState=1;
+//        //PwrDnInit();
+//      }	
+//    
       
-      if(( Flag.Clk & F_ThirdSec )) 	
-      {		
-        Flag.Clk &= ~F_ThirdSec;								
-      }
+//      if(( Flag.Clk & F_ThirdSec )) 	
+//      {		
+//        Flag.Clk &= ~F_ThirdSec;								
+//      }
       if(Flag.Clk& F_HalfSec)
       {
         ProcHalfSec();
@@ -880,7 +976,7 @@ void main(void)
       if (Flag.Clk & F_Hour) ProcHour();
       if (Flag.Clk & F_Day) ProcDay();
       
-      if(((Flag.Power & F_PwrUp) != 0))	
+//      if(Flag.Power & F_PwrUp)
       {	
         IEC101Process();
       }			

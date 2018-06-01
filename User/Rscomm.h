@@ -212,10 +212,10 @@
 #define Rs_CtlPtr      	8
 #define Rs_LenPtr      	9
 
-#define Rs_IDLPtr  		10
+#define Rs_IDLPtr  		0
 #define Rs_IDHPtr  		11
 #define Rs_DataPtr 		12
-#define Rs_WDataPtr    	16
+#define Rs_WDataPtr    	1
 
 #define RsZj_Head0Ptr   0
 #define RsZj_LenPtr1    1

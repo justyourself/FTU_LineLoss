@@ -70,16 +70,16 @@
 *                                           本地函数申明
 *********************************************************************************************************
 */
-/*
-__asm void wait()
+
+ void wait()
 {
-      BX lr
-}*/
+      __asm("BX lr");
+}
 
 void HardFault_Handler(void)
 {
     /* Go to infinite loop when Hard Fault exception occurs */
-      // wait();
+  wait();
   return;
 }
 
@@ -785,6 +785,8 @@ void RTC_IRQHandler()
       }
       if((Flag.Run & F_Hold) && ( HT_GPIOE->PTDAT & GPIOE_LVDIN0 ))
       {
+        if(SM.PowerUpTime<48)
+          SM.PowerUpTime = 48;
         SM.PowerUpTime++;
       }
     }       

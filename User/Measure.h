@@ -557,7 +557,7 @@ short GetMQuad( unsigned char PWFlag, short Reg );
 void GetCompMode( void );
 void ReCalFailVoltageChk( unsigned char* Source );				//ATChk
 void GetPW( unsigned char ECType, unsigned char* Source, unsigned short PhaseNo );		//V70		//V1001
-
+short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Devads);
 void GetCurrentPower(void);						//PWMD
 void GetATT7022PQZ( void );							//PWMD
 void GetAPW(void );							//PWMD

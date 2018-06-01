@@ -410,6 +410,7 @@ void _BCD6SUB(unsigned char *Dest, unsigned char *Src)
 
 void InitPara4(void)
 {
+
 }
 void InitPara5(void)
 {
@@ -423,8 +424,15 @@ void InitPara7(void)
 }
 void InitPara(void)			
 {
-	InitPara4();				
-	InitPara7();		
+  short i;
+  unsigned char *p_buf;
+ 
+  for(i=0;i<MAX_CH_NUM;++i)
+  {  
+    p_buf =(unsigned char*)&(m_ecpara[i].cmon_day);
+    E2P_RData(p_buf,CMon_DAY0+i*25,24);
+  }
+  InitPara7();		
 }
 
 void AllECClr( void )

@@ -306,7 +306,19 @@ void SetIDefault(unsigned short Devads)
 #endif
     EpAds += E2P_PGLEN;
     EpAds -= (0x100*Devads); //10.07.30
-    Buff[0]=0xee;
+    switch(RegAds)
+    {
+    case IgainA:
+      Buff[0]=0xB8;
+      break;
+    case IgainB:
+      Buff[0]=0x99;
+      break;
+    default:
+      Buff[0]=0xA8;
+      break;
+    }
+   // Buff[0]=0xee;
     Buff[1]=0xF1;//0xEE;
     //Buff[0]=0;
     //Buff[1]=0;
@@ -321,12 +333,106 @@ void SetIDefault(unsigned short Devads)
 #endif
     EpAds += E2P_PGLEN;
     EpAds -= (0x100*Devads); //10.07.30
-  Buff[0]=0xFA;
-   Buff[1]=0xFE;
+    
+    switch(RegAds)
+    {
+    case UgainC:
+      Buff[0]=0x1F;
+      Buff[1]=0xFF;
+      break;
+    case UgainB:
+      Buff[0]=0xC8;
+      Buff[1]=0xFE;
+      break;
+    default:
+      Buff[0]=0xC0;
+      Buff[1]=0xFE;
+      break;
+    }
+    
    // Buff[0]=0;
    // Buff[1]=0;
     E2P_WData( EpAds,Buff,2);	
   }
+  
+  for( RegAds=PhsregA0;RegAds<=PhsregC1;RegAds++ )
+  {
+#if ( NEW7022E == YesCheck )
+    EpAds = GetATT7022ECalibDataEAddr( RegAds );
+#else
+    EpAds = RegAds * 3;
+#endif
+    EpAds += E2P_PGLEN;
+    EpAds -= (0x100*Devads); //10.07.30
+    
+    switch(RegAds)
+    {
+    case PhsregA0:
+      Buff[0]=0x00;
+      Buff[1]=0x00;
+      break;
+    case PhsregA1:
+      Buff[0]=0x00;
+      Buff[1]=0x00;
+      break;
+    case PhsregB0:
+      Buff[0]=00;
+      Buff[1]=00;
+      break;
+    case PhsregC0:
+      Buff[0]=00;
+      Buff[1]=00;
+      break;
+    default:
+      Buff[0]=0x0;
+      Buff[1]=0x00;
+      break;
+    }
+    E2P_WData( EpAds,Buff,2);	
+  }
+  
+  for( RegAds=PoffsetA;RegAds<=PoffsetC;RegAds++ )
+  {
+#if ( NEW7022E == YesCheck )
+    EpAds = GetATT7022ECalibDataEAddr( RegAds );
+#else
+    EpAds = RegAds * 3;
+#endif
+    EpAds += E2P_PGLEN;
+    EpAds -= (0x100*Devads); //10.07.30
+    
+    switch(RegAds)
+    {
+    case PoffsetA:
+      Buff[0]=0xFF;
+      Buff[1]=0x7F;
+      break;
+    case PoffsetB:
+      Buff[0]=0x99;
+      Buff[1]=0x7F;
+      break;
+    case PoffsetC:
+      Buff[0]=0xAA;
+      Buff[1]=0x7F;
+      break;
+    default:
+      Buff[0]=0x0;
+      Buff[1]=00;
+      break;
+    }
+    E2P_WData( EpAds,Buff,2);	
+  }
+  
+  #if ( NEW7022E == YesCheck )
+    EpAds = GetATT7022ECalibDataEAddr( Iregion );
+#else
+    EpAds = Iregion * 3;
+#endif
+    EpAds += E2P_PGLEN;
+    EpAds -= (0x100*Devads); //10.07.30
+    Buff[0]=0x20;
+    Buff[1]=0x01;
+    E2P_WData( EpAds,Buff,2);	
 }
 
 void ATT7022Init(unsigned short Devads)
@@ -361,7 +467,7 @@ void ATT7022Init(unsigned short Devads)
   udelay(1000); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
   udelay(1000);
-  SetIDefault(Devads);//zzltest
+  //SetIDefault(Devads);//zzltest
   HFConstHL = MSpec.R7022E_HFConst;	//新国网		//13.08.30
   
   *(Point+3) =0;
@@ -593,99 +699,60 @@ void ATT7022Init(unsigned short Devads)
 
 unsigned char ComAdjWrite(unsigned char* ComBuf ,unsigned short Devads)
 {
-	short Temp,Temp2;		
-	unsigned char Buff[4]; 
-	unsigned char* Point;
-	unsigned short Temp3;				//10.07.30
-//	unsigned long Value;			//10.11.02
-	short i;							//10.11.02
-	
-	Point = Buff;	
-
-	Temp = *(ComBuf+Rs_IDLPtr);
-#if ( RemoteEnterCalib == YesCheck )								//新国网	//14.05.23
-//	if((((PIN_SETEN & P_SETEN ) != 0 )&&( IsFactoryTestState() != 0 ))||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  ) 
-	if((((HT_GPIOD->PTDAT & GPIOD_SETEN ) != 0 )&&( IsFactoryTestState() != 0 ))||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  ) //if((((PIN_SETEN & P_SETEN ) != 0 )&&( IsFactoryTestState() != 0 ))||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  ) 
-#else
-//	if((( PIN_SETEN & P_SETEN ) != 0 )||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  ) 
-	if((( HT_GPIOD->PTDAT & GPIOD_SETEN ) != 0 )||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  ) //if((( PIN_SETEN & P_SETEN ) != 0 )||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  ) 
-#endif
-	{
-		*ComBuf = 0xFF;
-		return RS_State_IVData;		
-	}						
-	if((( Temp >= PgainA )&&(Temp <= PgainC))||(( Temp >= PhsregA0 )&&(Temp <= PhsregC1))
-#if ( NEW7022E == YesCheck )
-		||(( Temp >= PhsregA2 )&&(Temp <= PhsregC2))||( Temp == Iregion1 )||( Temp == TPSoffset )
-#endif
-		||(( Temp >= UgainA )&&(Temp <= IgainC))||(Temp == GainADC7)||(Temp == HFDouble)||( Temp == Iregion)) 
-	{	
-		
-//#if ( NEW7022E == YesCheck )
-//		if(( Temp == Iregion )||( Temp == Iregion1 ))
+  short Temp,Temp2;		
+  unsigned char Buff[4]; 
+  unsigned char* Point;
+  unsigned short Temp3;				//10.07.30
+  short i;					//10.11.02
+  Point = Buff;	
+  Temp = *(ComBuf+Rs_IDLPtr);
+//#if ( RemoteEnterCalib == YesCheck )								//新国网	//14.05.23
+//  if((((HT_GPIOD->PTDAT & GPIOD_SETEN ) != 0 )&&( IsFactoryTestState() != 0 ))||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  )
 //#else
-//		if( Temp == Iregion )
+//  if((( HT_GPIOD->PTDAT & GPIOD_SETEN ) != 0 )||((SM.CalibCount != CALIBCOUNT1)&&(Temp != HFDouble))  ) 
 //#endif
-//		{
-//			Temp3 = Ib50mV;
-//			if( Ib50mV != 1 )		//校表时假定Ib为50MV，25MV时需要把设置值除以2
-//			{
-//				RAM_Write( (unsigned char*)&Temp3, ComBuf+Rs_WDataPtr, 2 );
-//				Temp3 /= Ib50mV;
-//				RAM_Write( ComBuf+Rs_WDataPtr, (unsigned char*)&Temp3,  2 );
-//			}
-//		}	
-
-		RAM_Write( Point, ComBuf+Rs_WDataPtr, 2 );		//10.07.30
+//  {
+//    *ComBuf = 0xFF;
+//    return RS_State_IVData;
+//  }
+  if((( Temp >= PgainA )&&(Temp <= PgainC))||(( Temp >= PhsregA0 )&&(Temp <= PhsregC1))
+#if ( NEW7022E == YesCheck )
+     ||(( Temp >= PhsregA2 )&&(Temp <= PhsregC2))||( Temp == Iregion1 )||( Temp == TPSoffset )
+#endif
+       ||(( Temp >= UgainA )&&(Temp <= IgainC))||(Temp == GainADC7)||(Temp == HFDouble)||( Temp == Iregion)) 
+  {
+    RAM_Write( Point, ComBuf+Rs_WDataPtr, 2 );		//10.07.30
 
 #if ( NEW7022E == YesCheck )
-		Temp2 = GetATT7022ECalibDataEAddr( Temp );
+    Temp2 = GetATT7022ECalibDataEAddr( Temp );
 #else
-		Temp2 = Temp * 3;								
+    Temp2 = Temp * 3;								
 #endif
-
-       	Temp3 = E2P_PGLEN - 0x100;						//10.07.30
-       	Temp3 += Temp2;									//10.07.30		
-       	E2P_WData( Temp3, ComBuf+Rs_WDataPtr, 2 );		//10.07.30
-       	E2P_RData( ComBuf+Rs_WDataPtr, Temp3, 2 );		//10.07.30
-		if( Data_Comp( Point, ComBuf+Rs_WDataPtr, 2 ) != 0 ) return RS_State_IVData;		//10.07.30
-
-/*		for( i=0;i<2;i++ )																//10.11.02					
-		{																				//10.11.02						
-			Value = (unsigned long)(AT7022DataZonePage+i)*4096;							//13.09.16		//新国网	//13.09.16
-			Read_Flash( FBuff1.Buff1, Value, 256+80 );									//13.09.16
-			*(ComBuf+Rs_WDataPtr+2) = ChkNum( ComBuf+Rs_WDataPtr, 2 );					//13.09.16
-			if( Data_Comp( ComBuf+Rs_WDataPtr, FBuff1.Buff1+Temp2, 3 ) == 0 ) continue;	//13.09.16	
-			RAM_Write( FBuff1.Buff1+Temp2, ComBuf+Rs_WDataPtr, 3 );						//13.09.16
-			DataFlash_Write( Value, FBuff1.Buff1, 256+80 );								//13.09.16	
-			RAM_Fill( FBuff2.Buff1, 256+80 );											//13.09.16		
-			Read_Flash( FBuff2.Buff1, Value, 256+80 );									//13.09.16
-			if(( Data_Comp( FBuff1.Buff1, FBuff2.Buff1, 256+80 ) != 0 )					//13.09.16
-				||( Data_Comp( Point, FBuff1.Buff1+Temp2, 2 ) != 0 )) 					//13.09.16		//新国网	//13.09.16
-			{																			//10.11.02
-				return RS_State_IVData;													//10.11.02
-			}																			//10.11.02				
-		}																				//10.11.02
-*/
-		*(Point+2) = 0x00;					
-		*(Point+1) = 0x00;
-		*Point = 0x5A;
-		ATT7022WtReg( 0xC9, Point ,Devads);
-		ATT7022WtReg( Temp+128, ComBuf+Rs_WDataPtr ,Devads);	
-		if(( Temp >= PgainA )&&(Temp <= PgainC))					//无功和视在使用有功数据
-		{
-			for( i=1;i<3;i++ )
-			{
-				ATT7022WtReg( Temp+i*3+128, ComBuf+Rs_WDataPtr ,Devads);	
-			}				
-		}	
-		*(Point+2) = 0x00;					
-		*(Point+1) = 0x00;
-		*Point = 0x01;						//关闭写校表数据功能
-		ATT7022WtReg( 0xC9, Point ,Devads);
-
-	}	
-	return 0;
+    Temp3 = Temp2 + E2P_PGLEN;
+    Temp3 -= (0x100*Devads);
+//    Temp3 = E2P_PGLEN - 0x100;	(0x100*Devads); //10.07.30
+//    Temp3 += Temp2;									//10.07.30
+    E2P_WData( Temp3, ComBuf+Rs_WDataPtr, 2 );		//10.07.30
+    E2P_RData( ComBuf+1, Temp3, 2 );		//10.07.30
+    if( Data_Comp( Point, ComBuf+Rs_WDataPtr, 2 ) != 0 ) return RS_State_IVData;		//10.07.30
+    *(Point+2) = 0x00;
+    *(Point+1) = 0x00;
+    *Point = 0x5A;
+    ATT7022WtReg( 0xC9, Point ,Devads);
+    ATT7022WtReg( Temp+128, ComBuf+Rs_WDataPtr ,Devads);
+    if(( Temp >= PgainA )&&(Temp <= PgainC))					//无功和视在使用有功数据
+    {
+      for(i=1;i<3;i++ )
+      {
+        ATT7022WtReg( Temp+i*3+128, ComBuf+Rs_WDataPtr ,Devads);
+      }
+    }
+    *(Point+2) = 0x00;
+    *(Point+1) = 0x00;
+    *Point = 0x01;						//关闭写校表数据功能
+    ATT7022WtReg( 0xC9, Point ,Devads);
+  }
+  return 0;
 }	
 
 long GetPhasePW( unsigned char Cmd ,unsigned short Devads)								//SmallCurrent
@@ -937,7 +1004,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   case ATYUaUc:
   case ATYUbUc:
     Value = (Value * 10 * 180 ) / 1048576;           
-    //LValue = (LValue * 225 ) / 131072;
+    LValue = (LValue * 225 ) / 131072;
     Value = LValue;
     break;
   default: 

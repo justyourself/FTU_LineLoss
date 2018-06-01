@@ -721,9 +721,10 @@ extern  const unsigned char LCDRollOrderTab[21];
 extern  const short DayTab[13];
 //extern  const EXECUTETAB ExecuteTab[10];
 extern  const unsigned short Crc16tab[256];
-extern REAL            Real_Data[8];
-extern ENERGY          Energy_Data[8];
+extern REAL            Real_Data[MAX_CH_NUM];
+extern ENERGY          Energy_Data[MAX_CH_NUM];
 extern const EVTPARALIST s_PnEvt[];
 extern const EVTPARALIST s_PtEvt[]; 
+extern EC_PARA m_ecpara[MAX_CH_NUM];
 #endif
 

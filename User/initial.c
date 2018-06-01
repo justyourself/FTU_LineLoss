@@ -516,6 +516,7 @@ void EnterHold(void)
   // Bat_on(0);
   //HT_WDT->WDTCLR = 0xAAFF;        //16s                                /*!< 看门狗喂狗                   */
   HT_FreeDog();
+#if 0 
   if(!SM.PowerUpTime)  //zzl add for 低功耗进入正常运行模块
   {
     SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;	//禁用SysTick滴答定时器
@@ -530,7 +531,8 @@ void EnterHold(void)
     HT_CMU->SYSCLKDIV = 0x0000;
     HT_CMU->CLKCTRL0 = 0x0000;    
     HT_CMU->WPREG = 0x0000;		//WPREG 写非0xA55A，则开启写保护功能	
-  } 
+  }
+#endif
   HT_EnterHold();		//2016.10.04clf
 }
 

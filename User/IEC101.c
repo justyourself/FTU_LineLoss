@@ -34,20 +34,22 @@ static int Blk_ptr;
 static int Record_no;
 static int Record_num;
 static int m_Channel_no;
+//307
 int Assamble_XmlFormat(int sect,char *In,char *Out)
 {
   int Len=0,i;
   long l_val;
+  unsigned long ul_val;
   float f_val;
   char tmp[64];
   sprintf(Out,"\t<DataRec sect=\"%d\" tm=\"%04d%02d%02d_%02d%02d%02d\">\r\n",sect,2000+In[5],In[4],In[3],In[2],In[1],In[0]);
   Len = strlen(Out);
   for(i=0;i<8;++i)
   {
-    memcpy(&l_val,In+6+i*4,4);
-    f_val = l_val;
-    f_val = f_val/100;
-    sprintf(tmp,"\t\t<DI val=\"%.2f\"/>\r\n",f_val);
+    memcpy(&ul_val,In+6+i*4,4);
+    f_val = ul_val;
+    f_val = ul_val/1000;
+    sprintf(tmp,"\t\t<DI val=\"%.3f\"/>\r\n",f_val);
     memcpy(Out+Len,tmp,strlen(tmp));
     Len += strlen(tmp);
   }
@@ -64,13 +66,20 @@ int Assamble_XmlFormat(int sect,char *In,char *Out)
   Len += strlen("\t</DataRec>\r\n");
   return Len; 
 }
+//200
 //unsigned short InfoAddrList[12]={0x6401,0x};
 int Assamble_MsgFormat(int sect,char *In,char *Out)
 {
   int Len=0,i;
-  unsigned long l_val;
+  signed long l_val;
+  unsigned long ul_val;
   float f_val;
   char tmp[64];
+  for(i=0;i<6;++i)
+  {
+    if(In[i]>60)
+      In[i]=0;
+  }
   sprintf(Out,"12,%04d-%02d-%02d %02d:%02d:%02d",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
   Len = strlen(Out);
   for(i=0;i<8;++i)
@@ -78,12 +87,14 @@ int Assamble_MsgFormat(int sect,char *In,char *Out)
     sprintf(tmp,",%04X,",0x6401+i);
     memcpy(Out+Len,tmp,strlen(tmp));
     Len += strlen(tmp);
-    memcpy(&l_val,In+6+i*4,4);
-    f_val = l_val;
-    f_val = f_val/100;
-    sprintf(tmp,"%.2f",f_val);
+    memcpy(&ul_val,In+6+i*4,4);
+    f_val = ul_val;
+    f_val = ul_val/1000;
+    sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
+      if(strlen(tmp)>12)
+        tmp[12] = 0;
       memcpy(Out+Len,tmp,strlen(tmp));
       Len += strlen(tmp);
     }
@@ -107,6 +118,8 @@ int Assamble_MsgFormat(int sect,char *In,char *Out)
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=10)
     {
+      if(strlen(tmp)>12)
+        tmp[12] = 0;
       memcpy(Out+Len,tmp,strlen(tmp));
       Len += strlen(tmp);
     }
@@ -122,13 +135,145 @@ int Assamble_MsgFormat(int sect,char *In,char *Out)
   Len +=2;
   return Len;
 }
+//278
+int Assamble_PnMsgFormat(int sect,char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0,i;
+  unsigned long ul_val;
+  float f_val;
+  sprintf(Out,"%02d,",sect);
+  Len=3;
+  sprintf(Out+Len,"%04d-%02d-%02d %02d:%02d:%02d,",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len = strlen(Out);
+  memcpy(&ul_val,In+6,4);
+  sprintf(tmp,"%d",ul_val);
+  if(strlen(tmp)>=8)
+  {
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  else
+  {
+    memset(Out+Len,' ',8-strlen(tmp));
+    Len += 8-strlen(tmp);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  Out[Len++]=0x38;
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = ul_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  sprintf(Out+Len,",%04d-%02d-%02d %02d:%02d:%02d",2000+In[47],In[46],In[45],In[44],In[43],In[42]);
+  Len = strlen(Out);
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = ul_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  memcpy(Out+Len,"\r\n",2);
+  Len +=2;
+  return Len;
+}
+//146
+int Assamble_PtMsgFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0,i;
+  unsigned long ul_val;
+  float f_val;
+  sprintf(Out,"%02d,",4);
+  Len=3;
+  sprintf(Out+Len,"%04d-%02d-%02d %02d:%02d:%02d,",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len = strlen(Out);
+  memcpy(&ul_val,In+6,4);
+  sprintf(tmp,"%d",ul_val);
+  if(strlen(tmp)>=8)
+  {
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  else
+  {
+    memset(Out+Len,' ',8-strlen(tmp));
+    Len += 8-strlen(tmp);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  Out[Len++]=0x38;
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = ul_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  memcpy(Out+Len,"\r\n",2);
+  Len +=2;
+  return Len;
+}
 
 typedef struct {
   u16 info_addr;
   u16 data_len;
   unsigned char *info_data;
 }S_SNINFO;
+#if MAX_CH_NUM==1
 unsigned char s_Devtype[]="FTU";
+#else
+unsigned char s_Devtype[]="DTU";
+#endif
 unsigned char s_Operation[]="N/A";
 unsigned char s_Manufacture[]="炬华";
 unsigned char s_Hardwarever[]="A";
@@ -156,7 +301,7 @@ unsigned char *File_List[]={FIXDMSG,FIXDXML,RANDMSG,RANDXML,FRZDMSG,FRZDXML,SHAR
 static struct IEC101_STRUCT m_IEC101;
 struct IEC101_STRUCT *lpIEC101=&m_IEC101;	//IEC101规约私用数据指针
 
-
+//175
 int Send_LoadXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
@@ -172,7 +317,7 @@ int Send_LoadXmlFile_Head(char *buf)
       byMsgNum += strlen(tmp);
       return byMsgNum;
 }
-
+//158
 int Send_RandXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
@@ -188,7 +333,7 @@ int Send_RandXmlFile_Head(char *buf)
       byMsgNum += strlen(tmp);
       return byMsgNum;
 }
-
+//158
 int Send_FrzdXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
@@ -204,7 +349,7 @@ int Send_FrzdXmlFile_Head(char *buf)
       byMsgNum += strlen(tmp);
       return byMsgNum;
 }
-
+//160
 int Send_SharpdXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
@@ -220,7 +365,7 @@ int Send_SharpdXmlFile_Head(char *buf)
       byMsgNum += strlen(tmp);
       return byMsgNum;
 }
-
+//160
 int Send_MonthdXmlFile_Head(char *buf)
 {
       int byMsgNum=0;
@@ -236,7 +381,7 @@ int Send_MonthdXmlFile_Head(char *buf)
       byMsgNum += strlen(tmp);
       return byMsgNum;
 }
-
+//205
 int Send_XmlDataType1(char * buf)
 {
   int byMsgNum=0;
@@ -250,7 +395,7 @@ int Send_XmlDataType1(char * buf)
     \t\t<DI ioa=\"25604\" type=\"float\" unit=\"kVARh\" />\r\n");
     return byMsgNum;
 }
-
+//205
 int Send_XmlDataType2(char * buf)
 {
   int byMsgNum=0;
@@ -264,7 +409,7 @@ int Send_XmlDataType2(char * buf)
     \t\t<DI ioa=\"25607\" type=\"float\" unit=\"kVARh\" />\r\n");
     return byMsgNum;
 }
-
+//208
 int Send_XmlDataType3(char * buf)
 {
   int byMsgNum=0;
@@ -449,18 +594,23 @@ void PLinkRecvProcessF(u8 byConField)
 	lpIEC101->haveset = TRUE;
         lpIEC101->initstatus = justinit;
         lpIEC101->PWinTimer=0;
+        lpIEC101->byPSGenStep=0;
+        lpIEC101->byPSDdStep=0;
+        lpIEC101->PReMsgType=0;
       }
       lpIEC101->PSeAppLayer.byMsgNum = 0;
       lpIEC101->PSeAppLayer.byFull = 1;
     }
     return;
   }
-  
-  if ( ((byConField & 0x20)==(lpIEC101->PfcbC<<5)) && (byConField & 0x10)&& lpIEC101->PfcvC)
+#if 0 
+  //if ( ((byConField & 0x20)==(lpIEC101->PfcbC<<5)) && (byConField & 0x10)&& lpIEC101->PfcvC)
+  if((byConField & 0x10) && ((byConField & 0x20)==(lpIEC101->PfcbC<<5)))
   {
     lpIEC101->PSendFrame.byFull = 1;
     return;
   }
+#endif  
   lpIEC101->PfcvC = byConField & 0x10;
   if((byConField & 0x40)==0)
   {
@@ -477,7 +627,13 @@ void PLinkRecvProcessF(u8 byConField)
           lpIEC101->Pacd = 3;
           lpIEC101->Pdfc = 1;
           lpIEC101->PSendFrame.byFunCode = 3;
-	}      
+          lpIEC101->byPSGenStep=0;
+          lpIEC101->byPSDdStep=0;
+	}
+       // else
+       // {
+      //    lpIEC101->PReMsgType=0;
+      //  }
       break;
     case LINK_GOOD:
       lpIEC101->PReFrameType = lpIEC101->PRecvFrame.byFunCode;
@@ -497,6 +653,7 @@ void PLinkRecvProcessF(u8 byConField)
   {
     if (lpIEC101->PRecvFrame.byFunCode == RESET_LINK)
     {
+     // lpIEC101->PReMsgType=0;
       lpIEC101->PfcbC = 0;
       lpIEC101->PSeAppLayer.LinkFunCode = 0x00;
       lpIEC101->firstData = nofirstdata;
@@ -519,8 +676,8 @@ void PLinkRecvProcessF(u8 byConField)
     lpIEC101->PSeAppLayer.byMsgNum = 0;
     lpIEC101->PSeAppLayer.byFull = 1;
   }
-  
-  if ((lpIEC101->PRecvFrame.byFunCode == CALL_DATA1)||(lpIEC101->PRecvFrame.byFunCode == CALL_DATA2))
+  if(lpIEC101->PfcvC)
+  //if ((lpIEC101->PRecvFrame.byFunCode == CALL_DATA1)||(lpIEC101->PRecvFrame.byFunCode == CALL_DATA2))
   {
     lpIEC101->PReFrameType = lpIEC101->PRecvFrame.byFunCode;
     lpIEC101->PfcbC = byConField & 0x20 ? 1 : 0;	// FCV位有效,则保存FCB位
@@ -559,7 +716,8 @@ void PLinkRecvProcessV(u8 byConField)
       lpIEC101->PSeAppLayer.byFull = 1;
     }
   }
-  lpIEC101->PfcbC = byConField & 0x20 ? 1 : 0;	// FCV位有效,则保存FCB位
+  if(lpIEC101->PfcvC)
+    lpIEC101->PfcbC = byConField & 0x20 ? 1 : 0;	// FCV位有效,则保存FCB位
   byFrameCount=5+lpIEC101->TypeLinkAdd; //指向类型标识
   lpIEC101->PReMsgType = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];	// 类型标识
   lpIEC101->byQualify = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];		// 可变结构限定词
@@ -574,6 +732,25 @@ void PLinkRecvProcessV(u8 byConField)
     lpIEC101->dwInfAdd.Byte[i] =  lpIEC101->PReAppLayer.lpByBuf[byFrameCount++]; 
   lpIEC101->byPSGenStep = 0;
   lpIEC101->byPSDdStep = 0;
+  switch(lpIEC101->PRecvFrame.byFunCode)
+  {
+  case TRAN_CONFIRM_DATA:
+      lpIEC101->PSeAppLayer.LinkFunCode = YES_ACK;
+      break;
+  case CALL_DATA1:
+  case CALL_DATA2:
+      lpIEC101->PSeAppLayer.LinkFunCode = RESP_NO_DATA;
+      break;
+  case CALL_ACD:
+  case CALL_LINK:
+      lpIEC101->PSeAppLayer.LinkFunCode = LINK_GOOD;
+      break;
+  }
+  if(lpIEC101->FlagPingH==0)
+  {
+    lpIEC101->PSeAppLayer.byFull = 0;
+    lpIEC101->PSendFrame.byFull = 0;
+  }
   switch(lpIEC101->PReMsgType)
   {
   case GeneralCall: //总召唤
@@ -623,7 +800,7 @@ void PLinkRecvProcessV(u8 byConField)
   case C_RR_NA_1:
     break;
   case C_RS_NA_1:
-    lpIEC101->PReFrameType = 0xff;
+          lpIEC101->PReFrameType = 0xff;
           byFrameCount -= lpIEC101->TypeInfAdd;
           lpIEC101->Sn = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];
           lpIEC101->Sn = (lpIEC101->Sn) | (lpIEC101->PReAppLayer.lpByBuf[byFrameCount++]<<8);
@@ -638,6 +815,48 @@ void PLinkRecvProcessV(u8 byConField)
           else //定值区间的所有参数
           {
           }
+    break;
+  case C_WS_NA_1:
+    byFrameCount -= lpIEC101->TypeInfAdd;
+    lpIEC101->Sn = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];
+    lpIEC101->Sn = (lpIEC101->Sn) | (lpIEC101->PReAppLayer.lpByBuf[byFrameCount++]<<8);
+    if(lpIEC101->byQualify)
+    {
+      unsigned char sn_tag;
+      unsigned char tt_buf[8];
+      float f_val;
+      float *p_val;
+      u16 info_addr;
+      sn_tag = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];
+      switch(sn_tag)
+      {
+      case 0x80:
+        for(i=0;i<lpIEC101->byQualify;++i)
+        {
+          info_addr = lpIEC101->PReAppLayer.lpByBuf[byFrameCount+1];
+          info_addr = (info_addr<<8)+(lpIEC101->PReAppLayer.lpByBuf[byFrameCount]);
+          byFrameCount +=2;
+          memcpy(tt_buf,lpIEC101->PReAppLayer.lpByBuf+byFrameCount,8);
+          memcpy(&f_val,lpIEC101->PReAppLayer.lpByBuf+byFrameCount+2,4);
+          p_val = &(m_ecpara[0].cmon_day);
+          *(p_val+(info_addr-0x8021)) = f_val;
+          byFrameCount += 2 + lpIEC101->PReAppLayer.lpByBuf[byFrameCount+1];
+        }
+        break;
+      case 0x79:
+        for(i=0;i<lpIEC101->byQualify;++i)
+        {
+          info_addr = lpIEC101->PReAppLayer.lpByBuf[byFrameCount+1];
+          info_addr = (info_addr<<8)+(lpIEC101->PReAppLayer.lpByBuf[byFrameCount]);
+          byFrameCount +=2;
+          ComAdjWrite(lpIEC101->PReAppLayer.lpByBuf+byFrameCount+2,info_addr-0x8021);
+          byFrameCount += 2 + lpIEC101->PReAppLayer.lpByBuf[byFrameCount+1];
+        }
+        break;
+      default:
+        break;
+      }
+    }
     break;
   case F_FR_NA_1:
     lpIEC101->PReFrameType = 0xff;
@@ -1574,6 +1793,12 @@ u8 OrgnizeTimeMsg(void)
 	*(lpby + byMsgNum ++) = *(Point+1);
        	return byMsgNum;       
 }
+                         
+void Calibrate_AT7022E(void)
+{
+  unsigned short Devads;
+  ComAdjWrite(lpIEC101->PReAppLayer.lpByBuf,Devads);
+}
 
 void SendTimeAck(void)
 {
@@ -1811,9 +2036,10 @@ void SendChanTestAck(void)
 
 void Dir_Send(void)
 {
-  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
-  u8 i,byMsgNum = 0;        
-  if(lpIEC101->byPSGenStep>1)
+  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf,flag;
+  u16 i,byMsgNum = 0; 
+  int Record_num;
+  if(lpIEC101->byPSGenStep>(MAX_CH_NUM*3-1))
   {
     return;
   }
@@ -1831,7 +2057,7 @@ void Dir_Send(void)
   *(lpby + byMsgNum ++) = 0x02;
   *(lpby + byMsgNum ++) = 0x00;
   memcpy(lpby + byMsgNum,&(lpIEC101->FId),4);byMsgNum+=4;
-  if(lpIEC101->byPSGenStep)
+  if(lpIEC101->byPSGenStep>=(MAX_CH_NUM*3-1))
   {
     *(lpby + byMsgNum ++) = 0x00;
   }
@@ -1839,17 +2065,95 @@ void Dir_Send(void)
   {
     *(lpby + byMsgNum ++) = 0x01;
   }
-  *(lpby + byMsgNum ++) = 0x05;
-  for(i=0;i<6;++i)
+  *(lpby + byMsgNum ++) = 0x04;
+  for(i=0;i<4;++i)
   {
-    *(lpby + byMsgNum) = strlen((char const *)File_List[i+lpIEC101->byPSGenStep*6]);
-    memcpy((lpby + byMsgNum + 1),File_List[i+lpIEC101->byPSGenStep*6],*(lpby + byMsgNum));
+    *(lpby + byMsgNum) = strlen((char const *)File_List[i+(lpIEC101->byPSGenStep%3)*4]);
+    memcpy((lpby + byMsgNum + 1),File_List[i+(lpIEC101->byPSGenStep%3)*4],*(lpby + byMsgNum));
+    *(lpby + byMsgNum +  *(lpby + byMsgNum) - 4) +=  lpIEC101->byPSGenStep/3;
     byMsgNum += (*(lpby + byMsgNum)+1);
     *(lpby + byMsgNum++) = 0;
-    *(lpby + byMsgNum++) = 0x88+i+lpIEC101->byPSGenStep*6;
-    *(lpby + byMsgNum++) = 0;
-    *(lpby + byMsgNum++) = 0;
-    *(lpby + byMsgNum++) = 0;
+    flag =0;
+    if(strstr(File_List[i+(lpIEC101->byPSGenStep%3)*4],".xml"))
+    {
+      flag = 1;
+    }
+    if(strstr(File_List[i+(lpIEC101->byPSGenStep%3)*4],"FIXD"))
+    {
+        Record_num=Load_Record_Num();
+        if(flag)
+        {
+          Record_num = Record_num*307;
+          Record_num += 793;
+        }
+        else
+        {
+          Record_num = Record_num*200;
+        }
+    }
+    else if(strstr(File_List[i+(lpIEC101->byPSGenStep%3)*4],"RAND"))
+    {
+      Record_num=Rand_Record_Num();
+      if(flag)
+        {
+          Record_num = Record_num*307;
+          Record_num += 776;
+        }
+        else
+        {
+          Record_num = Record_num*200;
+        }
+    }
+    else if(strstr(File_List[i+(lpIEC101->byPSGenStep%3)*4],"FRZD"))
+    {
+        Record_num=Day_Record_Num();
+        if(flag)
+        {
+          Record_num = Record_num*307;
+          Record_num += 776;
+        }
+        else
+        {
+          Record_num = Record_num*200;
+        }
+    }
+    else if(strstr(File_List[i+(lpIEC101->byPSGenStep%3)*4],"SHARPD"))
+    {
+      Record_num=Hour_Record_Num();
+      if(flag)
+        {
+          Record_num = Record_num*307;
+          Record_num += 778;
+        }
+        else
+        {
+          Record_num = Record_num*200;
+        }
+    }
+    else if(strstr(File_List[i+(lpIEC101->byPSGenStep%3)*4],"MONTHD"))
+    {
+      Record_num=Month_Record_Num();
+      if(flag)
+        {
+          Record_num = Record_num*307;
+          Record_num += 778;
+        }
+        else
+        {
+          Record_num = Record_num*200;
+        }
+    }
+    if(strstr(File_List[i+(lpIEC101->byPSGenStep%3)*4],"EVENTD"))
+    {
+      Record_num=GetPn_Event_num(0,0)+GetPn_Event_num(0,1)+GetPn_Event_num(0,2);
+      Record_num = Record_num*424;
+    }
+    memcpy(lpby + byMsgNum,&Record_num,4);
+    byMsgNum += 4;
+//    *(lpby + byMsgNum++) = 0x88+i+lpIEC101->byPSGenStep*6;
+//    *(lpby + byMsgNum++) = 0;
+//    *(lpby + byMsgNum++) = 0;
+//    *(lpby + byMsgNum++) = 0;
     *(lpby + byMsgNum++) = 0x50;
     *(lpby + byMsgNum++) = 0x46; 
     *(lpby + byMsgNum++) = 0x20;
@@ -1951,14 +2255,15 @@ u8 SendFileInfo(u8 bySendReason)
     {
         Record_num=Day_Record_Num();
     }
-      else if(strstr(lpIEC101->Fname,"SHARPD"))
-      {
-        Record_num=Hour_Record_Num();
-      }
-      else if(strstr(lpIEC101->Fname,"MONTHD"))
-      {
-        Record_num=Month_Record_Num();
-      }
+    else if(strstr(lpIEC101->Fname,"SHARPD"))
+    {
+      Record_num=Hour_Record_Num();
+    }
+    else if(strstr(lpIEC101->Fname,"MONTHD"))
+    {
+      Record_num=Month_Record_Num();
+    }
+    
       p_filename=strstr(lpIEC101->Fname,".");
       if(p_filename)
       {
@@ -1966,12 +2271,21 @@ u8 SendFileInfo(u8 bySendReason)
         if(m_Channel_no)
           m_Channel_no -= 1;
       }
+      if(strstr(lpIEC101->Fname,"EVENTD"))
+      {
+        Record_num=GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)+GetPn_Event_num(m_Channel_no,2);
+      }
   }
 #endif  
   strcpy(lpby + byMsgNum,"  v1.0\r\n");
   byMsgNum += strlen("  v1.0\r\n");
   strcpy(lpby + byMsgNum,"201710300001,96,2\r\n");
   byMsgNum += strlen("201710300001,96,2\r\n");
+  if(Record_num==0)
+  {
+    *(lpby + pos - 1)=0;
+    lpIEC101->byPSGenStep=254;
+  }
   for(j=pos;j<byMsgNum;j++)
     bySum = bySum + *(lpby + j);
   *(lpby + byMsgNum ++) = bySum;
@@ -1983,9 +2297,9 @@ u8 SendFileInfo(u8 bySendReason)
 u8 SendFileData(u8 bySendReason)
 {
   char * lpby = (char *)lpIEC101->PSeAppLayer.lpByBuf;
-  char tmpbuf[64];
+  char tmpbuf[100];
   int Len;
-  u8 i,byMsgNum = 0,pos,bySum=0,j;
+  u32 i,byMsgNum = 0,pos,bySum=0,j;
   u32 m_filelen;
   *(lpby + byMsgNum ++) = F_FR_NA_1;		// 210
   *(lpby + byMsgNum ++) = 0x01;
@@ -1997,58 +2311,93 @@ u8 SendFileData(u8 bySendReason)
     *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
   for(i=0;i<lpIEC101->TypeInfAdd;i++)
     *(lpby + byMsgNum ++) = 0;
-  *(lpby + byMsgNum ++) = 0x2;    
-  *(lpby + byMsgNum ++) = 0x5;
+  *(lpby + byMsgNum) = 0x2;
+  ++byMsgNum;
+  *(lpby + byMsgNum) = 0x5;
+  ++byMsgNum;
   memcpy(lpby + byMsgNum,&(lpIEC101->FId),4);
   byMsgNum += 4;
   m_filelen = (lpIEC101->byPSGenStep-1)*256;
   memcpy(lpby + byMsgNum,&(m_filelen),4);
-  byMsgNum += 4;
-  //if(lpIEC101->byPSGenStep<9)
-#if  0  
-  if(Record_no<Record_num)
-    *(lpby + byMsgNum ++) = 0x1;
-  else
-    *(lpby + byMsgNum ++) = 0x0;
-#endif  
+  byMsgNum += 4; 
   pos = byMsgNum;
   byMsgNum ++;//
   if(strstr(lpIEC101->Fname,".msg"))
   {
-    //strcpy(lpby + byMsgNum,"12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
-    //byMsgNum += strlen("12,2017-10-24 15:15:00,6401,   10.71,6402,    0.23,6403,    0.23,6404,    0.08,6405,    0.00,6406,    0.08,6407,    0.00,6408,    0.00,4008,-    0.003,4009,-    0.003,400A,-    0.003,400B,-    0.006\r\n");
-    if(Record_no<Record_num)
+    if(Blk_size<=Blk_ptr)
     {
-      //Get_LoadData(Record_no,m_Channel_no,tmpbuf);
-      if(strstr(lpIEC101->Fname,"FIXD"))
+      if(Record_no<Record_num)
       {
-        Get_LoadData(Record_no,m_Channel_no,tmpbuf);
+        if(strstr(lpIEC101->Fname,"FIXD"))
+        {
+          Get_LoadData(Record_no,m_Channel_no,tmpbuf);
+        }
+        else if(strstr(lpIEC101->Fname,"RAND"))
+        {
+          Get_RandData(Record_no,m_Channel_no,tmpbuf);
+        }
+        else if(strstr(lpIEC101->Fname,"FRZD"))
+        {
+          Get_DayData(Record_no,m_Channel_no,tmpbuf);
+        }
+        else if(strstr(lpIEC101->Fname,"SHARPD"))
+        {
+          Get_HourData(Record_no,m_Channel_no,tmpbuf);
+        }
+        else if(strstr(lpIEC101->Fname,"MONTHD"))
+        {
+          Get_MonthData(Record_no,m_Channel_no,tmpbuf);
+        }
+        if(strstr(lpIEC101->Fname,"EVENTD"))
+        {
+          if(Record_no<GetPn_Event_num(m_Channel_no,0))
+          {
+            GetPn_Event_Record(m_Channel_no,0,Record_no,tmpbuf);
+          }
+          else if(Record_no<(GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)))
+          {
+            GetPn_Event_Record(m_Channel_no,1,Record_no-GetPn_Event_num(m_Channel_no,0),tmpbuf);
+          }
+          else
+          {
+            GetPn_Event_Record(m_Channel_no,2,Record_no-GetPn_Event_num(m_Channel_no,0)-GetPn_Event_num(m_Channel_no,1),tmpbuf);
+          }
+          Blk_size=Assamble_PnMsgFormat(1,tmpbuf,Block_buf);
+        }
+        else
+        {
+          Blk_size=Assamble_MsgFormat(Record_no,tmpbuf,Block_buf);
+        }
+        Blk_ptr = 0;
+//        memcpy(lpby + byMsgNum,Block_buf,Blk_size);
+//        byMsgNum += Blk_size;
       }
-      else if(strstr(lpIEC101->Fname,"RAND"))
-      {
-        Get_RandData(Record_no,m_Channel_no,tmpbuf);
-      }
-      else if(strstr(lpIEC101->Fname,"FRZD"))
-      {
-        Get_DayData(Record_no,m_Channel_no,tmpbuf);
-      }
-      else if(strstr(lpIEC101->Fname,"SHARPD"))
-      {
-        Get_MonthData(Record_no,m_Channel_no,tmpbuf);
-      }
-      else if(strstr(lpIEC101->Fname,"MONTHD"))
-      {
-        Get_MonthData(Record_no,m_Channel_no,tmpbuf);
-      }
-      Blk_size=Assamble_MsgFormat(Record_no,tmpbuf,Block_buf);
-      memcpy(lpby + byMsgNum,Block_buf,Blk_size);
-      byMsgNum += Blk_size;
+      ++Record_no;
     }
-    Blk_size =0;
-    if(++Record_no>=Record_num)
+    if((Blk_size-Blk_ptr)>245)
     {
-      lpIEC101->byPSGenStep=254;
-    }
+        Len = 230;
+        memcpy(lpby + byMsgNum,Block_buf+Blk_ptr,Len); 
+        byMsgNum +=Len;
+        Blk_ptr +=Len;
+      }
+      else
+      {
+        memcpy(lpby + byMsgNum,Block_buf+Blk_ptr,Blk_size-Blk_ptr); 
+        byMsgNum +=Blk_size-Blk_ptr;
+        Blk_ptr=Blk_size;
+        if(Record_no>=Record_num)
+        {
+          lpIEC101->byPSGenStep=254;
+        }
+      }
+   
+//    
+//    if(Record_no>=Record_num)
+//    {
+//      Record_no++;
+//      lpIEC101->byPSGenStep=254;
+//    }
   }
   else if(strstr(lpIEC101->Fname,".xml"))
   {
@@ -2243,14 +2592,12 @@ void File_Send(void)
     if(lpIEC101->byPSGenStep==1)
     {
       byMsgNum=SendFileInfo(1);
-      lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-      lpIEC101->PSeAppLayer.LinkFunCode = 3;
+//      lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+//      lpIEC101->PSeAppLayer.LinkFunCode = 3;
     }
     else if(lpIEC101->byPSGenStep<254)
     {
-      byMsgNum=SendFileData(1);
-      lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-      lpIEC101->PSeAppLayer.LinkFunCode = 3;
+      byMsgNum=SendFileData(1); 
     }
   }
   else
@@ -2260,9 +2607,11 @@ void File_Send(void)
     else if (lpIEC101->byReason == DEACT)
       bySendReason = DEACTCON;
     byMsgNum = SendFileGenAck(bySendReason);
-    lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-    lpIEC101->PSeAppLayer.LinkFunCode = 3;
+//    lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+//    lpIEC101->PSeAppLayer.LinkFunCode = 3;
   }
+  lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+  lpIEC101->PSeAppLayer.LinkFunCode = 3;
   ++lpIEC101->byPSGenStep;
 }
 
@@ -2286,9 +2635,12 @@ void File_Server(void)
 void Sn_Read(void)
 {
   u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
-  u8 i,byMsgNum = 0,j;        
+  u8 i,byMsgNum = 0,j,flag=1;        
   *(lpby + byMsgNum ++) = C_RS_NA_1;
-  *(lpby + byMsgNum ++) = lpIEC101->byQualify;
+  if(lpIEC101->byQualify==0)
+    *(lpby + byMsgNum ++) = 6 * MAX_CH_NUM;
+  else
+    *(lpby + byMsgNum ++) = lpIEC101->byQualify;
   *(lpby + byMsgNum ++) = ACTCON;
   if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
     *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
@@ -2299,7 +2651,7 @@ void Sn_Read(void)
   *(lpby + byMsgNum ++) = (lpIEC101->Sn>>8)&0xff; 
   *(lpby + byMsgNum ++) = 0x00;
  
-  for(i=0;i<lpIEC101->byQualify;++i)
+  for(i=lpIEC101->byPSGenStep*20;i<lpIEC101->byQualify;++i)
   {
     *(lpby + byMsgNum ++) = lpIEC101->List_para[i]&0xff; 
     *(lpby + byMsgNum ++) = (lpIEC101->List_para[i]>>8)&0xff; 
@@ -2319,11 +2671,36 @@ void Sn_Read(void)
     {
       *(lpby + byMsgNum ++) = 0;
     }
+    if((i-lpIEC101->byPSGenStep*20)>=19)
+    {
+      flag = 0;
+      break;
+    }
+  }
+  if(lpIEC101->byQualify==0)
+  {
+    float *p_F;
+    p_F = &m_ecpara[0].cmon_day;
+    for(i=lpIEC101->byPSGenStep*20;i<6 * MAX_CH_NUM;++i)
+    {
+      *(lpby + byMsgNum ++) = (0x8021+i)&0xff; 
+      *(lpby + byMsgNum ++) = ((0x8021+i)>>8)&0xff; 
+      *(lpby + byMsgNum ++) = 0x26;
+      *(lpby + byMsgNum ++) = 4;
+      memcpy(lpby + byMsgNum,p_F+i,4);
+      byMsgNum +=4;
+      if((i-lpIEC101->byPSGenStep*20)>=19)
+      {
+        flag = 0;
+        break;
+      }
+    }
   }
   lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
   lpIEC101->PSeAppLayer.LinkFunCode = 3;
   lpIEC101->byPSGenStep++;
-  lpIEC101->PReMsgType = 0;
+  if(flag)
+    lpIEC101->PReMsgType = 0;
 }
 //组信息帧
 void AppVFrame(void)
@@ -2399,20 +2776,39 @@ void AppVFrame(void)
     {
       lpIEC101->PReMsgType = 0;
     }
-    lpIEC101->PReMsgType = 0;
+    //lpIEC101->PReMsgType = 0;
+    break;
+  case C_WS_NA_1:
+    //Calibrate_AT7022E();
     break;
   case F_FR_NA_1: //文件传输
     File_Server();
     if(lpIEC101->PSeAppLayer.byMsgNum)
       lpIEC101->PSeAppLayer.byFull = 1;
-   // else
- //   {
-    //  lpIEC101->PReMsgType = 0;
-  //  }
+    else
+    {
+      if(lpIEC101->FlagPingH==0)
+      {
+        SendData2();
+        lpIEC101->PSeAppLayer.byFull = 1;
+        lpIEC101->PReFrameType = 0xff;
+      }
+    }
+    if(lpIEC101->FlagPingH==0)
+      lpIEC101->PSeAppLayer.byFull = 1;
     break;
   default:
-    lpIEC101->PSeAppLayer.byFull = 0;
-    lpIEC101->PReMsgType = 0x0;
+    if(lpIEC101->FlagPingH)
+    {
+      lpIEC101->PSeAppLayer.byFull = 0;
+      lpIEC101->PReMsgType = 0x0;
+    }
+    else
+    {
+      SendData2();
+      lpIEC101->PSeAppLayer.byFull = 1;
+      lpIEC101->PReFrameType = 0xff;
+    }
     break;
   }
 }
@@ -2431,7 +2827,8 @@ void PAppSendProcess(void)
     {
      // if(lpIEC101->PReFrameType)// == CALL_DATA2)
       {
-        if( 0==lpIEC101->PReFrameType)
+        //if( 0==lpIEC101->PReFrameType)
+        if((lpIEC101->PReFrameType == CALL_DATA2 && lpIEC101->FlagPingH) || (lpIEC101->FlagPingH && (0==lpIEC101->PReFrameType)))
         {
           SendData2();
           lpIEC101->PSeAppLayer.byFull = 1;
@@ -2493,10 +2890,12 @@ void Iec101AppSendPro(void)
 	}
 }
 //组变长链路帧
-u8 OrgnizeVarFrame(u8 *lpby,u8 byMsgNum,u8 byConField)	//fulianqiang 2005.9.2
+u16 OrgnizeVarFrame(u8 *lpby,u8 byMsgNum,u8 byConField)	//fulianqiang 2005.9.2
 {
 	int i;
 	u8 bySum = 0;
+        if(byMsgNum>248)
+          byMsgNum = 248;
 	//u8 byMsgNum = lpIEC101->PSeAppLayer.byMsgNum;
 	*(lpby + 0) = V_STARTCODE;	// 变长帧起始字节
 	*(lpby + 1) = byMsgNum + 1 + lpIEC101->TypeLinkAdd;
@@ -2824,7 +3223,7 @@ void InitIEC101Prot(void)
     lpIEC101->wLinkAdd.Word=1;
     lpIEC101->initstatus = notinit;
     lpIEC101->haveset = FALSE;
-    lpIEC101->FlagPingH = 1;
+    lpIEC101->FlagPingH = 0;
     lpIEC101->UnsolTimeInterval=3;
     lpIEC101->firstData = nofirstdata;
    

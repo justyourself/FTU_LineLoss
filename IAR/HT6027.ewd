@@ -45,7 +45,7 @@
         </option>
         <option>
           <name>MemFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\debugger\Hitrendtech\HT6X2X.SVD</state>
+          <state>$TOOLKIT_DIR$\CONFIG\debugger\Hitrendtech\HT6X3X.SVD</state>
         </option>
         <option>
           <name>RunToEnable</name>
@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
-          <state>7.20.2.7418</state>
+          <state>7.30.3.8061</state>
         </option>
         <option>
           <name>OCDownloadAttachToProgram</name>
@@ -117,7 +117,7 @@
         </option>
         <option>
           <name>FlashLoadersV3</name>
-          <state>$TOOLKIT_DIR$\config\flashloader\Hitrendtech\HT6X2X.board</state>
+          <state>$TOOLKIT_DIR$\config\flashloader\Hitrendtech\HT6X3X.board</state>
         </option>
         <option>
           <name>OCImagesSuppressCheck1</name>
@@ -520,7 +520,7 @@
       <name>IJET_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>3</version>
+        <version>5</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -718,6 +718,20 @@
           <name>OCJetEmuParams</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IjetPreferETB</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IjetTraceSettingsList</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IjetTraceSizeList</name>
+          <version>0</version>
+          <state>2</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -835,7 +849,7 @@
         <option>
           <name>CCJLinkResetList</name>
           <version>6</version>
-          <state>7</state>
+          <state>10</state>
         </option>
         <option>
           <name>CCJLinkInterfaceCmdLine</name>
@@ -1306,6 +1320,10 @@
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\Quadros\Quadros_EWB7_Plugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\SafeRTOS\SafeRTOSPlugin.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
@@ -1331,7 +1349,7 @@
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
-        <loadFlag>1</loadFlag>
+        <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
@@ -1339,7 +1357,7 @@
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\SymList\SymList.ENU.ewplugin</file>
-        <loadFlag>1</loadFlag>
+        <loadFlag>0</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\uCProbe\uCProbePlugin.ENU.ewplugin</file>
@@ -1865,7 +1883,7 @@
       <name>IJET_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>3</version>
+        <version>5</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -2062,6 +2080,20 @@
         <option>
           <name>OCJetEmuParams</name>
           <state>1</state>
+        </option>
+        <option>
+          <name>IjetPreferETB</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IjetTraceSettingsList</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IjetTraceSizeList</name>
+          <version>0</version>
+          <state>2</state>
         </option>
       </data>
     </settings>
@@ -2648,6 +2680,10 @@
       </plugin>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\OpenRTOS\OpenRTOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\Quadros\Quadros_EWB7_Plugin.ewplugin</file>
         <loadFlag>0</loadFlag>
       </plugin>
       <plugin>

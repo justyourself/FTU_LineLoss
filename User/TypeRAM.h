@@ -404,7 +404,29 @@ typedef struct
 
 }MDVAR;					//3840字节
 */
-
+#pragma pack(2)
+#if 0
+typedef struct
+{
+  unsigned char cmon_day;
+  unsigned char cday_hour;
+  unsigned int  invert_val;
+  unsigned char invert_time;
+  unsigned int  trend_val;
+  unsigned char trend_time;
+}EC_PARA;
+#else
+typedef struct
+{
+  float cmon_day;
+  float cday_hour;
+  float invert_val;
+  float invert_time;
+  float trend_val;
+  float trend_time;
+}EC_PARA;
+#endif
+#pragma pack()
 typedef struct
 {
 	unsigned short PL_CumPp[8];				//当前正向有功电量脉冲计数器(2)
@@ -1389,6 +1411,14 @@ typedef struct
   unsigned int SumPluseECP0[8];
   unsigned int PQFlag[8];
   unsigned int PQFlag_b[8];
+  unsigned int PQNum[8][4];
+  unsigned long        Angle_Ia[8]; 			//A相电流角度
+  unsigned long        Angle_Ib[8]; 			//B相电流角度
+  unsigned long        Angle_Ic[8]; 			//C相电流角度
+  
+  unsigned long        Angle_Ua[8]; 			//A相电流角度
+  unsigned long        Angle_Ub[8]; 			//B相电流角度
+  unsigned long        Angle_Uc[8]; 			//C相电流角度
   unsigned char P_Time[8][4];
   unsigned char Delay30Min;
   unsigned char Delay60Sec;

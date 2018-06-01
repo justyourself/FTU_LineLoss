@@ -74,7 +74,63 @@
 #define CMon_EC_Q73                     CMon_EC_Q72+5
 #define CMon_EC_Q74                     CMon_EC_Q73+5  //结束地址:0x0140
 
-#define	ClockAdj			 CMon_EC_Q74+5	//（2）//结束地址:0x088D
+#define CMon_DAY0                       CMon_EC_Q74+5  
+#define CDay_HOUR0                      CMon_DAY0+5
+#define CDay_InvertVal0                 CDay_HOUR0+5
+#define CDay_InvertTime0                CDay_InvertVal0+5
+#define CDay_TrendVal0                  CDay_InvertTime0+5
+#define CDay_TrendTime0                 CDay_TrendVal0+5
+
+#define CMon_DAY1                       CDay_TrendTime0+5  
+#define CDay_HOUR1                      CMon_DAY1+5
+#define CDay_InvertVal1                 CDay_HOUR1+5
+#define CDay_InvertTime1                CDay_InvertVal1+5
+#define CDay_TrendVal1                  CDay_InvertTime1+5
+#define CDay_TrendTime1                 CDay_TrendVal1+5
+
+#define CMon_DAY2                       CDay_TrendTime1+5  
+#define CDay_HOUR2                      CMon_DAY2+5
+#define CDay_InvertVal2                 CDay_HOUR2+5
+#define CDay_InvertTime2                CDay_InvertVal2+5
+#define CDay_TrendVal2                  CDay_InvertTime2+5
+#define CDay_TrendTime2                 CDay_TrendVal2+5
+
+#define CMon_DAY3                       CDay_TrendTime2+5  
+#define CDay_HOUR3                      CMon_DAY3+5
+#define CDay_InvertVal3                 CDay_HOUR3+5
+#define CDay_InvertTime3                CDay_InvertVal3+5
+#define CDay_TrendVal3                  CDay_InvertTime3+5
+#define CDay_TrendTime3                 CDay_TrendVal3+5
+
+#define CMon_DAY4                       CDay_TrendTime3+5  
+#define CDay_HOUR4                      CMon_DAY4+5
+#define CDay_InvertVal4                 CDay_HOUR4+5
+#define CDay_InvertTime4                CDay_InvertVal4+5
+#define CDay_TrendVal4                  CDay_InvertTime4+5
+#define CDay_TrendTime4                 CDay_TrendVal4+5
+
+#define CMon_DAY5                       CDay_TrendTime4+5  
+#define CDay_HOUR5                      CMon_DAY5+5
+#define CDay_InvertVal5                 CDay_HOUR5+5
+#define CDay_InvertTime5                CDay_InvertVal5+5
+#define CDay_TrendVal5                  CDay_InvertTime5+5
+#define CDay_TrendTime5                 CDay_TrendVal5+5
+
+#define CMon_DAY6                       CDay_TrendTime5+5  
+#define CDay_HOUR6                      CMon_DAY6+5
+#define CDay_InvertVal6                 CDay_HOUR6+5
+#define CDay_InvertTime6                CDay_InvertVal6+5
+#define CDay_TrendVal6                  CDay_InvertTime6+5
+#define CDay_TrendTime6                 CDay_TrendVal6+5
+
+#define CMon_DAY7                       CDay_TrendTime6+5  
+#define CDay_HOUR7                      CMon_DAY7+5
+#define CDay_InvertVal7                 CDay_HOUR7+5
+#define CDay_InvertTime7                CDay_InvertVal7+5
+#define CDay_TrendVal7                  CDay_InvertTime7+5
+#define CDay_TrendTime7                 CDay_TrendVal7+5
+
+#define	ClockAdj			CDay_TrendTime7+4	//（2）//结束地址:0x088D
 
 //事件参数均改为HEX码
 #define	EPhFail_Valve		          ClockAdj+6		          //失压起始阀值(3)			yyy.y V 
@@ -137,7 +193,7 @@
 #define	CH7_PTD_EVT_PT                   CH7_PCN_EVT_PT+3
 #define	CH7_CLR_EVT_PT                   CH7_PCN_EVT_PT+3
 
-#define ErrorRegAddr			E2P_PGLEN-0x800
+#define ErrorRegAddr			 E2P_PGLEN-0x800
 
 #define E2P_PGLEN		         0x1000//0x0B00//0xAAA//0x1554		//数据备份页长度
 
@@ -153,54 +209,54 @@
 #define RAND_DATA_ADDR                   0x1680
 
 #define CH0_PAN_EVT_ADDR                RAND_DATA_ADDR+0x05A0
-#define CH0_PBN_EVT_ADDR                CH0_PAN_EVT_ADDR+800
-#define CH0_PCN_EVT_ADDR                CH0_PBN_EVT_ADDR+800
-#define CH0_PTD_EVT_ADDR                CH0_PCN_EVT_ADDR+800
-#define CH0_CLR_ADDR                    CH0_PTD_EVT_ADDR+400
+#define CH0_PBN_EVT_ADDR                CH0_PAN_EVT_ADDR+840
+#define CH0_PCN_EVT_ADDR                CH0_PBN_EVT_ADDR+840
+#define CH0_PTD_EVT_ADDR                CH0_PCN_EVT_ADDR+840
+#define CH0_CLR_ADDR                    CH0_PTD_EVT_ADDR+440
 
-#define CH1_PAN_EVT_ADDR                CH0_CLR_ADDR+400
-#define CH1_PBN_EVT_ADDR                CH1_PAN_EVT_ADDR+800
-#define CH1_PCN_EVT_ADDR                CH1_PBN_EVT_ADDR+800
-#define CH1_PTD_EVT_ADDR                CH1_PCN_EVT_ADDR+800
-#define CH1_CLR_ADDR                    CH1_PTD_EVT_ADDR+400
+#define CH1_PAN_EVT_ADDR                CH0_CLR_ADDR+440
+#define CH1_PBN_EVT_ADDR                CH1_PAN_EVT_ADDR+840
+#define CH1_PCN_EVT_ADDR                CH1_PBN_EVT_ADDR+840
+#define CH1_PTD_EVT_ADDR                CH1_PCN_EVT_ADDR+840
+#define CH1_CLR_ADDR                    CH1_PTD_EVT_ADDR+440
 
-#define CH2_PAN_EVT_ADDR                CH1_CLR_ADDR+400
-#define CH2_PBN_EVT_ADDR                CH2_PAN_EVT_ADDR+800
-#define CH2_PCN_EVT_ADDR                CH2_PBN_EVT_ADDR+800
-#define CH2_PTD_EVT_ADDR                CH2_PCN_EVT_ADDR+800
-#define CH2_CLR_ADDR                    CH2_PTD_EVT_ADDR+400
+#define CH2_PAN_EVT_ADDR                CH1_CLR_ADDR+440
+#define CH2_PBN_EVT_ADDR                CH2_PAN_EVT_ADDR+840
+#define CH2_PCN_EVT_ADDR                CH2_PBN_EVT_ADDR+840
+#define CH2_PTD_EVT_ADDR                CH2_PCN_EVT_ADDR+840
+#define CH2_CLR_ADDR                    CH2_PTD_EVT_ADDR+440
 
-#define CH3_PAN_EVT_ADDR                CH2_CLR_ADDR+400
-#define CH3_PBN_EVT_ADDR                CH3_PAN_EVT_ADDR+800
-#define CH3_PCN_EVT_ADDR                CH3_PBN_EVT_ADDR+800
-#define CH3_PTD_EVT_ADDR                CH3_PCN_EVT_ADDR+800
-#define CH3_CLR_ADDR                    CH3_PTD_EVT_ADDR+400
+#define CH3_PAN_EVT_ADDR                CH2_CLR_ADDR+440
+#define CH3_PBN_EVT_ADDR                CH3_PAN_EVT_ADDR+840
+#define CH3_PCN_EVT_ADDR                CH3_PBN_EVT_ADDR+840
+#define CH3_PTD_EVT_ADDR                CH3_PCN_EVT_ADDR+840
+#define CH3_CLR_ADDR                    CH3_PTD_EVT_ADDR+440
 
-#define CH4_PAN_EVT_ADDR                CH3_CLR_ADDR+400
-#define CH4_PBN_EVT_ADDR                CH4_PAN_EVT_ADDR+800
-#define CH4_PCN_EVT_ADDR                CH4_PBN_EVT_ADDR+800
-#define CH4_PTD_EVT_ADDR                CH4_PCN_EVT_ADDR+800
-#define CH4_CLR_ADDR                    CH4_PTD_EVT_ADDR+400
+#define CH4_PAN_EVT_ADDR                CH3_CLR_ADDR+440
+#define CH4_PBN_EVT_ADDR                CH4_PAN_EVT_ADDR+840
+#define CH4_PCN_EVT_ADDR                CH4_PBN_EVT_ADDR+840
+#define CH4_PTD_EVT_ADDR                CH4_PCN_EVT_ADDR+840
+#define CH4_CLR_ADDR                    CH4_PTD_EVT_ADDR+440
 
-#define CH5_PAN_EVT_ADDR                CH4_CLR_ADDR+400
-#define CH5_PBN_EVT_ADDR                CH5_PAN_EVT_ADDR+800
-#define CH5_PCN_EVT_ADDR                CH5_PBN_EVT_ADDR+800
-#define CH5_PTD_EVT_ADDR                CH5_PCN_EVT_ADDR+800
-#define CH5_CLR_ADDR                    CH5_PTD_EVT_ADDR+400
+#define CH5_PAN_EVT_ADDR                CH4_CLR_ADDR+440
+#define CH5_PBN_EVT_ADDR                CH5_PAN_EVT_ADDR+840
+#define CH5_PCN_EVT_ADDR                CH5_PBN_EVT_ADDR+840
+#define CH5_PTD_EVT_ADDR                CH5_PCN_EVT_ADDR+840
+#define CH5_CLR_ADDR                    CH5_PTD_EVT_ADDR+440
 
-#define CH6_PAN_EVT_ADDR                CH5_CLR_ADDR+400
-#define CH6_PBN_EVT_ADDR                CH6_PAN_EVT_ADDR+800
-#define CH6_PCN_EVT_ADDR                CH6_PBN_EVT_ADDR+800
-#define CH6_PTD_EVT_ADDR                CH6_PCN_EVT_ADDR+800
-#define CH6_CLR_ADDR                    CH6_PTD_EVT_ADDR+400
+#define CH6_PAN_EVT_ADDR                CH5_CLR_ADDR+440
+#define CH6_PBN_EVT_ADDR                CH6_PAN_EVT_ADDR+840
+#define CH6_PCN_EVT_ADDR                CH6_PBN_EVT_ADDR+840
+#define CH6_PTD_EVT_ADDR                CH6_PCN_EVT_ADDR+840
+#define CH6_CLR_ADDR                    CH6_PTD_EVT_ADDR+440
 
-#define CH7_PAN_EVT_ADDR                CH6_CLR_ADDR+400
-#define CH7_PBN_EVT_ADDR                CH7_PAN_EVT_ADDR+800
-#define CH7_PCN_EVT_ADDR                CH7_PBN_EVT_ADDR+800
-#define CH7_PTD_EVT_ADDR                CH7_PCN_EVT_ADDR+800
-#define CH7_CLR_ADDR                    CH7_PTD_EVT_ADDR+400
+#define CH7_PAN_EVT_ADDR                CH6_CLR_ADDR+440
+#define CH7_PBN_EVT_ADDR                CH7_PAN_EVT_ADDR+840
+#define CH7_PCN_EVT_ADDR                CH7_PBN_EVT_ADDR+840
+#define CH7_PTD_EVT_ADDR                CH7_PCN_EVT_ADDR+840
+#define CH7_CLR_ADDR                    CH7_PTD_EVT_ADDR+440
 
-#define E2END_DATA_ADDR                 (CH7_CLR_ADDR+400)
+#define E2END_DATA_ADDR                 (CH7_CLR_ADDR+440)
 
 
 #define ONE_RECORD_LEN                   54
