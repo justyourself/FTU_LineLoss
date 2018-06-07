@@ -20,7 +20,7 @@ extern short Judge_capture_objects( unsigned char* Data, short ProfileNo, unsign
 extern void InitialProfilePara( unsigned short ItemNo, unsigned short ItemLen );
 extern void GetCurvePara( CURVEPARA* CurvePara );
 extern long LoadPtrChk( CURVEPARA* CurvePara, long Type );
-extern void LoadRecord( unsigned short ChannelNo );
+extern void LoadRecord( unsigned short E2_Addr,unsigned char *Buff);
 extern short CreatCurveData( unsigned char* Dest, unsigned short ChannelNo );
 extern void IncSubsLoadPtr( CURVEPARA* CurvePara );
 extern short Recuce_capture_object_definition( unsigned char* Dest, unsigned char* Source );

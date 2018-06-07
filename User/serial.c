@@ -71,6 +71,8 @@ int16_t Serial_Write(uint8_t port,uint8_t *buf,uint16_t len)
 	{
 		case 0:
 			pUart=HT_UART0;
+                        //HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_9);
+                        HT_GPIO_BitsReset(HT_GPIOC,GPIO_Pin_9);
 			break;
 		case 1:
 			pUart=HT_UART1;
@@ -154,6 +156,39 @@ void UART2_IRQHandler()
 	}
 	return;
 }
+
+void UART0_IRQHandler()
+{
+  uint8_t port;
+  port=0;
+  if(SET == HT_UART_ITFlagStatusGet(HT_UART0, UART_UARTSTA_RXIF))
+	{	
+                HT_UART_ClearITPendingBit(HT_UART0, UART_UARTSTA_RXIF); 
+		m_sserial[port].serial_rx_buf[m_sserial[port].rx_len]=HT_UART0->SBUF;
+		m_sserial[port].rx_len++;
+		m_sserial[port].rx_len%=SERIAL_BUFFER_LEN;
+	}
+	if(SET == HT_UART_ITFlagStatusGet(HT_UART0, UART_UARTSTA_TXIF))
+	{	
+                HT_UART_ClearITPendingBit(HT_UART0, UART_UARTSTA_TXIF);
+		if(m_sserial[port].send_pos!=m_sserial[port].send_len)
+		{
+			HT_UART0->SBUF = m_sserial[port].serial_tx_buf[m_sserial[port].send_pos];
+			m_sserial[port].send_pos++;
+		}
+		else
+		{
+			m_sserial[port].send_pos=0;
+			m_sserial[port].send_len=0;
+                        HT_UART0->UARTCON &=~ (UART_UARTCON_TXIE + UART_UARTCON_TXEN);
+                        HT_UART0->UARTCON |= (UART_UARTCON_RXIE + UART_UARTCON_RXEN);
+                        //HT_GPIO_BitsReset(HT_GPIOC,GPIO_Pin_9);
+                        HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_9);
+		}				
+	}
+	return;
+}
+
 void CM_Gprs_Interrupt_Handle(HT_UART_TypeDef * pUart)
 {
         if(SET == HT_UART_ITFlagStatusGet(pUart, UART_UARTSTA_RXIF))

@@ -375,7 +375,7 @@
 #define ECUnitNum	11		//电量计量项数
 #define MDUnitNum	5		//需量计量项数			//反向需量不计
 #elif (MeterPhase == SinglePhase) //单相
-#define ECUnitNum	64		//电量计量项数
+#define ECUnitNum	8*MAX_CH_NUM
 #define MDUnitNum	5		//需量计量项数			//反向需量不计
 #endif
 
@@ -726,5 +726,6 @@ extern ENERGY          Energy_Data[MAX_CH_NUM];
 extern const EVTPARALIST s_PnEvt[];
 extern const EVTPARALIST s_PtEvt[]; 
 extern EC_PARA m_ecpara[MAX_CH_NUM];
+extern const PROFILETAB ProfileTab[];
 #endif
 

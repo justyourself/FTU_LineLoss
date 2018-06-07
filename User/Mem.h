@@ -93,8 +93,8 @@ short E2P_PWData( unsigned short E2P_Dest, unsigned char* RAM_Src,short Lenth );
 //short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth );
 short DataFlash_Read( unsigned char *RAM_Dest, unsigned long Fls_Src, unsigned long Fls_Sta, unsigned long Fls_End, unsigned short Lenth );
 //short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned long Fls_Sta, unsigned long Fls_End, unsigned short Lenth );
-short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned long Fls_Sta, unsigned long Fls_End,unsigned short Lenth );
-
+//short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned long Fls_Sta, unsigned long Fls_End,unsigned short Lenth );
+short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth );
 short Write_Flash_Direct( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth );
 
 short Flash_On( void );		//V10

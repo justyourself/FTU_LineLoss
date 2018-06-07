@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>HT6X3X	Hitrendtech HT6X3X</state>
+          <state>HT6X1X	Hitrendtech HT6X1X</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -168,7 +168,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>HT6x3x</state>
+          <state>HT6x1x</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -592,7 +592,7 @@
         </option>
         <option>
           <name>OCOutputOverride</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OOCOutputFile</name>
@@ -626,7 +626,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild></prebuild>
+        <prebuild>cmd /c start $PROJ_DIR$\ProduceVersion.bat $PROJ_DIR$</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -715,7 +715,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$TOOLKIT_DIR$\config\flashloader\Hitrendtech\HT6X2X.icf</state>
+          <state>$TOOLKIT_DIR$\config\flashloader\Hitrendtech\HT6X1X.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1895,7 +1895,7 @@
       <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\CoreSupport\core_cm0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x3x.s</name>
+      <name>$PROJ_DIR$\..\Libraries\Startup\IAR\startup_ht6x1x.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\CMSIS\CM0\DeviceSupport\system_ht6xxx.c</name>
@@ -1998,6 +1998,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\User\power.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\Profile.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\User\Ram.c</name>

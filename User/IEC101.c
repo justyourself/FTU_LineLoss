@@ -3,10 +3,13 @@
 #include "serial.h"
 #include "iec101.h"
 #include "TypeRAM.h"
+#include "TypeE2p.h"
 #include "data.h"
 #define justinit 1
 #define initend 2
 #define notinit 0
+
+#define IEC101_PORT  0
 
 #define yxbw   1
 #define substinit   2
@@ -28,7 +31,7 @@
 #define EVTXML   "LINELOSS/EVENTD/eventd01.xml"
 
 
-static char Block_buf[1024];
+static char Block_buf[768];
 static int Blk_size;
 static int Blk_ptr;
 static int Record_no;
@@ -498,10 +501,23 @@ void Iec101LinkRecv(void)
 {
   u8 Count;
   int i;
-  Count=Serial_Read(2,lpIEC101->byRecvBuf+lpIEC101->wRecvNum,128);
+  Count=Serial_Read(IEC101_PORT,lpIEC101->byRecvBuf+lpIEC101->wRecvNum,128);
   if(Count)
   {
     lpIEC101->wRecvNum +=Count;
+    if(lpIEC101->byRecvBuf[0]==0x7A)
+    {
+      if(lpIEC101->wRecvNum>4)
+      {
+        lpIEC101->wRecvNum=0;
+        if(lpIEC101->byRecvBuf[3]==0xf8)
+           GetATT7022ECalibrateReg(lpIEC101->byRecvBuf+2,lpIEC101->byRecvBuf[1]);
+        else     
+           ComAdjWrite(lpIEC101->byRecvBuf+2,lpIEC101->byRecvBuf[1]);
+        Serial_Write(IEC101_PORT,lpIEC101->byRecvBuf,5);
+      }
+      return;
+    }
     for(i=0;i<lpIEC101->wRecvNum;++i)
     {  
       if(lpIEC101->byRecvBuf[i]!=F_STARTCODE && lpIEC101->byRecvBuf[i]!=V_STARTCODE)
@@ -785,7 +801,20 @@ void PLinkRecvProcessV(u8 byConField)
   case C_DC_NA_1:
   case C_SC_NA_1: //单、双点遥控	
 	{
-		lpIEC101->byDCO = lpIEC101->PReAppLayer.lpByBuf[byFrameCount];//[lpIEC101->PRecvFrame.wFrameLen-3];
+                byFrameCount -= lpIEC101->TypeInfAdd;
+		lpIEC101->byDCO = lpIEC101->PReAppLayer.lpByBuf[byFrameCount];
+                byFrameCount+=2;
+                if(lpIEC101->PReAppLayer.lpByBuf[byFrameCount]==0)
+                {
+                  if(lpIEC101->byDCO%2) //电量
+                  {
+                    Clear_E2R((lpIEC101->byDCO-1)/2);
+                  }
+                  else  //事件
+                  {
+                    Clear_EVT2R((lpIEC101->byDCO-2)/2);
+                  }
+                }
 		lpIEC101->WaitYkXzRet = 0;
 		lpIEC101->WaitYkZxRet = 0;
 		lpIEC101->SendYkZxAck = 0;
@@ -820,23 +849,40 @@ void PLinkRecvProcessV(u8 byConField)
     byFrameCount -= lpIEC101->TypeInfAdd;
     lpIEC101->Sn = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];
     lpIEC101->Sn = (lpIEC101->Sn) | (lpIEC101->PReAppLayer.lpByBuf[byFrameCount++]<<8);
-    if(lpIEC101->byQualify)
+    //if(lpIEC101->byQualify)
     {
       unsigned char sn_tag;
-      unsigned char tt_buf[8];
+      //unsigned char tt_buf[8];
       float f_val;
       float *p_val;
+      unsigned char *p_buf;
+      short i;
       u16 info_addr;
       sn_tag = lpIEC101->PReAppLayer.lpByBuf[byFrameCount++];
       switch(sn_tag)
       {
+      case 0x00: //固化
+        for(i=0;i<MAX_CH_NUM;++i)
+        {  
+          p_buf =(unsigned char*)&(m_ecpara[i].cmon_day);
+          E2P_WData(CMon_DAY0+i*25,p_buf,24);
+        }
+        break;
+      case 0x40:  //取消
+        
+        for(i=0;i<MAX_CH_NUM;++i)
+        {  
+          p_buf =(unsigned char*)&(m_ecpara[i].cmon_day);
+          E2P_RData(p_buf,CMon_DAY0+i*25,24);
+        }
+        break;
       case 0x80:
         for(i=0;i<lpIEC101->byQualify;++i)
         {
           info_addr = lpIEC101->PReAppLayer.lpByBuf[byFrameCount+1];
           info_addr = (info_addr<<8)+(lpIEC101->PReAppLayer.lpByBuf[byFrameCount]);
           byFrameCount +=2;
-          memcpy(tt_buf,lpIEC101->PReAppLayer.lpByBuf+byFrameCount,8);
+          //memcpy(tt_buf,lpIEC101->PReAppLayer.lpByBuf+byFrameCount,8);
           memcpy(&f_val,lpIEC101->PReAppLayer.lpByBuf+byFrameCount+2,4);
           p_val = &(m_ecpara[0].cmon_day);
           *(p_val+(info_addr-0x8021)) = f_val;
@@ -1622,7 +1668,7 @@ void SendGeneralData(void)
     lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
     lpIEC101->byPSGenStep++;
   }
-  else if ( (lpIEC101->byPSGenStep >= 1) && (lpIEC101->byPSGenStep <= 8) )
+  else if ( (lpIEC101->byPSGenStep >= 1) && (lpIEC101->byPSGenStep <= MAX_CH_NUM) )
   {
     bySendReason = lpIEC101->byQOI;
     byFrameNo = (lpIEC101->byPSGenStep - 1) * 2;
@@ -2279,13 +2325,14 @@ u8 SendFileInfo(u8 bySendReason)
 #endif  
   strcpy(lpby + byMsgNum,"  v1.0\r\n");
   byMsgNum += strlen("  v1.0\r\n");
-  strcpy(lpby + byMsgNum,"201710300001,96,2\r\n");
-  byMsgNum += strlen("201710300001,96,2\r\n");
-  if(Record_num==0)
+  sprintf(lpby + byMsgNum,"201710300001,%2d,2\r\n",Record_num);
+  byMsgNum += strlen(lpby + byMsgNum);
+  if((Record_num==0) && strstr(lpIEC101->Fname,".msg"))
   {
-    *(lpby + pos - 1)=0;
-    lpIEC101->byPSGenStep=254;
-  }
+   *(lpby + pos - 1)=0;
+   lpIEC101->byPSGenStep=254;
+ }
+  Blk_size=Blk_ptr=0;
   for(j=pos;j<byMsgNum;j++)
     bySum = bySum + *(lpby + j);
   *(lpby + byMsgNum ++) = bySum;
@@ -2975,7 +3022,7 @@ void Iec101LinkSend(void)
     return;
   if (lpIEC101->PSendFrame.byFull == 1)
   {
-    Serial_Write(2,lpIEC101->PSendFrame.byLinkBuf,lpIEC101->PSendFrame.wFrameLen);
+    Serial_Write(IEC101_PORT,lpIEC101->PSendFrame.byLinkBuf,lpIEC101->PSendFrame.wFrameLen);
   //if (lpIEC101->wPSendNum >= lpIEC101->PSendFrame.wFrameLen)
     {
       lpIEC101->byFrameIntval = (lpIEC101->PSendFrame.wFrameLen*10000)/9600;
@@ -3230,12 +3277,12 @@ void InitIEC101Prot(void)
     
     lpIEC101->TypeProtocol=1;
     lpIEC101->PSeAppLayer.lpByBuf = lpIEC101->PSendFrame.byLinkBuf + 5 + lpIEC101->TypeLinkAdd;
-    lpIEC101->YcFN = 8;
+    lpIEC101->YcFN = MAX_CH_NUM;
     for(i=0;i<20;++i)
     {
       lpIEC101->YcNPF[i]=23;//23;
     }
-    lpIEC101->DdFN = 16;
+    lpIEC101->DdFN = MAX_CH_NUM*2;
     for(i=0;i<20;++i)
     {
       lpIEC101->DdNPF[i]=8;

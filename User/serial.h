@@ -6,7 +6,7 @@
 #define SERIAL_CHECK_NO 0
 #define SERIAL_CHECK_ODD 1
 #define SERIAL_CHECK_EVEN 2
-#define SERIAL_BUFFER_LEN	320
+#define SERIAL_BUFFER_LEN	272
 
 struct S_Serial_
 {

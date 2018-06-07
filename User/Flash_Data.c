@@ -739,7 +739,8 @@ short Write_Flash( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned shor
   else 
     return -1;
 }
-static char m_Databuf[4096];
+#if 0
+static char m_Databuf[4];
 short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned long Fls_Sta, unsigned long Fls_End,unsigned short Lenth )
 {
   unsigned short Buf_Addr;
@@ -776,6 +777,32 @@ short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned 
   }
   return 0;
 }
+#else
+short DataFlash_Write( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth )
+{
+	unsigned short Buf_Addr;
+	unsigned short Len;
+	unsigned long Value;
+	
+	Value = Fls_Dest;
+	if(( Value % 4096 ) == 0 )			//写数据空间为4K页的首地址
+	{
+		BlockErase( Value );
+	}		
+	while( Lenth > 0 ) 
+	{
+		Buf_Addr = Fls_Dest % FLS_PAGE;
+		if( Buf_Addr != 0 ) Len = FLS_PAGE - Buf_Addr;
+		else Len = FLS_PAGE;
+		if( Lenth < Len ) Len = Lenth;
+		Write_Flash( Fls_Dest, RAM_Src, Len );
+		Fls_Dest += Len; 
+		RAM_Src += Len;
+		Lenth -= Len;
+	}
+	return 0;
+}
+#endif
 
 short Write_Flash_Direct( unsigned long Fls_Dest, unsigned char *RAM_Src, unsigned short Lenth )
 {

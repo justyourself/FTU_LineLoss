@@ -56,7 +56,7 @@ void fnTarget_Init(void)
   CMU_InitTypeDef  CMU_InitStruct;
   __disable_irq();
   Flag.Power &= ~F_PwrUp;
-  HT_CMU_Prefetch_Set( DISABLE ); 	//关闭指令预取功能，降低功耗		//17.02.07
+  //HT_CMU_Prefetch_Set( DISABLE ); 	//关闭指令预取功能，降低功耗		//17.02.07
   CMU_InitStruct.SysClkSel = SysPLL;//SysHRCDiv1;//SysPLL;
   CMU_InitStruct.CPUDiv = CPUDiv1;
   HT_CMU_Init(&CMU_InitStruct);	
@@ -94,7 +94,7 @@ void PwrOnInit(void)
 {
   __disable_irq();
   HT_FreeDog();
-  HT_CMU_Prefetch_Set( ENABLE );		//打开指令预取功能，增强抗静电干扰能力		//17.02.07
+ // HT_CMU_Prefetch_Set( ENABLE );		//打开指令预取功能，增强抗静电干扰能力		//17.02.07
  
     /***** 以下代码用于配置CMU时钟及分频 *****/
   CMU_InitStructure.SysClkSel = SysPLL;//SysHRCDiv1;//SysPLL;
@@ -105,12 +105,17 @@ void PwrOnInit(void)
 
   // NET RX TX 指示灯
    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_5;
-   HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure);  
-   HT_GPIO_BitsSet(HT_GPIOA,GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_5);
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10;
+   GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
+   GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
+   HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure); 
+   HT_GPIO_BitsSet(HT_GPIOA,GPIO_Pin_4|GPIO_Pin_9|GPIO_Pin_10);
+   HT_GPIO_BitsReset(HT_GPIOA,GPIO_Pin_8);
+   
    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_4;
-   HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure);
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+   HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure); 
+
 #if 0		
     HT_INT->EXTIE |= (uint32_t)(INT_EXTIE_RIE_INT3);
     HT_INT->PINFLT |= (uint32_t)(INT_EXTIE_RIE_INT3);
@@ -122,67 +127,56 @@ void PwrOnInit(void)
     HT_GPIOB->AFCFG &=~ GPIO_Pin_All;		/*配置为第一复用功能*/
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
+    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);  
-    HT_GPIO_BitsSet(HT_GPIOB,GPIO_Pin_10);
+    HT_GPIO_BitsReset(HT_GPIOB,GPIO_Pin_4);
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
-    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
-    HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
-    HT_GPIOB->PTSET |=  GPIO_Pin_5;
-    
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2;
     HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
 
     /*!< GPIOC配置信息*/    		   
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
-    GPIO_InitStructure.GPIO_Pin = GPIOC_EE_SCL|GPIOC_EE_SDA|GPIO_Pin_2;
-    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
-    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
-    HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
-
 
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF1;
     GPIO_InitStructure.GPIO_Pin = GPIOC_232_TXD|GPIOC_232_RXD;
-    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Up;
-    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
     
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_3|GPIO_Pin_9|GPIO_Pin_10|FSI|FSCLK;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_12;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
-    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
-    HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_10);
-    HT_GPIO_BitsReset(HT_GPIOC,GPIO_Pin_8);
+    HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_11|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_12);
+   // HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_9);
 	
 
     /*!< GPIOD配置信息*/     		   
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_11|GPIO_Pin_14|GPIO_Pin_15;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
-    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOD, &GPIO_InitStructure);
-    HT_GPIO_BitsSet(HT_GPIOD,GPIO_Pin_9|GPIO_Pin_11|GPIO_Pin_14|GPIO_Pin_15);
+    HT_GPIO_BitsReset(HT_GPIOD,GPIO_Pin_14);
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_8|GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_13;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
-    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOD, &GPIO_InitStructure);
 	
     /*!< GPIOE配置信息*/        		   
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|FCS1;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_2|GPIO_Pin_6;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
-    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOE, &GPIO_InitStructure);
-    HT_GPIOE->PTSET = GPIO_Pin_0;
+    HT_GPIO_BitsSet(HT_GPIOE,GPIO_Pin_0|GPIO_Pin_2|GPIO_Pin_6);
 #if 0
 	HT_GPIOE->PTDIR |= GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_6;
 	HT_GPIOE->PTOD  |= GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_6;
@@ -191,11 +185,11 @@ void PwrOnInit(void)
 #endif        
         
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|FSO;
+    GPIO_InitStructure.GPIO_Pin = FSO;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOE, &GPIO_InitStructure);
-    
+#if 0    
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOIN;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
@@ -207,6 +201,7 @@ void PwrOnInit(void)
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
     HT_GPIO_Init(HT_GPIOH, &GPIO_InitStructure);
+#endif    
         
         HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR0EN, ENABLE); 
 	HT_TMR0->TMRDIV = 0x0004;                            /*!< 设置定时器预分频器     4分频 */
@@ -231,8 +226,9 @@ void PwrOnInit(void)
         HT_TMR3->TMRCON = 0x0307;                            /*!< 设置定时器工作模式          */    
         HT_TMR3->TMRIE = 0x0001;               			     /*!< 使能TIMER中断               */
         NVIC_EnableIRQ(TIMER_3_IRQn);    
-        
+#if 0        
         HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR5EN, DISABLE); 
+#endif        
 #if 0
 	HT_TMR5->TMRDIV = 0x0013;                            /*!< 设置定时器预分频器     20分频 */
         HT_TMR5->TMRPRD = 0x157C;                             /*!< 设置定时器周期寄存器  5ms */   
@@ -261,9 +257,9 @@ void PwrOnInit(void)
     HT_TBSConfig(TBS_TBSCON_VBATEn,ENABLE);
     HT_TBS_PeriodSet(VBATPRD,TBS_TBSPRD_VBATPRD_2S);
     HT_TBS_ITConfig(TBS_TBSIE_VBATIE,ENABLE);
-  //  NVIC_EnableIRQ(UART0_IRQn);                                  /*!< 使能UART中断*/
+    NVIC_EnableIRQ(UART0_IRQn);                                  /*!< 使能UART中断*/
   //  NVIC_EnableIRQ(UART1_IRQn);                                  /*!< 使能UART中断*/
-    NVIC_EnableIRQ(UART2_IRQn);                                  /*!< 使能UART中断*/
+    //NVIC_EnableIRQ(UART2_IRQn);                                  /*!< 使能UART中断*/
    // NVIC_EnableIRQ(UART3_IRQn);                                  /*!< 使能UART中断*/
     NVIC_EnableIRQ(TBS_IRQn);
     __enable_irq();
@@ -274,7 +270,7 @@ void PwrDnInit(void)
   __disable_irq();
   HT_FreeDog();
   Flag.Power &= ~F_PwrUp;
-  HT_CMU_Prefetch_Set( DISABLE );		//关闭指令预取功能，降低功耗		//17.02.07
+  //HT_CMU_Prefetch_Set( DISABLE );		//关闭指令预取功能，降低功耗		//17.02.07
 #if 0  
   HT_CMU->WPREG = 0xA55A;		//WPREG 写入0xA55A，则关闭写保护功能
 	

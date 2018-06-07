@@ -108,7 +108,7 @@ void SysTick_Handler()			//1/64√Î÷–∂œ
     if(( Clk.Sec_64 == 0 )||( Clk.Sec_64 == 32 )) 					//PWMD
     {																//PWMD
       Flag.Clk |= F_HalfSec;
-      HT_GPIO_BitsToggle(HT_GPIOC,GPIO_Pin_8);		
+      HT_GPIO_BitsToggle(HT_GPIOC,GPIO_Pin_10);		
     }																//PWMD	
     if(( Clk.Sec_64 == 0 )||( Clk.Sec_64 == 21 )||( Clk.Sec_64 == 42 )) 
     {
@@ -327,7 +327,7 @@ void EXTI6_IRQHandler()
 *********************************************************************************************************
 */
 
-
+#if 0
 void UART0_IRQHandler()
 {
 #if 1
@@ -354,7 +354,7 @@ void UART0_IRQHandler()
   CM_Gprs_Interrupt_Handle(HT_UART0);
 #endif
 }
-
+#endif
 /*
 *********************************************************************************************************
 *                                   UART1 INTERRUPT HANDLER  #16+10

@@ -31,7 +31,7 @@ ITMportsTermIO=0
 ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
 [DebugChecksum]
-Checksum=-927617777
+Checksum=-344945093
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -54,23 +54,6 @@ Freq=10000000
 MultiCoreRunAll=1
 [RecentFlashDownload]
 Path=C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\config\flashloader\Hitrendtech\HT6X3X.out
-[SfrWindow]
-Show=1 1
-Sort=4 0
-[struct_types]
-Fmt0=CLK-YearH	4	0
-Fmt1=CLK-YearL	4	0
-Fmt2=struct IEC101_STRUCT-PReFrameType	4	0
-Fmt3=struct IEC101_STRUCT-Sn	4	0
-[array_types]
-Fmt0=u16[32]	4	0
-Fmt1=u8[256]	5	0
-Fmt2=u8[320]	4	0
-Fmt3=uint8_t[256]	4	0
-Fmt4=unsigned char[16]	4	0
-Fmt5=unsigned char[8]	4	0
-Fmt6=unsigned int[8]	4	0
-Fmt7=unsigned short[8]	4	0
 [Trace2]
 Enabled=0
 ShowSource=0
@@ -112,10 +95,33 @@ GraphEnabled=0
 ShowTimeLog=1
 ShowTimeSum=1
 SumSortOrder=0
+[PowerProbe]
+Frequency=10000
+Probe0=I0
+ProbeSetup0=2 1 1 2 0 0
+[SfrWindow]
+Show=1 1
+Sort=4 0
+[struct_types]
+Fmt0=CLK-YearH	4	0
+Fmt1=CLK-YearL	4	0
+Fmt2=struct IEC101_STRUCT-PReFrameType	4	0
+Fmt3=struct IEC101_STRUCT-Sn	4	0
+[array_types]
+Fmt0=u16[32]	4	0
+Fmt1=u8[256]	5	0
+Fmt2=u8[320]	4	0
+Fmt3=uint8_t[256]	4	0
+Fmt4=unsigned char[16]	4	0
+Fmt5=unsigned char[8]	4	0
+Fmt6=unsigned int[8]	4	0
+Fmt7=unsigned short[8]	4	0
 [Disassemble mode]
 mode=3
 [Breakpoints2]
-Count=0
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\IEC101.c}.3085.3" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\IEC101.c}.1715.3" 0 0 1 "" 0 "" 0
+Count=2
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -128,13 +134,9 @@ Count=0
 SuppressDialog=0
 [CallStackLog]
 Enabled=0
-[PowerProbe]
-Frequency=10000
-Probe0=I0
-ProbeSetup0=2 1 1 2 0 0
 [DriverProfiling]
 Enabled=0
-Mode=3
+Mode=0
 Graph=0
 Symbiont=0
 Exclusions=

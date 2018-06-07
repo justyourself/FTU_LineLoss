@@ -152,9 +152,9 @@
 //#define AdjEAds     0xA0	//校表参数 EEPROM 24C02
 //国网单相表配置
 //#define DataEAds    0xA0	//#define DataEAds    0xA4	//数据 EEPROM 24C64
-#define AdjEAds     0xA6	//#define AdjEAds     0xA0	//校表参数 EEPROM 24C04
+#define AdjEAds     0xA0	//#define AdjEAds     0xA0	//校表参数 EEPROM 24C04
 
-#define	FMAds		0xA0	//当前电量和需量缓存 FM24C16	
+#define	FMAds		0xA6	//当前电量和需量缓存 FM24C16	
 #define RTCAds		0x64	//RTC8025时钟芯片地址
 #define TCN75Ads	0x9E	//温度传感器地址
 #define DS3231Ads	0xD0	//时钟芯片DS3231地址
@@ -1356,4 +1356,4 @@
 #define StepSWFreeze_No		11			//阶梯切换冻结记录号 				
 #define StepSaveSWFreeze_No	12			//阶梯结算冻结记录号 				
 
-#define MAX_CH_NUM              8
+#define MAX_CH_NUM              1

@@ -21,7 +21,8 @@
 #if ( MEASCHIP == ATT7022E )
 #include "ATT7022E.h"					
 
-
+#define E7022_E2_W E2P_WAdj
+#define E7022_E2_R E2P_RAdj
 
 
 unsigned short GetATT7022ECalibDataEAddr( unsigned char RegNo )  
@@ -186,7 +187,7 @@ void ATT7022AmperInit(void)
 #endif
           EpAds += E2P_PGLEN;
           EpAds -= 0x100;
-          E2P_RData( Point, EpAds, 2 );
+          E7022_E2_R( Point, EpAds, 2 );
           if(( Flag.BatState & F_E2PCheck ) != 0 )
           {													
             if(( HT_GPIOB->PTDAT & GPIOB_VMEM_CTL ) != 0 )	//if(( P8OUT & P_EECTL ) != 0 )			//若Flash处于关闭状态，打开FLASH，并增加若干延时。
@@ -279,7 +280,7 @@ void SetIDefault(unsigned short Devads)
     Buff[1]=0xf2;
    //Buff[0]=0;
    //Buff[1]=0;
-    E2P_WData( EpAds,Buff,2);	
+    E7022_E2_W( EpAds,Buff,2);	
   }
   
   for( RegAds=SgainA;RegAds<=SgainC;RegAds++ )
@@ -295,7 +296,7 @@ void SetIDefault(unsigned short Devads)
     Buff[1]=0xf8;
    //Buff[0]=0;
    //Buff[1]=0;
-    E2P_WData( EpAds,Buff,2);	
+    E7022_E2_W( EpAds,Buff,2);	
   }
   for( RegAds=IgainA;RegAds<=IgainC;RegAds++ )
   {
@@ -322,7 +323,7 @@ void SetIDefault(unsigned short Devads)
     Buff[1]=0xF1;//0xEE;
     //Buff[0]=0;
     //Buff[1]=0;
-    E2P_WData( EpAds,Buff,2);	
+    E7022_E2_W( EpAds,Buff,2);	
   }
   for( RegAds=UgainA;RegAds<=UgainC;RegAds++ )
   {
@@ -352,7 +353,7 @@ void SetIDefault(unsigned short Devads)
     
    // Buff[0]=0;
    // Buff[1]=0;
-    E2P_WData( EpAds,Buff,2);	
+    E7022_E2_W( EpAds,Buff,2);	
   }
   
   for( RegAds=PhsregA0;RegAds<=PhsregC1;RegAds++ )
@@ -388,7 +389,7 @@ void SetIDefault(unsigned short Devads)
       Buff[1]=0x00;
       break;
     }
-    E2P_WData( EpAds,Buff,2);	
+    E7022_E2_W( EpAds,Buff,2);	
   }
   
   for( RegAds=PoffsetA;RegAds<=PoffsetC;RegAds++ )
@@ -420,7 +421,7 @@ void SetIDefault(unsigned short Devads)
       Buff[1]=00;
       break;
     }
-    E2P_WData( EpAds,Buff,2);	
+    E7022_E2_W( EpAds,Buff,2);	
   }
   
   #if ( NEW7022E == YesCheck )
@@ -432,7 +433,7 @@ void SetIDefault(unsigned short Devads)
     EpAds -= (0x100*Devads); //10.07.30
     Buff[0]=0x20;
     Buff[1]=0x01;
-    E2P_WData( EpAds,Buff,2);	
+    E7022_E2_W( EpAds,Buff,2);	
 }
 
 void ATT7022Init(unsigned short Devads)
@@ -452,18 +453,28 @@ void ATT7022Init(unsigned short Devads)
   SPIPara = (SPIPARA*)Buff1;
   GetSPIPara( SPIPara, Devads );
   Point = Buff;
-  HT_FreeDog(); 
+  HT_FreeDog();
+#if 0  
   HT_GPIOG->IOCFG &=~(GPIOG_EMU_CLK|GPIOG_EMU_DIN|GPIOG_EMU_DOUT);
   HT_GPIOG->PTUP  &=~(GPIOG_EMU_CLK|GPIOG_EMU_DIN|GPIOG_EMU_DOUT);
   HT_GPIOG->PTDIR |= GPIOG_EMU_CLK;
   HT_GPIOG->PTCLR = GPIOG_EMU_CLK;
+#endif
+  HT_GPIOC->IOCFG &=~(GPIOG_EMU_CLK|GPIOG_EMU_DIN|GPIOG_EMU_DOUT);
+  HT_GPIOC->PTUP  &=~(GPIOG_EMU_CLK|GPIOG_EMU_DIN|GPIOG_EMU_DOUT);
+  HT_GPIOC->PTDIR |= GPIOG_EMU_CLK;
+  HT_GPIOC->PTCLR = GPIOG_EMU_CLK;
+  
   *SPIPara->AD_RST_PTDIR |= SPIPara->AD_RST;
   *SPIPara->AD_RST_PTCLR = SPIPara->AD_RST;
+#if 0 
   HT_GPIOG->PTSET |= GPIOG_EMU_DIN;
+#endif
+  HT_GPIOC->PTSET |= GPIOG_EMU_DIN;  
   *SPIPara->AD_CS_PTSET |= SPIPara->AD_CS;
   *SPIPara->AD_CS_PTDIR |= SPIPara->AD_CS;
-  HT_GPIOG->PTCLR |= GPIOG_EMU_DIN;
-  HT_GPIOG->PTDIR &= ~GPIOG_EMU_DOUT;
+  HT_GPIOC->PTCLR |= GPIOG_EMU_DIN;
+  HT_GPIOC->PTDIR &= ~GPIOG_EMU_DOUT;
   udelay(1000); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
   udelay(1000);
@@ -574,7 +585,7 @@ void ATT7022Init(unsigned short Devads)
 #endif
           EpAds += E2P_PGLEN;
           EpAds -= (0x100*Devads); //10.07.30
-          E2P_RData( Point, EpAds, 2 );				//10.07.30
+          E7022_E2_R( Point, EpAds, 2 );				//10.07.30
           ATT7022WtReg( RegAds+128, Point ,Devads);
           Value2 = 0;														//10.11.02
           RAM_Write( (unsigned char*)&Value2, Point, 2 );		//ATChk
@@ -660,7 +671,7 @@ void ATT7022Init(unsigned short Devads)
 #endif
 		EpAds += E2P_PGLEN;	
 		EpAds -= (0x100*Devads);
-		E2P_RData( Point, EpAds, 2 );
+		E7022_E2_R( Point, EpAds, 2 );
 		ATT7022WtReg( RegAds+128, Point ,Devads);
 		Value2 = 0;														//10.11.02
 		RAM_Write( (unsigned char*)&Value2, Point, 2 );		//ATChk
@@ -732,8 +743,8 @@ unsigned char ComAdjWrite(unsigned char* ComBuf ,unsigned short Devads)
     Temp3 -= (0x100*Devads);
 //    Temp3 = E2P_PGLEN - 0x100;	(0x100*Devads); //10.07.30
 //    Temp3 += Temp2;									//10.07.30
-    E2P_WData( Temp3, ComBuf+Rs_WDataPtr, 2 );		//10.07.30
-    E2P_RData( ComBuf+1, Temp3, 2 );		//10.07.30
+    E7022_E2_W( Temp3, ComBuf+Rs_WDataPtr, 2 );		//10.07.30
+    E7022_E2_R( ComBuf+1, Temp3, 2 );		//10.07.30
     if( Data_Comp( Point, ComBuf+Rs_WDataPtr, 2 ) != 0 ) return RS_State_IVData;		//10.07.30
     *(Point+2) = 0x00;
     *(Point+1) = 0x00;

@@ -53,8 +53,8 @@ GPIOB
 /****
 GPIOC
 ****/
-#define 	GPIOC_232_TXD				GPIO_Pin_11//GPIO_Pin_0
-#define 	GPIOC_232_RXD				GPIO_Pin_12//GPIO_Pin_1
+#define 	GPIOC_232_TXD				GPIO_Pin_2//GPIO_Pin_0
+#define 	GPIOC_232_RXD				GPIO_Pin_3//GPIO_Pin_1
 #define 	GPIOC_GPRS_RXD				GPIO_Pin_2
 #define 	GPIOC_GPRS_TXD				GPIO_Pin_3
 
@@ -70,8 +70,8 @@ GPIOC
 #define 	GPIOC_MODEM_TXD				GPIO_Pin_0//GPIO_Pin_11
 #define 	GPIOC_MODEM_RXD				GPIO_Pin_1//GPIO_Pin_12
 
-#define 	GPIOC_EE_SCL				GPIO_Pin_9
-#define 	GPIOC_EE_SDA				GPIO_Pin_3
+#define 	GPIOC_EE_SCL				GPIO_Pin_8
+#define 	GPIOC_EE_SDA				GPIO_Pin_4
 
 /****
 GPIOD
@@ -155,18 +155,18 @@ GPIOH
 #define 	P_CARDOUT	0x04
 
 
-#define		DF_CS		HT_GPIOE->PTDAT
-#define		DF_SCK		HT_GPIOC->PTDAT
-#define		DF_SDI		HT_GPIOC->PTDAT
+#define		DF_CS		HT_GPIOC->PTDAT
+#define		DF_SCK		HT_GPIOE->PTDAT
+#define		DF_SDI		HT_GPIOE->PTDAT
 #define		DF_SDO		HT_GPIOE->PTDAT
-#define 	FCS1		GPIO_Pin_2
+#define 	FCS1		GPIO_Pin_12
 #define 	FSO		GPIO_Pin_1
-#define 	FSI		GPIO_Pin_13
-#define 	FSCLK		GPIO_Pin_14
+#define 	FSI		GPIO_Pin_2
+#define 	FSCLK		GPIO_Pin_0
 
-#define 	GPIOG_EMU_CLK				GPIO_Pin_7
-#define 	GPIOG_EMU_DOUT				GPIO_Pin_8
-#define 	GPIOG_EMU_DIN				GPIO_Pin_9
+#define 	GPIOG_EMU_CLK				GPIO_Pin_8
+#define 	GPIOG_EMU_DOUT				GPIO_Pin_0
+#define 	GPIOG_EMU_DIN				GPIO_Pin_1
 #define 	GPIOB_EMU_RST8				GPIO_Pin_4
 #define 	GPIOA_EMU_RST1				GPIO_Pin_10
 #define 	GPIOA_EMU_CS1				GPIO_Pin_9
