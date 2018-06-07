@@ -1406,20 +1406,20 @@ typedef struct
   unsigned int CalibCount;
   unsigned int AT7022ChkSumCnt;
   unsigned int MeasChipErrCnt;
-  unsigned int State[8];
-  unsigned int PulseWidthCnt[8];
-  unsigned int SumPluseECP0[8];
-  unsigned int PQFlag[8];
-  unsigned int PQFlag_b[8];
-  unsigned int PQNum[8][4];
-  unsigned long        Angle_Ia[8]; 			//A相电流角度
-  unsigned long        Angle_Ib[8]; 			//B相电流角度
-  unsigned long        Angle_Ic[8]; 			//C相电流角度
+  unsigned int State[MAX_CH_NUM];
+  unsigned int PulseWidthCnt[MAX_CH_NUM];
+  unsigned int SumPluseECP0[MAX_CH_NUM];
+  unsigned int PQFlag[MAX_CH_NUM];
+  unsigned int PQFlag_b[MAX_CH_NUM];
+  unsigned int PQNum[MAX_CH_NUM][4];
+  unsigned long        Angle_Ia[MAX_CH_NUM]; 			//A相电流角度
+  unsigned long        Angle_Ib[MAX_CH_NUM]; 			//B相电流角度
+  unsigned long        Angle_Ic[MAX_CH_NUM]; 			//C相电流角度
   
-  unsigned long        Angle_Ua[8]; 			//A相电流角度
-  unsigned long        Angle_Ub[8]; 			//B相电流角度
-  unsigned long        Angle_Uc[8]; 			//C相电流角度
-  unsigned char P_Time[8][4];
+  unsigned long        Angle_Ua[MAX_CH_NUM]; 			//A相电流角度
+  unsigned long        Angle_Ub[MAX_CH_NUM]; 			//B相电流角度
+  unsigned long        Angle_Uc[MAX_CH_NUM]; 			//C相电流角度
+  unsigned char P_Time[MAX_CH_NUM][4];
   unsigned char Delay30Min;
   unsigned char Delay60Sec;
 } SRAM;
