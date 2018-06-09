@@ -514,7 +514,7 @@ void Iec101LinkRecv(void)
            GetATT7022ECalibrateReg(lpIEC101->byRecvBuf+2,lpIEC101->byRecvBuf[1]);
         else     
            ComAdjWrite(lpIEC101->byRecvBuf+2,lpIEC101->byRecvBuf[1]);
-        Serial_Write(IEC101_PORT,lpIEC101->byRecvBuf,5);
+        Serial_Write(IEC101_PORT,lpIEC101->byRecvBuf,6);
       }
       return;
     }

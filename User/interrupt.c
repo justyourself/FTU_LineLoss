@@ -585,6 +585,7 @@ void TIMER_0_IRQHandler()
 
         HT_TMR_ClearITPendingBit(HT_TMR0, TMR_TMRIF_CMPIF);                    /*!< 清除中断标志       */         
     } 
+    SM.CalibCount++;
     Iec101WatchTime();
 }
 

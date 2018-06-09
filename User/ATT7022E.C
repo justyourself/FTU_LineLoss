@@ -463,21 +463,22 @@ void ATT7022Init(unsigned short Devads)
   HT_GPIOC->IOCFG &=~(GPIOG_EMU_CLK|GPIOG_EMU_DIN|GPIOG_EMU_DOUT);
   HT_GPIOC->PTUP  &=~(GPIOG_EMU_CLK|GPIOG_EMU_DIN|GPIOG_EMU_DOUT);
   HT_GPIOC->PTDIR |= GPIOG_EMU_CLK;
-  HT_GPIOC->PTCLR = GPIOG_EMU_CLK;
+ // HT_GPIOC->PTCLR = GPIOG_EMU_CLK;
   
   *SPIPara->AD_RST_PTDIR |= SPIPara->AD_RST;
   *SPIPara->AD_RST_PTCLR = SPIPara->AD_RST;
 #if 0 
   HT_GPIOG->PTSET |= GPIOG_EMU_DIN;
 #endif
-  HT_GPIOC->PTSET |= GPIOG_EMU_DIN;  
+//  HT_GPIOC->PTSET |= GPIOG_EMU_DIN;  
   *SPIPara->AD_CS_PTSET |= SPIPara->AD_CS;
   *SPIPara->AD_CS_PTDIR |= SPIPara->AD_CS;
-  HT_GPIOC->PTCLR |= GPIOG_EMU_DIN;
+//  HT_GPIOC->PTCLR |= GPIOG_EMU_DIN;
   HT_GPIOC->PTDIR &= ~GPIOG_EMU_DOUT;
-  udelay(1000); 
+  SM.CalibCount = 0;
+  udelay(500); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
-  udelay(1000);
+  udelay(4500);
   //SetIDefault(Devads);//zzltest
   HFConstHL = MSpec.R7022E_HFConst;	//ÐÂ¹úÍø		//13.08.30
   

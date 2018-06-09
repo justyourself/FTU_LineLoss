@@ -7,7 +7,7 @@ void udelay(int us)
     int i,j;
     for(i=0;i<us;i++)
     {
-      for(j=0;j<10;++j)
+      for(j=0;j<22;++j)
       {
         __NOP();
       }
