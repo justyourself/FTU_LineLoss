@@ -604,7 +604,6 @@ void ProcMin(void)
     }
     
     Save_RandData(Time_buf);
- //   Save_MonthData(Time_buf);
 }	
 
 /***************************************************
@@ -684,7 +683,7 @@ void main(void)
         InitPara5();
         Serial_Open(0,9600,8,UartParity_Disable);
         //Serial_Open(0,9600,8,UartParity_EVEN);
-        
+        Load_InfoData();
 	InitPara6();   
         InitIEC101Prot();
         Read_FlashID(flash_id);

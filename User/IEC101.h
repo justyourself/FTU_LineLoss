@@ -39,6 +39,12 @@ union IEC101_DADD
   u16 Word[2];
   u32 Dword;
 };
+union FOUR_BYTE_TO_DWORD
+{
+  u8 Byte[4];
+  u16 Word[2];
+  u32 Dword;
+};
 struct APP_STRUCT
 {
   u8 byFull;
@@ -113,8 +119,17 @@ struct IEC101_STRUCT
   struct APP_STRUCT PSendFrame;
   struct APP_STRUCT PRecvFrame;
   struct REAPP_STRUCT PReAppLayer; 
+  u16 nStartYcOver;
+  u16 SendYcN;
+  long byRange;
+  long nLastYcVal[32];
 };
-
+#ifndef INT
+#define INT signed int
+#endif
+#ifndef LONG
+#define LONG signed long
+#endif
 /***************************************************************************
 					IEC-870-5-101预定义头文件
 ***************************************************************************/

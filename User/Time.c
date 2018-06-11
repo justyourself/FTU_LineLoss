@@ -682,4 +682,472 @@ void DayInc( unsigned char* Data )
 	}		
 }
 
+#if ( CPUOutputRTC_Pluse == YesCheck )			//CPU输出秒信号				//17.11.03
+//MCU速率（用户可配置）---------------------------------------------------------
+#define	SPD_22000K		0
+#define	SPD_11000K		1
+#define	SPD_5500K		2
+#define	SPD_2750K		3
+#define	SPD_1375K		4
+#define	SPD_688K		5
+#define	SPD_344K		6
+#define	SPD_172K		7
+#define	SPD_MCU			SPD_11000K
 
+
+/*******************************************************************************
+功能描述：	单字节BCD码转HEX码
+输入参数：	bcd:		源数据(BCD码)
+返回参数：	HEX码数据
+函数说明：
+*******************************************************************************/
+INT8U BCD_HEX(INT8U bcd)
+{
+	INT8U	hex;
+	
+	hex = bcd & 0xF0;
+	hex >>= 1;
+	hex += (hex>>2);
+	hex += bcd & 0x0F;
+	return hex;
+}
+
+/*******************************************************************************
+功能描述：	2~4字节BCD格式转换为INT32U型HEX数据
+输入参数：	*pData:		源数据(BCD码)
+			len:		转换字节数
+返回参数：	INT32U型HEX数据
+函数说明：
+*******************************************************************************/
+INT32U nBCD_LHEX(const INT8U *pData, INT8U len)
+{
+	INT32U	value = 0;
+	while (--len)
+	{
+		value += BCD_HEX(pData[len]);
+		value *= 100;
+	}
+	value += BCD_HEX(pData[0]);
+	return value;
+}
+
+/*******************************************************************************
+功能描述：	软件延时若干毫秒
+输入参数：	mSec:		延时时间
+返回参数：
+函数说明：
+*******************************************************************************/
+void Delay_mSec(INT8U mSec)
+{
+	INT16U	i;
+	
+	if (HT_CMU->SYSCLKCFG & 0x0002)				//高频时钟:PLL或HRC
+	{
+		while (mSec--)
+		{
+			for (i=0; i<(2200>>SPD_MCU); i++)
+			{
+				__NOP();
+				__NOP();
+				__NOP();
+				__NOP();
+			}
+		}
+	}
+	else
+	{
+		for (i=0; i<10*mSec; i++)				//31uS*(1+4)*7=1ms
+		{
+			__NOP();
+		}
+	}
+}
+
+static const INT16U TAB_DFx_waibu[10] = 
+{
+	0x0000, 0x0000,
+	0x007F, 0xD64c,
+	0x007E, 0xD708,
+	0x0000, 0x546E,
+	0x0000, 0x04B0,  
+};
+
+static const INT16U TAB_DFx_waibu_New[10] = 		//18.04.28
+{
+	0x0000, 0x0000,
+	0x007F, 0xDA4B,
+	0x007E, 0xD9AC,
+	0x0000, 0x4A2E,
+	0x007F, 0xFC90,  
+};
+
+//static const INT16U TAB_DFx_neibu[10] = 
+//{
+//	0x0000, 0x0705,															//系数A, 常数项
+//	0x007F, 0xE80D,															//系数B, 一次项
+//	0x007F, 0x060C,															//系数C, 二次项
+//	0x0000, 0x7262,															//系数D, 三次项
+//	0x0000, 0x1E26															//系数E, 四次项
+//};
+
+#define	C_Toff			0x0000												//温度偏置寄存器
+//#define	C_MCON01		0x6077												//控制系数01
+#define	C_MCON01		0x2000												//控制系数01
+//#define	C_MCON23		0x2388												//控制系数23
+#define	C_MCON23		0x0588												//控制系数23
+//#define	C_MCON45		0x2688												//控制系数45
+#define	C_MCON45		0x4488												//控制系数45
+
+#define	EnWr_WPREG()		HT_CMU->WPREG = 0xA55A							//则关闭写保护功能，用户可以写操作被保护的寄存器
+#define	DisWr_WPREG()		HT_CMU->WPREG = 0x0000							//则开启写保护功能，用户禁止写操作被保护的寄存器
+
+/*******************************************************************************
+功能描述：	装载InfoData数据
+*******************************************************************************/
+void Load_InfoData(void)
+{
+	INT8U	i;
+	INT32U	chksum = 0;
+	INT32U	toff;
+	INT16S	temp, code;
+	
+	for (i=0; i<14; i++)
+	{
+		chksum += HT_INFO->DataArry[i];
+	}
+	if (chksum == HT_INFO->DataArry[14])		//已设置
+	{
+		if (HT_RTC->DFAH	!= (HT_INFO->Muster.iDFAH   & 0x007F))	HT_RTC->DFAH	= (HT_INFO->Muster.iDFAH   & 0x007F);
+		if (HT_RTC->DFAL	!= (HT_INFO->Muster.iDFAL   & 0xFFFF))	HT_RTC->DFAL	= (HT_INFO->Muster.iDFAL   & 0xFFFF);
+		if (HT_RTC->DFBH	!= (HT_INFO->Muster.iDFBH   & 0x007F))	HT_RTC->DFBH	= (HT_INFO->Muster.iDFBH   & 0x007F);
+		if (HT_RTC->DFBL	!= (HT_INFO->Muster.iDFBL   & 0xFFFF))	HT_RTC->DFBL	= (HT_INFO->Muster.iDFBL   & 0xFFFF);
+		if (HT_RTC->DFCH	!= (HT_INFO->Muster.iDFCH   & 0x007F))	HT_RTC->DFCH	= (HT_INFO->Muster.iDFCH   & 0x007F);
+		if (HT_RTC->DFCL	!= (HT_INFO->Muster.iDFCL   & 0xFFFF))	HT_RTC->DFCL	= (HT_INFO->Muster.iDFCL   & 0xFFFF);
+		if (HT_RTC->DFDH	!= (HT_INFO->Muster.iDFDH   & 0x007F))	HT_RTC->DFDH	= (HT_INFO->Muster.iDFDH   & 0x007F);
+		if (HT_RTC->DFDL	!= (HT_INFO->Muster.iDFDL   & 0xFFFF))	HT_RTC->DFDL	= (HT_INFO->Muster.iDFDL   & 0xFFFF);
+		if (HT_RTC->DFEH	!= (HT_INFO->Muster.iDFEH   & 0x007F))	HT_RTC->DFEH	= (HT_INFO->Muster.iDFEH   & 0x007F);
+		if (HT_RTC->DFEL	!= (HT_INFO->Muster.iDFEL   & 0xFFFF))	HT_RTC->DFEL	= (HT_INFO->Muster.iDFEL   & 0xFFFF);
+		if (HT_RTC->Toff	!= (HT_INFO->Muster.iToff   & 0xFFFF))	HT_RTC->Toff	= (HT_INFO->Muster.iToff   & 0xFFFF);
+		if (HT_RTC->MCON01	!= (HT_INFO->Muster.iMCON01 & 0xFFFF))	HT_RTC->MCON01	= (HT_INFO->Muster.iMCON01 & 0xFFFF);
+		if (HT_RTC->MCON23	!= (HT_INFO->Muster.iMCON23 & 0xFFFF))	HT_RTC->MCON23	= (HT_INFO->Muster.iMCON23 & 0xFFFF);
+		if (HT_RTC->MCON45	!= (HT_INFO->Muster.iMCON45 & 0xFFFF))	HT_RTC->MCON45	= (HT_INFO->Muster.iMCON45 & 0xFFFF);
+	}
+	else
+	{
+//		if(yingclkdatatab[1]!=0x00)
+//		{	
+//		if (HT_RTC->DFAH	!= TAB_DFx_neibu[0])	HT_RTC->DFAH	= TAB_DFx_neibu[0];
+//		if (HT_RTC->DFAL	!= TAB_DFx_neibu[1])	HT_RTC->DFAL	= TAB_DFx_neibu[1];
+//		if (HT_RTC->DFBH	!= TAB_DFx_neibu[2])	HT_RTC->DFBH	= TAB_DFx_neibu[2];
+//		if (HT_RTC->DFBL	!= TAB_DFx_neibu[3])	HT_RTC->DFBL	= TAB_DFx_neibu[3];
+//		if (HT_RTC->DFCH	!= TAB_DFx_neibu[4])	HT_RTC->DFCH	= TAB_DFx_neibu[4];
+//		if (HT_RTC->DFCL	!= TAB_DFx_neibu[5])	HT_RTC->DFCL	= TAB_DFx_neibu[5];
+//		if (HT_RTC->DFDH	!= TAB_DFx_neibu[6])	HT_RTC->DFDH	= TAB_DFx_neibu[6];
+//		if (HT_RTC->DFDL	!= TAB_DFx_neibu[7])	HT_RTC->DFDL	= TAB_DFx_neibu[7];
+//		if (HT_RTC->DFEH	!= TAB_DFx_neibu[8])	HT_RTC->DFEH	= TAB_DFx_neibu[8];
+//		if (HT_RTC->DFEL	!= TAB_DFx_neibu[9])	HT_RTC->DFEL	= TAB_DFx_neibu[9];
+//		}
+//		else 
+//		{	
+			if(((*(unsigned char*)0x40188 == 0xFF)&&(*(unsigned char*)0x4018C == 0xFF))				//18.04.28
+  				||((*(unsigned char*)0x40188 == 0xA0)&&(*(unsigned char*)0x4018C == 0x5F)))         //18.04.28
+//  			if((*(unsigned char*)0x40188 == 0xA0)&&(*(unsigned char*)0x4018C == 0x5F))         	//18.04.28
+			{                                                                       				//18.04.28
+				if (HT_RTC->DFAH	!= TAB_DFx_waibu[0])	HT_RTC->DFAH	= TAB_DFx_waibu[0];
+				if (HT_RTC->DFAL	!= TAB_DFx_waibu[1])	HT_RTC->DFAL	= TAB_DFx_waibu[1];
+				if (HT_RTC->DFBH	!= TAB_DFx_waibu[2])	HT_RTC->DFBH	= TAB_DFx_waibu[2];
+				if (HT_RTC->DFBL	!= TAB_DFx_waibu[3])	HT_RTC->DFBL	= TAB_DFx_waibu[3];
+				if (HT_RTC->DFCH	!= TAB_DFx_waibu[4])	HT_RTC->DFCH	= TAB_DFx_waibu[4];
+				if (HT_RTC->DFCL	!= TAB_DFx_waibu[5])	HT_RTC->DFCL	= TAB_DFx_waibu[5];
+				if (HT_RTC->DFDH	!= TAB_DFx_waibu[6])	HT_RTC->DFDH	= TAB_DFx_waibu[6];
+				if (HT_RTC->DFDL	!= TAB_DFx_waibu[7])	HT_RTC->DFDL	= TAB_DFx_waibu[7];
+				if (HT_RTC->DFEH	!= TAB_DFx_waibu[8])	HT_RTC->DFEH	= TAB_DFx_waibu[8];
+				if (HT_RTC->DFEL	!= TAB_DFx_waibu[9])	HT_RTC->DFEL	= TAB_DFx_waibu[9];
+			}																								//18.04.28		
+			else                                                                                            //18.04.28
+			{                                                                                               //18.04.28
+				if (HT_RTC->DFAH	!= TAB_DFx_waibu_New[0])	HT_RTC->DFAH	= TAB_DFx_waibu_New[0];     //18.04.28
+				if (HT_RTC->DFAL	!= TAB_DFx_waibu_New[1])	HT_RTC->DFAL	= TAB_DFx_waibu_New[1];     //18.04.28
+				if (HT_RTC->DFBH	!= TAB_DFx_waibu_New[2])	HT_RTC->DFBH	= TAB_DFx_waibu_New[2];     //18.04.28
+				if (HT_RTC->DFBL	!= TAB_DFx_waibu_New[3])	HT_RTC->DFBL	= TAB_DFx_waibu_New[3];     //18.04.28
+				if (HT_RTC->DFCH	!= TAB_DFx_waibu_New[4])	HT_RTC->DFCH	= TAB_DFx_waibu_New[4];     //18.04.28
+				if (HT_RTC->DFCL	!= TAB_DFx_waibu_New[5])	HT_RTC->DFCL	= TAB_DFx_waibu_New[5];     //18.04.28
+				if (HT_RTC->DFDH	!= TAB_DFx_waibu_New[6])	HT_RTC->DFDH	= TAB_DFx_waibu_New[6];     //18.04.28
+				if (HT_RTC->DFDL	!= TAB_DFx_waibu_New[7])	HT_RTC->DFDL	= TAB_DFx_waibu_New[7];     //18.04.28
+				if (HT_RTC->DFEH	!= TAB_DFx_waibu_New[8])	HT_RTC->DFEH	= TAB_DFx_waibu_New[8];     //18.04.28
+				if (HT_RTC->DFEL	!= TAB_DFx_waibu_New[9])	HT_RTC->DFEL	= TAB_DFx_waibu_New[9];     //18.04.28
+			}		                                                                                        //18.04.28
+//		}
+//	}			//17.12.06
+		toff = *(INT32U*)0x4012C;				//Toff低位
+		temp = *(INT16S*)0x4015E;				//温度
+		code = *(INT16S*)0x4015C;				//TPS code
+		if (((toff > 0x0BB8) && (toff < 0xF448))
+		|| (temp < 2000) || (temp > 3000)
+		|| (code < -7000) || (code > -1000))
+		{
+			toff = C_Toff;
+		}
+		if (HT_RTC->Toff	!= toff)		HT_RTC->Toff	= toff;
+		if (HT_RTC->MCON01	!= C_MCON01)	HT_RTC->MCON01	= C_MCON01;
+		if (HT_RTC->MCON23	!= C_MCON23)	HT_RTC->MCON23	= C_MCON23;
+		if (HT_RTC->MCON45	!= C_MCON45)	HT_RTC->MCON45	= C_MCON45;
+	}			//17.12.06
+}
+
+static const INT16S TAB_Temperature[] =
+{
+	22495,		//-50C
+	4638,		//0C
+	-720,		//+15C
+	-7862,		//+35C
+	-13220,		//+50C
+	-31077,		//+100C
+};
+INT16S ADC_TempVolt(void)
+{
+	INT16S	temp, toff;
+	
+	toff = HT_RTC->Toff;
+	temp = HT_TBS->TMPDAT;
+	temp -= toff;
+	return temp;
+}
+void Prog_InfoData(INT32U *info);
+/*******************************************************************************
+功能描述：	RTC误差校准
+输入参数：	err:		秒脉冲误差
+返回参数：
+函数说明：
+*******************************************************************************/
+unsigned char  Sample_Error(INT8U *err)
+{
+	INT8U	i, j, num, buff[7];
+	INT32U	info[15];
+	INT32S	ratio[5];														//当前补偿系数
+	INT16S	error, tps[3];
+	INT64S	tmp64s;															//中间变量
+	double	FN, tmp;
+	double	add[3];															//修正补偿系数
+    double	TT13, TT23, T13, T23;
+	
+	//RTC误差及温度采样---------------------------------------------------------
+	error = nBCD_LHEX(&err[0], 3);
+	if (err[3] & 0x80)
+	{
+		error = -error;
+	}
+	if ((error < -30000) || (error > 30000))								//-30.0s/d ~ +30.0s/d
+	{
+		return FALSE;
+	}
+	
+	tps[0] = ADC_TempVolt();													//当前TpsCode
+	for (i=0; i<3; i++)
+	{
+		if ((tps[0] <= TAB_Temperature[i*2+0])
+		&& (tps[0] >= TAB_Temperature[i*2+1]))								//-50C~0C; +15C~+35C; +50C~+100C
+		{
+			break;
+		}
+	}
+	if (i >= 3)
+	{
+		return FALSE;
+	}
+	j = i;																	//当前采样点
+	num = 1;																//1个有效点
+	//已采样数据收集------------------------------------------------------------
+//	if (TRUE != Read_ParaData(ID_TpsCode, &buff[0]))						//读取温度采样数据
+	//{
+	//	return FALSE;
+	//}
+//	readep(buff,ID_TpsCode,6,eplxsj);
+	E2P_RData( buff, ID_TpsCode, 6 );										//17.11.03
+	for (i=0; i<3; i++)
+	{
+		if (i != j)															//不同点
+		{
+			tps[num] = buff[i*2] | buff[i*2+1]<<8;
+			if ((tps[num] <= TAB_Temperature[i*2+0])
+			&& (tps[num] >= TAB_Temperature[i*2+1]))						//-50C~0C; +15C~+35C; +50C~+100C
+			{
+				num++;														//有效点
+			}
+		}
+		else																//同一点
+		{
+			buff[i*2]   = tps[0];
+			buff[i*2+1] = tps[0]>>8;
+		}
+	}
+//	wrep(buff,ID_TpsCode,6,eplxsj);
+	E2P_WData( ID_TpsCode, buff, 6 );										//17.11.03
+
+//	if (TRUE != Write_ParaData(ID_TpsCode, &buff[0]))						//更新温度采样数据
+//	{
+//		return FALSE;
+//	}
+	//读出InfoData--------------------------------------------------------------
+	ratio[0] = HT_RTC->DFAH<<16 | HT_RTC->DFAL;
+	ratio[1] = HT_RTC->DFBH<<16 | HT_RTC->DFBL;
+	ratio[2] = HT_RTC->DFCH<<16 | HT_RTC->DFCL;
+	ratio[3] = HT_RTC->DFDH<<16 | HT_RTC->DFDL;
+	ratio[4] = HT_RTC->DFEH<<16 | HT_RTC->DFEL;
+	for (i=0; i<5; i++)
+	{
+		if (ratio[i] & 0x00400000)
+		{
+			ratio[i] |= 0xFF800000;
+		}
+	}
+	
+	tmp64s  =  ratio[4];
+	tmp64s *=  tps[0];
+	tmp64s >>= 16;
+	
+	tmp64s +=  ratio[3];
+	tmp64s *=  tps[0];
+	tmp64s >>= 16;
+	
+	tmp64s +=  ratio[2];
+	tmp64s *=  tps[0];
+	tmp64s >>= 16;
+	
+	tmp64s +=  ratio[1];
+	tmp64s *=  tps[0];
+	tmp64s >>= 16;
+	
+	tmp64s +=  ratio[0];
+	tmp64s +=  2;
+	tmp64s >>= 2;
+	
+	FN  = (double)tmp64s/512.0 +32768;
+	tmp = error / 1000.0;													//转换为double型
+	FN  = FN*tmp/(86400-tmp);
+	//曲线拟合------------------------------------------------------------------
+	if (num == 3)															//3点拟合
+	{
+		TT13 = (double)(tps[0]+tps[2]) * (tps[0]-tps[2]);					//dTps[0]^2 - dTps[2]^2
+		TT23 = (double)(tps[1]+tps[2]) * (tps[1]-tps[2]);					//dTps[1]^2 - dTps[2]^2
+		
+		T13  = (double)(tps[0]-tps[2]);										//dTps[0] - dTps[2]
+		T23  = (double)(tps[1]-tps[2]);										//dTps[0] - dTps[2]
+		
+		TT23 *= T13;
+		TT23 /= T23;
+		TT23 = TT13 - TT23;
+		
+		add[2] = FN/TT23;													//2次系数修正
+		add[1] = (FN-add[2]*TT13)/T13;										//1次系数修正
+		add[0] = FN -add[2]*tps[0]*tps[0] -add[1]*tps[0];					//0次系数修正
+
+		add[2] = add[2] *128 *16 *65536 *65536;
+		add[1] = add[1] *128 *16 *65536;
+		add[0] = add[0] *128 *16;
+	}
+	else if (num == 2)														//2点拟合
+	{
+		T23  = (double)(tps[1]-tps[0]);
+		
+		add[1] = -FN/T23;
+		add[0] = -add[1]*tps[1];
+		
+		add[2] = 0;
+		add[1] = add[1] *128 *16 *65536;
+		add[0] = add[0] *128 *16;
+	}
+	else																	//1点拟合
+	{
+		add[2] = 0;
+		add[1] = 0;
+		add[0] = FN*128*16;
+	}
+    ratio[0] += (INT32S)add[0];												//0次补偿系数
+    ratio[1] += (INT32S)add[1];												//1次补偿系数
+    ratio[2] += (INT32S)add[2];												//2次补偿系数
+	//写入InfoData数据----------------------------------------------------------
+	info[0]  = (ratio[0]>>16) & 0x007F;
+	info[1]  = ratio[0]       & 0xFFFF;
+	info[2]  = (ratio[1]>>16) & 0x007F;
+	info[3]  = ratio[1]       & 0xFFFF;
+	info[4]  = (ratio[2]>>16) & 0x007F;
+	info[5]  = ratio[2]       & 0xFFFF;
+	info[6]  = (ratio[3]>>16) & 0x007F;
+	info[7]  = ratio[3]       & 0xFFFF;
+	info[8]  = (ratio[4]>>16) & 0x007F;
+	info[9]  = ratio[4]       & 0xFFFF;
+	info[10] = HT_RTC->Toff;
+	info[11] = HT_RTC->MCON01;
+	info[12] = HT_RTC->MCON23;
+	info[13] = HT_RTC->MCON45;
+	info[14] = 0;															//checksum
+	for (i=0; i<14; i++)
+	{
+		info[14] += info[i];
+	}
+	Prog_InfoData(&info[0]);
+
+	return TRUE;
+}
+
+void Prog_InfoData(INT32U *info)
+{
+	INT8U	i;
+	INT32U	data[64];														//256字节1页
+	
+	for (i=0; i<64; i++)
+	{
+//		data[i] = *((INT32U*)(HT_INFO_BASE+i*4));							//整页读取
+		data[i] = *((INT32U*)(HT_INFO_BASE+0x100+i*4));						//整页读取		//17.11.03
+	}
+	for (i=0; i<15; i++)
+	{
+		data[i+1] = info[i];												//更新RTC参数
+	}
+	//擦除InfoData--------------------------------------------------------------
+//关闭预读取指令模式//
+//	HT_CMU->PREFETCH=0X00000;
+
+	EnWr_WPREG();
+	HT_CMU->FLASHLOCK = 0x7A68;												//unlock flash memory
+	HT_CMU->INFOLOCK  = 0xF998;												//unlock information flash memory
+	HT_CMU->FLASHCON  = 0x02;												//page erase
+	*((INT32U*)HT_INFO_BASE) = 0xFFFFFFFF;									//data
+	while (HT_CMU->FLASHCON & 0x04)											//FLASH_BSY
+		;
+	HT_CMU->FLASHCON  = 0x00;												//read only
+	
+	Delay_mSec(2);
+	//更新InfoData--------------------------------------------------------------
+	HT_CMU->FLASHCON  = 0x01;												//word write
+	for (i=0; i<64; i++)
+	{
+//		*((INT32U *)(HT_INFO_BASE+i*4)) = data[i];							//program word
+		*((INT32U *)(HT_INFO_BASE+0x100+i*4)) = data[i];					//program word		//17.11.03
+		while (HT_CMU->FLASHCON  & 0x04)									//FLASH_BSY
+			;
+	}
+	HT_CMU->FLASHLOCK = ~0x7A68;											//lock flash memory
+	HT_CMU->INFOLOCK  = ~0xF998;											//lock information flash memory
+	HT_CMU->FLASHCON  = 0x00;												//read only
+	DisWr_WPREG();
+
+//主频太高开启预读取指令模式//
+//	HT_CMU->PREFETCH=0X00001;
+}
+
+unsigned char NCom_WriteCPU_RTC(unsigned char* ComBuf )
+{
+  unsigned char* WriteBufAds;
+  WriteBufAds =  ComBuf;
+  
+  if (TRUE == Sample_Error(WriteBufAds))											
+  {
+    Load_InfoData();
+    return 0;
+  }
+  else return 1;	
+  return 1;
+}
+#endif

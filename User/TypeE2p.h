@@ -26,10 +26,11 @@
 #define CDay_TrendVal0                  CDay_InvertTime0+5
 #define CDay_TrendTime0                 CDay_TrendVal0+5
 
-#define	ClockAdj			CDay_TrendTime0+5	//（2）//结束地址:0x088D
 
+#define	ClockAdj			CDay_TrendTime0+5	//（2）//结束地址:0x088D
+#define ID_TpsCode                      ClockAdj+6
 //事件参数均改为HEX码
-#define	EPhFail_Valve		          ClockAdj+6		          //失压起始阀值(3)			yyy.y V 
+#define	EPhFail_Valve		          ID_TpsCode+7		          //失压起始阀值(3)			yyy.y V 
 #define AT7022ChkSum		          EPhFail_Valve+7		//7022校表数据校验和(4)		//ATChk		//V1000
 #define AT7022ChkSum2		          AT7022ChkSum+6		//7022e校表数据校验和2(4)		//ATChk		//V1000
 

@@ -13,6 +13,12 @@ typedef unsigned char BCD6[6];
 typedef unsigned char BCD7[7];
 typedef unsigned char BCD8[8];
 typedef unsigned char BCD9[9];
+typedef signed long long INT64S;
+typedef unsigned int INT32U;
+typedef signed int INT32S;
+typedef unsigned char INT8U;
+typedef signed short INT16S;
+typedef unsigned short INT16U;
 
 /*×´Ì¬×Ö¶¨Òå------------------------*/
 typedef union{

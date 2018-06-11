@@ -428,6 +428,11 @@ int Send_XmlDataType3(char * buf)
   \t</DataAttr>\r\n");
     return byMsgNum;
 }
+#define YX_BIT   0x80
+u8 GetYx(u16 wYxTNo,u8 yx_bit)
+{
+  return 0;
+}
                          
 long GetYc(unsigned short ycno)
 {
@@ -515,6 +520,22 @@ void Iec101LinkRecv(void)
         else     
            ComAdjWrite(lpIEC101->byRecvBuf+2,lpIEC101->byRecvBuf[1]);
         Serial_Write(IEC101_PORT,lpIEC101->byRecvBuf,6);
+      }
+      return;
+    }
+    if(lpIEC101->byRecvBuf[0]==0x7E)
+    {
+      Count = 0;
+      for(i=0;i<5;++i)
+        Count += lpIEC101->byRecvBuf[i];
+      if(lpIEC101->wRecvNum>5)
+      {
+        if(lpIEC101->byRecvBuf[5] == Count)
+        {  
+          lpIEC101->byRecvBuf[1]=NCom_WriteCPU_RTC(lpIEC101->byRecvBuf+1);
+          Serial_Write(IEC101_PORT,lpIEC101->byRecvBuf,2);
+        }
+        lpIEC101->wRecvNum = 0;
       }
       return;
     }
@@ -1065,71 +1086,64 @@ void WatchPWindow(void)
 //搜索一级数据
 void SearchFirstData(void)
 {     
-    	//short wYxChang,wSendNo;
-    	if(lpIEC101->FlagPingH)	  //如果是平衡方式
-    	{
-          if((lpIEC101->PRecvFrame.byFunCode == RESET_LINK) && (lpIEC101->PWinTimer>200) && (lpIEC101->initstatus == justinit))
-          {
-            lpIEC101->PWinTimer = 0;
-            lpIEC101->PSeAppLayer.byFull = 1;
-            lpIEC101->PSeAppLayer.LinkFunCode = CALL_LINK;
-            lpIEC101->Pacd = 2;
-          }
-          if(lpIEC101->PRecvFrame.byFunCode == LINK_GOOD)
-          {
-            lpIEC101->PSeAppLayer.byFull = 1;
-            lpIEC101->PSeAppLayer.LinkFunCode = RESET_LINK;
-            lpIEC101->PRecvFrame.byFunCode = 0;
-            lpIEC101->Pacd = 2;
-          }
-        /*  if(lpIEC101->wTester.Byte.l && lpIEC101->PWinTimer>200)
-          {
-            lpIEC101->PWinTimer = 0;
-            lpIEC101->PSeAppLayer.LinkFunCode=TRAN_CONFIRM_DATA;
-            lpIEC101->PSendFrame.byFunCode = TRAN_CONFIRM_DATA;
-            lpIEC101->PReMsgType = C_TS_NA_1; 
-          }*/
-          return;
-        }
-	if (lpIEC101->firstData != nofirstdata)	// 已有1级用户数据,暂停搜索
-   		return;
-	if (lpIEC101->initstatus == justinit)
-	{
-		lpIEC101->firstData = substinit;		// 子站初始化
-	}
+  //short wYxChang,wSendNo;
+  if(lpIEC101->FlagPingH)	  //如果是平衡方式
+  {
+    if((lpIEC101->PRecvFrame.byFunCode == RESET_LINK) && (lpIEC101->PWinTimer>200) && (lpIEC101->initstatus == justinit))
+    {
+      lpIEC101->PWinTimer = 0;
+      lpIEC101->PSeAppLayer.byFull = 1;
+      lpIEC101->PSeAppLayer.LinkFunCode = CALL_LINK;
+      lpIEC101->Pacd = 2;
+    }
+    if(lpIEC101->PRecvFrame.byFunCode == LINK_GOOD)
+    {
+      lpIEC101->PSeAppLayer.byFull = 1;
+      lpIEC101->PSeAppLayer.LinkFunCode = RESET_LINK;
+      lpIEC101->PRecvFrame.byFunCode = 0;
+      lpIEC101->Pacd = 2;
+    }
+    return;
+  }
+  if (lpIEC101->firstData != nofirstdata)	// 已有1级用户数据,暂停搜索
+    return;
+  if (lpIEC101->initstatus == justinit)
+  {
+    lpIEC101->firstData = substinit;		// 子站初始化
+  }
 #if 0       
-	else if((lpIEC101->YxChangeC != sHostSoe.bySoeWrite)&&(initend==lpIEC101->initstatus))
-	{
-		wYxChang=lpIEC101->YxChangeC ;
-		while (wYxChang != sHostSoe.bySoeWrite)
-		{
-			//本机SOE对应的遥信变位
-			wSendNo = sHostSoe.SoeQueue[wYxChang].byYXSendSN;
-			//增加判断目的是按照发送表发遥信变位fulianqiang 2006.1.10
-			if((wSendNo <= lpIEC101->SendYxN)&&(pYXSendTab[wSendNo].byUnitType==FTU))    //判断发送顺序表中是否有此遥信,避免空遥信变位
-			{
-				lpIEC101->firstData = yxbw;		// 遥信变位
-				lpIEC101->YxChangeC= wYxChang;
-				break;
-			}
-			if((++wYxChang) >= MAX_SOE_NUM )   //移动soe读指针
-			      	wYxChang = 0;
-		 }
-	}
+  else if((lpIEC101->YxChangeC != sHostSoe.bySoeWrite)&&(initend==lpIEC101->initstatus))
+  {
+    wYxChang=lpIEC101->YxChangeC ;
+    while (wYxChang != sHostSoe.bySoeWrite)
+    {
+      //本机SOE对应的遥信变位
+      wSendNo = sHostSoe.SoeQueue[wYxChang].byYXSendSN;
+      //增加判断目的是按照发送表发遥信变位fulianqiang 2006.1.10
+      if((wSendNo <= lpIEC101->SendYxN)&&(pYXSendTab[wSendNo].byUnitType==FTU))    //判断发送顺序表中是否有此遥信,避免空遥信变位
+      {
+        lpIEC101->firstData = yxbw;		// 遥信变位
+        lpIEC101->YxChangeC= wYxChang;
+        break;
+      }
+      if((++wYxChang) >= MAX_SOE_NUM )   //移动soe读指针
+        wYxChang = 0;
+    }
+  }
 #endif        
-    	if(nofirstdata==lpIEC101->firstData)
-	{
-		if (lpIEC101->dwReadAd.Dword)
-	    	{
-	   		lpIEC101->firstData = readcmd;		// 由读数命令所寻址的信息体的数据
-	   	}
-	}
-	if (lpIEC101->firstData != nofirstdata)	// 搜索到1级用户数据
-	{
-		lpIEC101->Pacd = 1;			// ACD置位
-	}
-	else
-		lpIEC101->Pacd=0;        
+  if(nofirstdata==lpIEC101->firstData)
+  {
+    if (lpIEC101->dwReadAd.Dword)
+    {
+      lpIEC101->firstData = readcmd;		// 由读数命令所寻址的信息体的数据
+    }
+  }
+  if (lpIEC101->firstData != nofirstdata)	// 搜索到1级用户数据
+  {
+    lpIEC101->Pacd = 1;			// ACD置位
+  }
+  else
+    lpIEC101->Pacd=0;        
 }
 //组遥信变位信息体
 u8 OrgnizeYxbwMsg(u8 *lpby)
@@ -1197,8 +1211,9 @@ u8 OrgnizeInitEndMsg(u8* pbyMsg)
 //组读数据信息体
 u8 OrgnizeReadDataMsg(u8* lpby)
 {
-	//int wYxTNo;
+	u16 wYxTNo;
 	u8 i;
+        u8 byYxVal;
 	int wYcTNo;
 	long  iYcVal;
 	//int wDdTNo;
@@ -1413,60 +1428,101 @@ u8 OrgnizeSoeMsg(void)
 //组遥测越限值信息体
 u8 OrgnizeYcOverMsg(void)
 {
-	//int i;
-	//int  dwYcAdd;
-	//int  nTempYc;
-	//int  iThreshold;	//门限值
-	//int  iDifference;	//差值
-	//u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
-	//u8  j,byMsgNum = 0,bySendYcOverNum = 0;
-	//u8* lpInfoNum;
-#if 0        
-	*(lpby + byMsgNum ++) = 21;			// 类型标识21
-	lpInfoNum = lpby + byMsgNum ++;		//信息体数目
-	*(lpby + byMsgNum ++) = SPONT;				// 传送原因<3>:突发
-	if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
-           *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
-       	*(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.l;   //2005.9.2
-        if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
-           *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
-	if(lpIEC101->TypeProtocol)	 //判断是否2002版的101规约
- 	     dwYcAdd.Dword =  IEC101_YCSA_2002;
- 	else 
- 	     dwYcAdd.Dword =  IEC101_YCSA;
-	dwYcAdd.Word[1] = lpIEC101->dwInfAdd.Word[1];
-	for (i=lpIEC101->nStartYcOver;i < lpIEC101->SendYcN;i++)
-	{
-		nTempYc = GetYc(i);
-		iDifference=nTempYc-lpIEC101->nLastYcVal[i];	//取两次遥测的差值
-		if (iDifference<0)	//差值为负数
-			iDifference=-iDifference;	//将负整数变为正整数
-		iThreshold=(INT)((LONG)lpIEC101->nLastYcVal[i]*(LONG)lpIEC101->byRange/1000);	//计算门限值				
-		if (iThreshold<0)	//门限值为负数
-			iThreshold=-iThreshold;	//将负整数变为正整数
-		if (iDifference>iThreshold)	//差的绝对值超过设定的门限值
-		{
-			lpIEC101->nLastYcVal[i] = nTempYc;
-			dwYcAdd.Dword += i;
-	        	for(j=0;j<lpIEC101->TypeInfAdd;j++)		//信息体地址 fulianqiang 2005.9.2
-	          	    *(lpby + byMsgNum ++) = dwYcAdd.Byte[j];		    
-			dwYcAdd.Dword -= i;
-			*(lpby + byMsgNum ++) = (u8)nTempYc;	// 遥测值
-			*(lpby + byMsgNum ++) = (u8)(nTempYc >> 8);
-			if(++bySendYcOverNum >= IEC101_YCCNPF)
-				break;
-		}
-	}
-	if (i == lpIEC101->SendYcN)
-		lpIEC101->nStartYcOver = 0;
-	else
-		lpIEC101->nStartYcOver = i;
-	if (bySendYcOverNum)
-		*lpInfoNum = bySendYcOverNum;
-	else
-		byMsgNum = 0;
-#endif        
-	return 0;
+  int i;
+  float f_val;
+  FOUR_BYTE_TO_DWORD  dwYcAdd;
+  int  nTempYc;
+  int  iThreshold;	//门限值
+  int  iDifference;	//差值
+  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
+  u8  j,byMsgNum = 0,bySendYcOverNum = 0;
+  u8* lpInfoNum;
+  u8 databuf[4];
+  
+  *(lpby + byMsgNum ++) = 13;			// 类型标识21
+  lpInfoNum = lpby + byMsgNum ++;		//信息体数目
+  *(lpby + byMsgNum ++) = SPONT;				// 传送原因<3>:突发
+  if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
+    *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
+  *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.l;   //2005.9.2
+  if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
+    *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
+  if(lpIEC101->TypeProtocol)	 //判断是否2002版的101规约
+    dwYcAdd.Dword =  IEC101_YCSA_2002;
+  else 
+    dwYcAdd.Dword =  IEC101_YCSA;
+  dwYcAdd.Word[1] = lpIEC101->dwInfAdd.Word[1];
+  for (i=lpIEC101->nStartYcOver;i < lpIEC101->SendYcN;i++)
+  {
+    nTempYc = GetYc(i);
+    iDifference=nTempYc-lpIEC101->nLastYcVal[i];	//取两次遥测的差值
+    if (iDifference<0)	//差值为负数
+      iDifference=-iDifference;	//将负整数变为正整数
+    //iThreshold=(INT)((LONG)lpIEC101->nLastYcVal[i]*(LONG)lpIEC101->byRange/1000);	//计算门限值				
+    iThreshold = 10;
+    if (iThreshold<0)	//门限值为负数
+      iThreshold=-iThreshold;	//将负整数变为正整数
+    if (iDifference>iThreshold)	//差的绝对值超过设定的门限值
+    {
+      lpIEC101->nLastYcVal[i] = nTempYc;
+      f_val=nTempYc;
+      dwYcAdd.Dword += i;
+      for(j=0;j<lpIEC101->TypeInfAdd;j++)		//信息体地址 fulianqiang 2005.9.2
+        *(lpby + byMsgNum ++) = dwYcAdd.Byte[j];		    
+      dwYcAdd.Dword -= i;
+      switch(i%23)
+      {
+      case 1:
+      case 2:
+      case 3:
+        f_val = f_val/10000;
+        break;
+      case 0:
+      case 7:
+      case 8:
+      case 9:
+      case 10:
+      case 11:
+      case 12:
+      case 13:
+      case 14:
+      case 15:
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+      case 20:
+      case 21:
+      case 22:
+        f_val = f_val/1000;
+        break;
+      case 4:
+      case 5:
+      case 6:
+        f_val = f_val/100;
+        break;
+      default:
+        break;
+      }
+      memcpy(databuf,&f_val,4);
+      *(lpby + byMsgNum ++) = databuf[0];//(u8)nVal;	// 遥测值
+      *(lpby + byMsgNum ++) = databuf[1];//(u8)(nVal >> 8);
+      *(lpby + byMsgNum ++) = databuf[2];//(u8)(nVal >> 16);
+      *(lpby + byMsgNum ++) = databuf[3];//(u8)(nVal >> 24);
+      *(lpby + byMsgNum ++) = 0;
+    }
+    if(++bySendYcOverNum >= IEC101_YCCNPF)
+      break;
+  }
+  if (i == lpIEC101->SendYcN)
+    lpIEC101->nStartYcOver = 0;
+  else
+    lpIEC101->nStartYcOver = i;
+  if (bySendYcOverNum)
+    *lpInfoNum = bySendYcOverNum;
+  else
+    byMsgNum = 0;        
+  return byMsgNum;
 }
 //上送二级数据
 void SendData2(void)
@@ -1474,12 +1530,12 @@ void SendData2(void)
 	u8 byMsgNum = 0;
 #if 1        
        	SearchFirstData();
-	if (lpIEC101->firstData == nofirstdata)
-	{
-		lpIEC101->PSeAppLayer.LinkFunCode = 9;
-		lpIEC101->PSeAppLayer.byMsgNum = 0;
-		return;
-	}
+//	if (lpIEC101->firstData == nofirstdata)
+//	{
+//		lpIEC101->PSeAppLayer.LinkFunCode = 9;
+//		lpIEC101->PSeAppLayer.byMsgNum = 0;
+//		return;
+//	}
 #if 0       
 	//事件顺序纪录数据
 	if (lpChanl[ChanlNo].ReadSoeC!=sHostSoe.bySoeWrite)
@@ -1497,9 +1553,10 @@ void SendData2(void)
 	}      	    
 	if (!byMsgNum)
 	{
+                lpIEC101->PSeAppLayer.LinkFunCode = 9;
 		lpIEC101->PSeAppLayer.byMsgNum = 0;
 		//lpIEC101->PSeAppLayer.LinkFunCode = 0xE5;
-                lpIEC101->PSeAppLayer.LinkFunCode = YES_ACK;
+                //lpIEC101->PSeAppLayer.LinkFunCode = YES_ACK;
 	} 
 #endif        
 }
@@ -3270,7 +3327,7 @@ void InitIEC101Prot(void)
     lpIEC101->wLinkAdd.Word=1;
     lpIEC101->initstatus = notinit;
     lpIEC101->haveset = FALSE;
-    lpIEC101->FlagPingH = 0;
+    lpIEC101->FlagPingH = 1;
     lpIEC101->UnsolTimeInterval=3;
     lpIEC101->firstData = nofirstdata;
    
@@ -3282,6 +3339,8 @@ void InitIEC101Prot(void)
     {
       lpIEC101->YcNPF[i]=23;//23;
     }
+    lpIEC101->nStartYcOver=0;
+    lpIEC101->SendYcN=MAX_CH_NUM*23;
     lpIEC101->DdFN = MAX_CH_NUM*2;
     for(i=0;i<20;++i)
     {

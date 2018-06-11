@@ -253,7 +253,7 @@ void PwrOnInit(void)
 	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 	//½ûÓÃSysTickµÎ´ð¶¨Ê±Æ÷
 //	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-
+    HT_RTC_ToutSet(Tout1Hz);
     HT_TBSConfig(TBS_TBSCON_VBATEn,ENABLE);
     HT_TBS_PeriodSet(VBATPRD,TBS_TBSPRD_VBATPRD_2S);
     HT_TBS_ITConfig(TBS_TBSIE_VBATIE,ENABLE);

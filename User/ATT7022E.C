@@ -1035,229 +1035,227 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
 
 short Read_ATTAmper( unsigned char Cmd, unsigned char* Data ,unsigned short Devads )
 {
-	unsigned short	i=1,Temp;
-	unsigned long Value;
-	unsigned long long LValue;
-	unsigned long A0002Ib;			//新国网		//13.08.30
-	unsigned char Buff[4];
-	unsigned char* Point;
-	unsigned char Temp2=0;				//11.08.03
-	
-	Point = Buff;
-	
-	LValue = 0;
-
-	A0002Ib = MSpec.RBaseCurrent / 500;	//新国网		//13.08.30
-	Temp2 = ATT7022RdReg( Cmd, Data ,Devads);		//11.08.03	
-	if(( *(Data +2) & 0x80 ) == 0) i = 0;
-	else    {
-	            *(Data+2) ^= 0xff;     
-	            *(Data+1) ^= 0xff;     
-	            *Data ^= 0xff;     	                	                
-	        }   
-	Temp = *(Data + 1) * 256 + *Data;
-	Value = (unsigned long)*(Data + 2) * 65536;
-	LValue = Temp;
-	LValue += Value;
-
-	if( i == 1 ) 	LValue += 1;
-	LValue = LValue * 100;
-	Value = LValue;
-	switch( Cmd )
-	{
-		case ATUrmsA:		
-		case ATUrmsB:		
-		case ATUrmsC:	
-						LValue = ( LValue * 10 ) / 8192;
-						Value = LValue;
-                        break;
-		case ATIrmsA:		
-		case ATIrmsB:		
-		case ATIrmsC:		
-		case RmsADC7:
-//						LValue *= A100Ib;									//新国网	//13.08.30
-						LValue *= MSpec.RBaseCurrent;						//新国网	//13.08.30
-						LValue /= 245760;		//2^13*30=8192*30=245760  
-
-                        Value = LValue;
-						if( Value < A0002Ib ) Value = 0;
-
-						Temp = (unsigned short)((unsigned long)Value%100);
-						Value /= 100;
-						if( Temp >= 50 ) Value += 1;	
-						Long_BCD4( Point, (unsigned long)Value );
-						RAM_Write( Data, Point, 4 );
-						return i;
-//						break;	
-		default: break;
-	}
-	if( Value < 100 ) Value = 0;
-	Long_BCD4( Point, (unsigned long)Value );
-	Temp = *Point;
-	RAM_Write( Point, Point+1, 3 );
-	if( Temp >= 0x50 ) _BCD3INC( Point );
-	RAM_Write( Data, Point, 3 );
-	if( Temp2 != 0 ) return 2;			//11.08.03		读底层数据有误
-	else return i;						//11.08.03		读底层数据有误
+  unsigned short	i=1,Temp;
+  unsigned long Value;
+  unsigned long long LValue;
+  unsigned long A0002Ib;			//新国网		//13.08.30
+  unsigned char Buff[4];
+  unsigned char* Point;
+  unsigned char Temp2=0;				//11.08.03
+  
+  Point = Buff;
+  
+  LValue = 0;
+  
+  A0002Ib = MSpec.RBaseCurrent / 500;	//新国网		//13.08.30
+  Temp2 = ATT7022RdReg( Cmd, Data ,Devads);		//11.08.03	
+  if(( *(Data +2) & 0x80 ) == 0) i = 0;
+  else    {
+    *(Data+2) ^= 0xff;     
+    *(Data+1) ^= 0xff;     
+    *Data ^= 0xff;     	                	                
+  }   
+  Temp = *(Data + 1) * 256 + *Data;
+  Value = (unsigned long)*(Data + 2) * 65536;
+  LValue = Temp;
+  LValue += Value;
+  
+  if( i == 1 ) 	LValue += 1;
+  LValue = LValue * 100;
+  Value = LValue;
+  switch( Cmd )
+  {
+  case ATUrmsA:		
+  case ATUrmsB:		
+  case ATUrmsC:	
+    LValue = ( LValue * 10 ) / 8192;
+    Value = LValue;
+    break;
+  case ATIrmsA:		
+  case ATIrmsB:		
+  case ATIrmsC:		
+  case RmsADC7:
+    //						LValue *= A100Ib;									//新国网	//13.08.30
+    LValue *= MSpec.RBaseCurrent;						//新国网	//13.08.30
+    LValue /= 245760;		//2^13*30=8192*30=245760  
+    
+    Value = LValue;
+    if( Value < A0002Ib ) Value = 0;
+    
+    Temp = (unsigned short)((unsigned long)Value%100);
+    Value /= 100;
+    if( Temp >= 50 ) Value += 1;	
+    Long_BCD4( Point, (unsigned long)Value );
+    RAM_Write( Data, Point, 4 );
+    return i;
+    //						break;	
+  default: break;
+  }
+  if( Value < 100 ) Value = 0;
+  Long_BCD4( Point, (unsigned long)Value );
+  Temp = *Point;
+  RAM_Write( Point, Point+1, 3 );
+  if( Temp >= 0x50 ) _BCD3INC( Point );
+  RAM_Write( Data, Point, 3 );
+  if( Temp2 != 0 ) return 2;			//11.08.03		读底层数据有误
+  else return i;						//11.08.03		读底层数据有误
 }
 
 	
 void ATT7022EStateCheckRun( unsigned short Devads )
 {
-	unsigned char Buff[50];
-	unsigned char* Point;
-//	unsigned short TempInt1;
-//	unsigned short TempInt2;
-	unsigned char Temp;
+  unsigned char Buff[50];
+  unsigned char* Point;
+  unsigned char Temp;
 
-	Point = Buff;
-
-    if(SM.CalibCount == CALIBCOUNT)				
-    {
-		*Point =0;
-		*(Point+1) =0;
-		*(Point+2) =0;
-		
-		*Point = 0x5A;
-		ATT7022WtReg( 0xC9, Point ,Devads);
-		*Point = 0x0;	
-		ATT7022WtReg( 0xC3, Point ,Devads);
-		ATT7022WtReg( 0x80, Point ,Devads);
-		
-		*(Point+2) = 0x0;	
-		
-//		*Point = 0xFE;
-		*Point = 0x7E;						//ADC chop关闭	//Test
-		*(Point+1) = 0xB9;
-//		*(Point+1) = 0xB8;					//Femu=1.8432M			//15.09.06
-		ATT7022WtReg( ModeCfg+128, Point ,Devads);	//模式配置寄存器
-		
-		*Point = 0x00;						//电压通道2倍增益、电流通道1倍增益
-//		*(Point+1) = 0x01;
-		*(Point+1) = 0x00;				//12..01.18  ADC1倍
-		ATT7022WtReg( PGACtrl+128, Point ,Devads);	//ADC增益配置寄存器
-		
+  Point = Buff;
+  
+  if(SM.CalibCount == CALIBCOUNT)				
+  {
+    *Point =0;
+    *(Point+1) =0;
+    *(Point+2) =0;
+    
+    *Point = 0x5A;
+    ATT7022WtReg( 0xC9, Point ,Devads);
+    *Point = 0x0;	
+    ATT7022WtReg( 0xC3, Point ,Devads);
+    ATT7022WtReg( 0x80, Point ,Devads);
+    
+    *(Point+2) = 0x0;	
+    
+    *Point = 0xFE;
+    //		*Point = 0x7E;						//ADC chop关闭	//Test
+    *(Point+1) = 0xB9;
+    //		*(Point+1) = 0xB8;					//Femu=1.8432M			//15.09.06
+    ATT7022WtReg( ModeCfg+128, Point ,Devads);	//模式配置寄存器
+    
+    *Point = 0x00;						//电压通道2倍增益、电流通道1倍增益
+    //		*(Point+1) = 0x01;
+    *(Point+1) = 0x00;				//12..01.18  ADC1倍
+    ATT7022WtReg( PGACtrl+128, Point ,Devads);	//ADC增益配置寄存器
+    
 #if( LinkMode == Phase3Wire4 )			//ATChk
 #if ( DLT645_2007_14 ==	YesCheck )			//新国网	//14.04.25
-		*Point = 0xCC;						//代数和、能量寄存器读后清0	//视在采用RMS		//14.09.04
+    *Point = 0xCC;						//代数和、能量寄存器读后清0	//视在采用RMS		//14.09.04
 #else
-		*Point = 0xC4;						//代数和、能量寄存器读后清0
+    *Point = 0xC4;						//代数和、能量寄存器读后清0
 #endif
 #else
-		*Point = 0x84;						//代数和、能量寄存器读后清0	
+    *Point = 0x84;						//代数和、能量寄存器读后清0	
 #endif
-		*(Point+1) = 0xF8;					//选择功率作为潜动起动判断依据
-		ATT7022WtReg( EMUCfg+128, Point ,Devads);	//EMU单元配置
-		
-//		*Point = HFConstL;													//新国网		//13.08.30	
-//		*(Point+1) = HFConstH;												//新国网		//13.08.30	
-		RAM_Write( Point, (unsigned char*)&MSpec.R7022E_HFConst, 2 );		//新国网		//13.08.30	
-		ATT7022WtReg( REGHFConst+128, Point ,Devads);	//高频脉冲输出
-		
-		*Point = 0x00;
-		*(Point+1) = 0x00;
-		ATT7022WtReg( QPhscal+128, Point ,Devads);	//无功相位校正寄存器
-		
-//#if (( RTCCHIP == RX8025 )||( RTCCHIP == RX8025T ))	//8025T用7022内部温度传感器
-		*Point = 0x37;							//7022E必须增加温度补偿
-//#else
-//		*Point = 0x27;
-//#endif
-		*(Point+1) = 0x34;
-		ATT7022WtReg( ModuleCFG+128, Point ,Devads);	//模拟模块使能寄存器
-		
-//      *Point = Pstartup % 256;											//新国网		//13.08.30		
-//      *(Point+1) = Pstartup / 256;										//新国网		//13.08.30	
-		RAM_Write( Point, (unsigned char*)&MSpec.R7022E_PStartup, 2 );		//新国网		//13.08.30	
-		ATT7022WtReg( Pstart+128, Point,Devads );	//模拟模块使能寄存器
-		
-//      *Point = Istart % 256;							//13.07.01			//新国网		//13.08.30	
-//      *(Point+1) = Istart / 256;											//新国网		//13.08.30		
-		RAM_Write( Point, (unsigned char*)&MSpec.R7022E_IStart, 2 );		//新国网		//13.08.30	
-		ATT7022WtReg( Istartup+128, Point ,Devads);	//电流启动阀值寄存器
-
+    *(Point+1) = 0xF8;					//选择功率作为潜动起动判断依据
+    ATT7022WtReg( EMUCfg+128, Point ,Devads);	//EMU单元配置
+    
+    //		*Point = HFConstL;													//新国网		//13.08.30	
+    //		*(Point+1) = HFConstH;												//新国网		//13.08.30	
+    RAM_Write( Point, (unsigned char*)&MSpec.R7022E_HFConst, 2 );		//新国网		//13.08.30	
+    ATT7022WtReg( REGHFConst+128, Point ,Devads);	//高频脉冲输出
+    
+    *Point = 0x00;
+    *(Point+1) = 0x00;
+    ATT7022WtReg( QPhscal+128, Point ,Devads);	//无功相位校正寄存器
+    
+    //#if (( RTCCHIP == RX8025 )||( RTCCHIP == RX8025T ))	//8025T用7022内部温度传感器
+    *Point = 0x37;							//7022E必须增加温度补偿
+    //#else
+    //		*Point = 0x27;
+    //#endif
+    *(Point+1) = 0x34;
+    ATT7022WtReg( ModuleCFG+128, Point ,Devads);	//模拟模块使能寄存器
+    
+    //      *Point = Pstartup % 256;											//新国网		//13.08.30		
+    //      *(Point+1) = Pstartup / 256;										//新国网		//13.08.30	
+    RAM_Write( Point, (unsigned char*)&MSpec.R7022E_PStartup, 2 );		//新国网		//13.08.30	
+    ATT7022WtReg( Pstart+128, Point,Devads );	//模拟模块使能寄存器
+    
+    //      *Point = Istart % 256;							//13.07.01			//新国网		//13.08.30	
+    //      *(Point+1) = Istart / 256;											//新国网		//13.08.30		
+    RAM_Write( Point, (unsigned char*)&MSpec.R7022E_IStart, 2 );		//新国网		//13.08.30	
+    ATT7022WtReg( Istartup+128, Point ,Devads);	//电流启动阀值寄存器
+    
 #if ( NEW7022E == YesCheck )
-//	*Point = 0xF7;												
-//	*(Point+1) = 0xFE;
-	*Point = 0x11;												
-	*(Point+1) = 0xFF;
-	ATT7022WtReg( TCcoffA+128, Point ,Devads);		//调整温度补偿系数		//13.08.09
-
-//	*Point = 0x1B;												
-//	*(Point+1) = 0x2F;
-	*Point = 0x53;												
-	*(Point+1) = 0x2B;
-	ATT7022WtReg( TCcoffB+128, Point ,Devads);		//调整温度补偿系数		//13.08.09
-
-//	*Point = 0xDB;												
-//	*(Point+1) = 0x10;
-	*Point = 0x83;												
-	*(Point+1) = 0xD4;
-	ATT7022WtReg( TCcoffC+128, Point ,Devads);		//调整温度补偿系数		//13.08.09
-
-        *Point = 0x02;						//VrefAotu_en = 1  //温度自动补偿使能
-        *(Point+1) = 0x00;
-		ATT7022WtReg( EMCfg+128, Point ,Devads);	//新增加的算法控制寄存器
+    //	*Point = 0xF7;												
+    //	*(Point+1) = 0xFE;
+    *Point = 0x11;												
+    *(Point+1) = 0xFF;
+    ATT7022WtReg( TCcoffA+128, Point ,Devads);		//调整温度补偿系数		//13.08.09
+    
+    //	*Point = 0x1B;												
+    //	*(Point+1) = 0x2F;
+    *Point = 0x53;												
+    *(Point+1) = 0x2B;
+    ATT7022WtReg( TCcoffB+128, Point ,Devads);		//调整温度补偿系数		//13.08.09
+    
+    //	*Point = 0xDB;												
+    //	*(Point+1) = 0x10;
+    *Point = 0x83;												
+    *(Point+1) = 0xD4;
+    ATT7022WtReg( TCcoffC+128, Point ,Devads);		//调整温度补偿系数		//13.08.09
+    
+    *Point = 0x02;						//VrefAotu_en = 1  //温度自动补偿使能
+    *(Point+1) = 0x00;
+    ATT7022WtReg( EMCfg+128, Point ,Devads);	//新增加的算法控制寄存器
 #endif
-
-		SM.CalibCount += 1;	
-		*(Point+2) = 0x00;					//关闭写校表数据功能
-		*(Point+1) = 0x00;
-		*Point = 0x01;
-		ATT7022WtReg( 0xC9, Point ,Devads);
-
-		SM.AT7022ChkSumCnt = 0;				
-	}	
-	else  	
-	{			
-		if( SM.CalibCount != CALIBCOUNT1 )												
-		{																				
-			if(	SM.AT7022ChkSumCnt != 0 ) SM.AT7022ChkSumCnt--;				
-			else 																		
-			{									
-				Temp = 0;
-				ATT7022RdReg( ATChkSum1, Point ,Devads);												
-				if( IsAllData( Point, 3, 0x00 ) == 0 ) ;
-				else
-				{																				
-					if( Data_Comp(Point, Para.RAT7022ChkSum, 3) != 0 ) 
-                    {
-                      	ATT7022RdReg( ATChkSum1, Point+3 ,Devads);										
-						if( IsAllData( Point+3, 3, 0x00 ) == 0 ) ;
-                      	else
-                      	{
-                      		if( Data_Comp(Point+3, Para.RAT7022ChkSum, 3) != 0 ) Temp = 0x55;	
-                      	}	
-                    }
-                    else Temp = 0;  
-					if((Temp!=0 )&&(Data_Comp(Point, Point+3, 3) == 0))
-					{
-						ATT7022Init(Devads);		
-						return;
-					}	
-				}	 																								
+    
+    SM.CalibCount += 1;	
+    *(Point+2) = 0x00;					//关闭写校表数据功能
+    *(Point+1) = 0x00;
+    *Point = 0x01;
+    ATT7022WtReg( 0xC9, Point ,Devads);
+    
+    SM.AT7022ChkSumCnt = 0;				
+  }	
+  else  	
+  {			
+    if( SM.CalibCount != CALIBCOUNT1 )												
+    {																				
+      if(SM.AT7022ChkSumCnt != 0) SM.AT7022ChkSumCnt--;				
+      else 																		
+      {									
+        Temp = 0;
+        ATT7022RdReg( ATChkSum1, Point ,Devads);												
+        if( IsAllData( Point, 3, 0x00 ) == 0 ) ;
+        else
+        {																				
+          if( Data_Comp(Point, Para.RAT7022ChkSum, 3) != 0 ) 
+          {
+            ATT7022RdReg( ATChkSum1, Point+3 ,Devads);										
+            if( IsAllData( Point+3, 3, 0x00 ) == 0 ) ;
+            else
+            {
+              if( Data_Comp(Point+3, Para.RAT7022ChkSum, 3) != 0 ) Temp = 0x55;	
+            }	
+          }
+          else Temp = 0;  
+          if((Temp!=0 )&&(Data_Comp(Point, Point+3, 3) == 0))
+          {
+            ATT7022Init(Devads);		
+            return;
+          }	
+        }	 																								
 #if ( NEW7022E == YesCheck )
-				Temp = 0;
-				ATT7022RdReg( ATChkSum2, Point ,Devads);												
-				if( IsAllData( Point, 3, 0x00 ) == 0 ) ;
-				else
-				{																				
-					if( Data_Comp(Point, Para.RAT7022ChkSum2, 3) != 0 ) 
-                    {
-                      	ATT7022RdReg( ATChkSum2, Point+3 ,Devads);										
-						if( IsAllData( Point+3, 3, 0x00 ) == 0 ) ;
-                      	else
-                      	{
-                      		if( Data_Comp(Point+3, Para.RAT7022ChkSum2, 3) != 0 ) Temp = 0x55;	
-                      	}	
-                    }
-                    else Temp = 0;  
-					if((Temp!=0 )&&(Data_Comp(Point, Point+3, 3) == 0)) ATT7022Init( Devads);			
-				}	 																								
+        Temp = 0;
+        ATT7022RdReg( ATChkSum2, Point ,Devads);												
+        if( IsAllData( Point, 3, 0x00 ) == 0 ) ;
+        else
+        {																				
+          if( Data_Comp(Point, Para.RAT7022ChkSum2, 3) != 0 ) 
+          {
+            ATT7022RdReg( ATChkSum2, Point+3 ,Devads);										
+            if( IsAllData( Point+3, 3, 0x00 ) == 0 ) ;
+            else
+            {
+              if( Data_Comp(Point+3, Para.RAT7022ChkSum2, 3) != 0 ) Temp = 0x55;	
+            }	
+          }
+          else Temp = 0;  
+          if((Temp!=0 )&&(Data_Comp(Point, Point+3, 3) == 0)) ATT7022Init( Devads);			
+        }	 																								
 #endif
-			}																							
-		}																								
-	}			
+      }																							
+    }																								
+  }			
 }
 
 short GetATT7022ECalibrateReg( unsigned char* ComBuf ,unsigned short Devads)
