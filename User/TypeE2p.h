@@ -217,6 +217,7 @@
 #define FLASH_252K	 0x3F000			//252K..
 #define FLASH_256K	 0x40000			//256K..
 #define FLASH_184K	 0x2E000	//8213内部flash存储用户程序的空间192K-8K=184K
+#define FLASH_1M	 0x100000
 
 //升级程序参数--备用..
 //895 37F000h 37FFFFh

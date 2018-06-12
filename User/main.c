@@ -760,7 +760,13 @@ void main(void)
       if (Flag.Clk & F_Hour) ProcHour();
       if (Flag.Clk & F_Day) ProcDay();
       
-//      if(Flag.Power & F_PwrUp)
+      if(Flag.Power & F_IrmsCheck)
+      {
+        Serial_Open(0,115200,8,UartParity_Disable);
+        xmodemReceive();
+        Serial_Open(0,9600,8,UartParity_Disable);
+      }
+      else
       {	
         IEC101Process();
       }			
