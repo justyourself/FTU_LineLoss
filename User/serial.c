@@ -72,7 +72,7 @@ int16_t Serial_Write(uint8_t port,uint8_t *buf,uint16_t len)
 		case 0:
 			pUart=HT_UART0;
                         //HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_9);
-                        HT_GPIO_BitsReset(HT_GPIOC,GPIO_Pin_9);
+                        //HT_GPIO_BitsReset(HT_GPIOC,GPIO_Pin_9);
 			break;
 		case 1:
 			pUart=HT_UART1;

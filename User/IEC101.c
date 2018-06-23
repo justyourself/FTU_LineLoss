@@ -3181,7 +3181,7 @@ void OrgnizeIec101Frame(void)
 	//链路层发送处理函数
 	Iec101LinkSendPro();
 	//链路层发送函数
-   //	Iec101LinkSend();
+   	Iec101LinkSend();
 }
 //规约各定时器监测函数
 void Iec101WatchTime(void)

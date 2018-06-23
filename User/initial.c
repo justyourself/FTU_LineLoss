@@ -141,18 +141,18 @@ void PwrOnInit(void)
     /*!< GPIOCÅäÖÃÐÅÏ¢*/    		   
 
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF1;
-    GPIO_InitStructure.GPIO_Pin = GPIOC_232_TXD|GPIOC_232_RXD;
+    GPIO_InitStructure.GPIO_Pin = GPIOC_232_TXD|GPIOC_232_RXD|GPIO_Pin_8;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
     
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_10|GPIO_Pin_9|GPIO_Pin_12;
     GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
-    HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_11|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_12);
+    HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_11|GPIO_Pin_10|GPIO_Pin_9|GPIO_Pin_12);
    // HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_9);
 	
 

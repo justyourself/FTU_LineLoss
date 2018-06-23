@@ -164,7 +164,8 @@ GPIOH
 #define 	FSI		GPIO_Pin_2
 #define 	FSCLK		GPIO_Pin_0
 
-#define 	GPIOG_EMU_CLK				GPIO_Pin_8
+//#define 	GPIOG_EMU_CLK				GPIO_Pin_8
+#define 	GPIOG_EMU_CLK				GPIO_Pin_10
 #define 	GPIOG_EMU_DOUT				GPIO_Pin_0
 #define 	GPIOG_EMU_DIN				GPIO_Pin_1
 #define 	GPIOB_EMU_RST8				GPIO_Pin_4

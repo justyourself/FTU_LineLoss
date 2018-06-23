@@ -157,6 +157,65 @@ short Get_DayData(int No,int ch,unsigned char *buf)
   return ONE_RECORD_LEN;
 }
 
+void compensate_day()
+{
+ unsigned char tmp_buf[ONE_RECORD_SIZE]; 
+ unsigned char time_buf[8];
+ int year;
+ int i,j,k;
+ for(i=0;i<MAX_CH_NUM;++i)
+ {
+   ReadRecord(FRZD0_USEADDR+30*i,tmp_buf,0);
+   memcpy(time_buf,tmp_buf,6); 
+   tmp_buf[3] = Clk.DayH;
+   tmp_buf[4] = Clk.Month;
+   year = Clk.YearH;
+   year = year*256 + Clk.YearL;
+   tmp_buf[5]=year-2000;
+   for(j=0;j<7;++j)
+   {
+     if((tmp_buf[3] == time_buf[3]) && (tmp_buf[4] == time_buf[4]) && (tmp_buf[5] == time_buf[5]))
+     {
+       break;
+     }
+     --tmp_buf[3];
+     if(tmp_buf[3]==0)
+     {
+       --tmp_buf[4];
+       if(tmp_buf[4]==0)
+       {
+         tmp_buf[4] = 12;
+         --tmp_buf[5];
+       }
+       if((tmp_buf[4]==2) && (tmp_buf[5]%4==0))
+        tmp_buf[3] = 29;
+       else
+        tmp_buf[3] = MonTab[tmp_buf[4]]; 
+     }
+   }
+
+   for(j=0;j<7;++j)
+   {
+     if((tmp_buf[3] == Clk.DayH) && (tmp_buf[4] == Clk.Month) && (tmp_buf[5] == (year-2000)))
+     {
+       break;
+     }
+     ++tmp_buf[3];
+     if(tmp_buf[3] > (((tmp_buf[4]==2 ) && ((tmp_buf[5]%4)==0))? 29:MonTab[tmp_buf[4]]))
+     {
+       tmp_buf[3]=1;
+       ++tmp_buf[4];
+       if(tmp_buf[4]>12)
+       {
+         tmp_buf[4] = 1;
+         ++tmp_buf[5];
+       }
+     }	
+     LoadRecord(FRZD0_USEADDR+i*30,tmp_buf);
+   }
+ }
+}
+
 int Day_Record_Num()
 {
   int Num;
@@ -445,7 +504,12 @@ void ProcSec(void)
   Point = Buff;
   
   memset( Point,0,6 );
-  
+//  Buff[0]=0xaa;
+//        Buff[1]=0x55;
+//        Buff[2]=0x00;
+//        Buff[3]=0x11;
+//        Buff[4]=0x22;
+//        Serial_Write(0,Buff,5);
   if((Flag.Power & F_PwrUp) != 0)
   {
     if(SM.TestCnt != 0)
@@ -734,6 +798,7 @@ void main(void)
         {
           ATT7022Init(i);	//Test
         }
+        compensate_day();
         break;
       }	
       if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))
