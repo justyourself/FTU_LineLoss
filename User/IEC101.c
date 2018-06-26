@@ -474,6 +474,7 @@ short GetDd(unsigned short kwhno,unsigned char *buf)
     //                    *(lpby + byMsgNum ++) = tmp_buf[3];//(u8)(nVal >> 24);
     return 4;
   }
+#if 0  
   else
   {
     Read_LastData(m_ch,tmp_buf);
@@ -488,6 +489,7 @@ short GetDd(unsigned short kwhno,unsigned char *buf)
     memcpy(buf+6,tmp_buf,6);
     return 12;
   }
+#endif 
 }
 //功能：接收错误处理
 //输入：void
@@ -506,6 +508,47 @@ void IEC101RErrorProcess(void)
 		}
 	}
 }
+                         
+                         
+void Read_Para(unsigned char *buf)
+{
+  unsigned char Len;
+  Len = buf[0];
+  switch(buf[1])
+  {
+  case 0x7A:
+    GetATT7022ECalibrateReg(buf+3,buf[2]);
+    break;
+  case 0x7E:
+    break;
+  default:
+    break;
+  }
+  Serial_Write(IEC101_PORT,buf-9,Len+12);
+}
+void Write_Para(unsigned char *buf)
+{
+  unsigned char Len;
+  Len = buf[0];
+  switch(buf[1])
+  {
+  case 0x7A:
+    ComAdjWrite(buf+3,buf[2]);
+    break;
+  case 0x7E:
+    NCom_WriteCPU_RTC(buf+2);
+    break;
+  case 0x7d:
+    if((buf[2]==0xaa) && (buf[3]==0x55))
+      Flag.Power |=F_IrmsCheck;
+    else if((buf[2]==0x55) && (buf[3]==0xaa))
+      NVIC_SystemReset();
+    break;
+  default:
+    break;
+  }
+  Serial_Write(IEC101_PORT,buf-9,Len+12);
+}
 //链路层接收函数
 //功能：链路接收，把串口接收缓冲区中的数据解出一桢
 //      并放入lpIEC101->PRecvFrame.byLinkBuf
@@ -515,8 +558,8 @@ void IEC101RErrorProcess(void)
 
 void Iec101LinkRecv(void)
 {
-  u8 Count;
-  int i;
+  u8 Count,cmd;
+  int i,num,ptr;
   Count=Serial_Read(IEC101_PORT,lpIEC101->byRecvBuf+lpIEC101->wRecvNum,128);
   if(Count)
   {
@@ -568,6 +611,50 @@ void Iec101LinkRecv(void)
         }
         Serial_Write(IEC101_PORT,lpIEC101->byRecvBuf,lpIEC101->wRecvNum);
         lpIEC101->wRecvNum = 0;
+      }
+      return;
+    }
+    if(lpIEC101->byRecvBuf[0]==0xfe)
+    {
+      if(lpIEC101->wRecvNum>12)
+      {
+        for(i=0;i<10;++i)
+        {
+          if(lpIEC101->byRecvBuf[i]!=0xfe)
+          {
+            break;
+          }
+        }
+        ptr = i;
+        if(lpIEC101->byRecvBuf[i]!=0x68)
+        {
+          lpIEC101->wRecvNum=0;
+          return;
+        }
+        while((lpIEC101->byRecvBuf[++i]!=0x68) && (i<lpIEC101->wRecvNum)) ;
+        if(lpIEC101->wRecvNum>(i+4))
+        {
+          if(lpIEC101->byRecvBuf[i+2] <= (lpIEC101->wRecvNum-i-5))
+          {
+            Count = 0;
+            for(i=ptr,num=lpIEC101->byRecvBuf[i+9]+10+i;i<num;++i)
+              Count += lpIEC101->byRecvBuf[i];
+            if(Count==lpIEC101->byRecvBuf[i])
+            {
+              cmd = lpIEC101->byRecvBuf[ptr+8];
+              switch(cmd)
+              {
+              case 0x11:  //读参数
+                Read_Para(lpIEC101->byRecvBuf+ptr+9);
+                break;
+              case 0x14:  //写参数
+                Write_Para(lpIEC101->byRecvBuf+ptr+9);
+                break;
+              }
+            }
+            lpIEC101->wRecvNum = 0;
+          }
+        }
       }
       return;
     }
@@ -1116,10 +1203,59 @@ void WatchPWindow(void)
                 lpIEC101->PWindow = 1;
         }
 }
+
+u8  OrgnizeTDdMsg(u8 bySendReason,u8 byFrameNo)     
+{
+  int i;
+  FOUR_BYTE_TO_DWORD  dwInfoAd;
+  int dwDdVal;
+  u8 tmp_buf[ONE_RECORD_LEN];
+  float f_val;
+  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
+  u8 j,byMsgNum = 0;
+  u8 byDdNPF;	//每帧电度数
+  int dwDdAdd;
+  byDdNPF=lpIEC101->DdNPF[byFrameNo];	//取得实际的每帧电度数,最后一帧可能不是32
+  if (byFrameNo<lpIEC101->DdFN)	//帧数小于需要发送的电度帧数
+  {
+    
+    *(lpby + byMsgNum ++) = M_IT_TC_1;	
+    *(lpby + byMsgNum ++) = 0x80|byDdNPF;
+    *(lpby + byMsgNum ++) = bySendReason;
+    if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
+      *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
+    *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.l;   //2005.9.2
+    if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
+      *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
+    if(lpIEC101->TypeProtocol)
+      dwDdAdd =  IEC101_DDSA_2002;
+    else
+      dwDdAdd =  IEC101_DDSA;
+    dwInfoAd.Dword = dwDdAdd+(byFrameNo)*31;
+    dwInfoAd.Word[1] = lpIEC101->dwInfAdd.Word[1];
+    for(j=0;j<lpIEC101->TypeInfAdd;j++)
+      *(lpby + byMsgNum ++) = dwInfoAd.Byte[j];
+    for (i = 0; i < byDdNPF;++i)
+    {
+      Read_LastData(byFrameNo,tmp_buf);
+      memset(lpby + byMsgNum,0,12);
+      memcpy(&dwDdVal,tmp_buf+6+4*i,4);
+      f_val = dwDdVal;
+      f_val = f_val/1000;
+      memcpy(lpby + byMsgNum,(unsigned char *)&f_val,4);
+      memcpy(lpby + byMsgNum+6,tmp_buf,6);
+      byMsgNum +=12;  
+    }
+  }
+  return byMsgNum;
+}
+                         
 //搜索一级数据
 void SearchFirstData(void)
 {     
   //short wYxChang,wSendNo;
+  u8 byMsgNum;
+  PUSHSTATE m_push;
   if(lpIEC101->FlagPingH)	  //如果是平衡方式
   {
 #if 1  
@@ -1138,6 +1274,25 @@ void SearchFirstData(void)
         lpIEC101->PSeAppLayer.LinkFunCode = RESET_LINK;
         lpIEC101->PRecvFrame.byFunCode = 0;
         lpIEC101->Pacd = 2;
+      }
+    }
+    if(Get_Valid_Push(&m_push))
+    {
+      switch(m_push.Type)
+      {
+      case LOAR_TYPE:
+        byMsgNum = OrgnizeTDdMsg(SPONT,m_push.Ch);
+        lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+        lpIEC101->PSeAppLayer.LinkFunCode = 4;
+        break;
+      default:
+        break;
+      }
+      if(lpIEC101->PSeAppLayer.byMsgNum)
+      {
+        lpIEC101->Pacd = 2;
+      //  lpIEC101->PSendFrame.byFull = 1;
+        lpIEC101->PSeAppLayer.byFull = 1;
       }
     }
 #endif    
@@ -1652,46 +1807,45 @@ u8 OrgnizeGenAck(u8 bySendReason)
 //组全遥信信息体
 u8 OrgnizeYxMsg(u8 *lpby,u8 bySendReason,u8 byFrameNo)
 {
-	//u8 j,byYxVal;
-	//u8 byMsgNum = 0;
-#if 0        
-    //WORD wStartAd;
- FOUR_BYTE_TO_DWORD  dwStartAd;
-    int nYxNo;
-	int i;
-	u8  byYxNPF;	//每帧遥信数
-    static WORD wStartYxAd[16] = {0x001, 0x041, 0x081, 0x0C1, 0x101, 0x141, 0x181, 0x1C1, 
-						   0x201, 0x241, 0x281, 0x2C1, 0x301, 0x341, 0x381, 0x3C1};
-	byYxNPF=lpIEC101->YxNPF[byFrameNo];	//取得实际的每帧遥信数,最后一帧可能不是64
-	if (byFrameNo<lpIEC101->YxFN)	//帧数小于需要发送的遥信帧数
-	{
-		*(lpby + byMsgNum ++) = 1;		// 1类型标识
-		*(lpby + byMsgNum ++) = 0x80 | byYxNPF;	  //可变结构限定词
-		*(lpby + byMsgNum ++) = bySendReason;
-		if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
-        	   *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
-
-		//*(lpby + byMsgNum ++) = lpIEC101->byCmmAdd;
-       		*(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.l;   //2005.9.2
-       		if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
-           	    *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
-
-		dwStartAd.Word[0] = wStartYxAd[byFrameNo];
-		dwStartAd.Word[1] = lpIEC101->dwInfAdd.Word[1];
-		for(j=0;j<lpIEC101->TypeInfAdd;j++)	  //信息体地址 fulianqiang 2005.9.2
-		   *(lpby + byMsgNum ++) = dwStartAd.Byte[j];
-		nYxNo = byFrameNo * IEC101_YXNPF;
-		for (i = nYxNo; i < nYxNo + byYxNPF; i++)
-		{
-			byYxVal = GetYx(i,YX_BIT);
-			if (byYxVal)
-				*(lpby + byMsgNum ++) = 1;		// 带品质描述的单点信息 6.4.1
-			else
-				*(lpby + byMsgNum ++) = 0;
-		}
-	}
+  u8 j,byYxVal;
+  u8 byMsgNum = 0;
+#if 1        
+  //WORD wStartAd;
+  FOUR_BYTE_TO_DWORD  dwStartAd;
+  int nYxNo;
+  int i;
+  u8  byYxNPF;	//每帧遥信数
+  static WORD wStartYxAd[16] = {0x001, 0x041, 0x081, 0x0C1, 0x101, 0x141, 0x181, 0x1C1, 
+  0x201, 0x241, 0x281, 0x2C1, 0x301, 0x341, 0x381, 0x3C1};
+  byYxNPF=lpIEC101->YxNPF[byFrameNo];	//取得实际的每帧遥信数,最后一帧可能不是64
+  if (byFrameNo<lpIEC101->YxFN)	//帧数小于需要发送的遥信帧数
+  {
+    *(lpby + byMsgNum ++) = 1;		// 1类型标识
+    *(lpby + byMsgNum ++) = 0x80 | byYxNPF;	  //可变结构限定词
+    *(lpby + byMsgNum ++) = bySendReason;
+    if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
+      *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
+    
+    *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.l;   //2005.9.2
+    if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
+      *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
+    
+    dwStartAd.Word[0] = wStartYxAd[byFrameNo];
+    dwStartAd.Word[1] = lpIEC101->dwInfAdd.Word[1];
+    for(j=0;j<lpIEC101->TypeInfAdd;j++)	  //信息体地址 fulianqiang 2005.9.2
+      *(lpby + byMsgNum ++) = dwStartAd.Byte[j];
+    nYxNo = byFrameNo * IEC101_YXNPF;
+    for (i = nYxNo; i < nYxNo + byYxNPF; i++)
+    {
+      byYxVal = GetYx(i,YX_BIT);
+      if (byYxVal)
+        *(lpby + byMsgNum ++) = 1;		// 带品质描述的单点信息 6.4.1
+      else
+        *(lpby + byMsgNum ++) = 0;
+    }
+  }
 #endif        
-	return 0;
+	return byMsgNum;
 }
 //组全遥测信息体
 u8 OrgnizeYcMsg(u8* lpby,u8 bySendReason,u8 byFrameNo)
@@ -1983,21 +2137,21 @@ void SendTimeAck(void)
 //组召唤电度确认信息体
 u8 OrgnizeDdAckMsg(u8 bySendReason)
 { 
-	u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
-	u8 j,byMsgNum = 0;
-	*(lpby + byMsgNum ++) = C_CI_NA_1;		// 101
-	*(lpby + byMsgNum ++) = 0x81;
-	*(lpby + byMsgNum ++) = bySendReason;
-	if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
-           *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
-	*(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.l;   //2005.9.2
-       	if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
-             *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
-	for(j=0;j<lpIEC101->TypeInfAdd;j++)
-	    *(lpby + byMsgNum ++) = 0;
-
-	*(lpby + byMsgNum ++) = lpIEC101->byQCC;
-	return byMsgNum;      
+  u8* lpby = lpIEC101->PSeAppLayer.lpByBuf;
+  u8 j,byMsgNum = 0;
+  *(lpby + byMsgNum ++) = C_CI_NA_1;		// 101
+  *(lpby + byMsgNum ++) = 0x81;
+  *(lpby + byMsgNum ++) = bySendReason;
+  if (lpIEC101->TypeSeReason==2)			//传送原因两个字节
+    *(lpby + byMsgNum ++) = lpIEC101->bySourceAdd;
+  *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.l;   //2005.9.2
+  if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
+    *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
+  for(j=0;j<lpIEC101->TypeInfAdd;j++)
+    *(lpby + byMsgNum ++) = 0;
+  
+  *(lpby + byMsgNum ++) = lpIEC101->byQCC;
+  return byMsgNum;      
 }
 //组电度数据信息体
 u8 OrgnizeDdMsg(u8 bySendReason,u8 byFrameNo)
@@ -2012,12 +2166,13 @@ u8 OrgnizeDdMsg(u8 bySendReason,u8 byFrameNo)
   byDdNPF=lpIEC101->DdNPF[byFrameNo];	//取得实际的每帧电度数,最后一帧可能不是32
   if (byFrameNo<lpIEC101->DdFN)	//帧数小于需要发送的电度帧数
   {
+/*    
     if(byFrameNo%2)
     {
       *(lpby + byMsgNum ++) = M_IT_TC_1;	
       *(lpby + byMsgNum ++) = 0x80|byDdNPF;
      }
-     else
+     else*/
      {
       *(lpby + byMsgNum ++) = M_IT_NB_1;	
       *(lpby + byMsgNum ++) = 0x80|byDdNPF;
@@ -2029,47 +2184,25 @@ u8 OrgnizeDdMsg(u8 bySendReason,u8 byFrameNo)
       if(lpIEC101->TypeCmmAdd==2)	   //是否两个字节的应用服务单元地址
       *(lpby + byMsgNum ++) = lpIEC101->wCmmAdd.Byte.h;
       if(lpIEC101->TypeProtocol)
-        dwDdAdd =  IEC101_DDSA_2002+31;
+        dwDdAdd =  IEC101_DDSA_2002;
       else
         dwDdAdd =  IEC101_DDSA;
-      dwInfoAd.Dword = dwDdAdd+(byFrameNo/2)*31;
+      dwInfoAd.Dword = dwDdAdd+(byFrameNo)*31;
       dwInfoAd.Word[1] = lpIEC101->dwInfAdd.Word[1];
       for(j=0;j<lpIEC101->TypeInfAdd;j++)
         *(lpby + byMsgNum ++) = dwInfoAd.Byte[j];
       for (i = byFrameNo * IEC101_DDNPF; i < byFrameNo * IEC101_DDNPF + byDdNPF; i++)
       {
-#if 0                        
-			dwDdVal = 0;			// 电度发送值
-			dwDdVal = i;//GetDd(i);
-			*(lpby + byMsgNum ++) = (u8)dwDdVal;
-			*(lpby + byMsgNum ++) = (u8)(dwDdVal >> 8);
-			*(lpby + byMsgNum ++) = (u8)(dwDdVal >> 16);
-			*(lpby + byMsgNum ++) = (u8)(dwDdVal >> 24);
-			*(lpby + byMsgNum ++) = i - byFrameNo * IEC101_DDNPF;	// IV CA CY SQ--6.4.7
-#else
-                        dwDdVal=GetDd(i,lpby + byMsgNum);
-                        byMsgNum +=dwDdVal;
-                        if(byFrameNo%2==0)
-                          *(lpby + byMsgNum ++) = 0;
-                       // byMsgNum +=dwDdVal;
-                       // *(lpby + byMsgNum ++) = i - byFrameNo * IEC101_DDNPF;
-#if 0                       
-                        if(dwDdVal==4)
-                        {
-                          byMsgNum +=dwDdVal;
-                          *(lpby + byMsgNum ++) = i - byFrameNo * IEC101_DDNPF;
-                        }
-                        else
-                        {
-                           *(lpby + byMsgNum+4) = i - byFrameNo * IEC101_DDNPF;
-                           byMsgNum +=dwDdVal;
-                        }
-#endif                        
-                        
-#endif                        
-		}
-	}
-	return byMsgNum;
+        
+        dwDdVal=GetDd(i,lpby + byMsgNum);
+        byMsgNum +=dwDdVal;
+        //if(byFrameNo%2==0)
+          *(lpby + byMsgNum ++) = 0;                        
+        
+        
+      }
+  }
+  return byMsgNum;
 }
 //为了兼容97和2002电度召唤，有两种解决方法：
 //1）比较直观的解决办法，另写一电镀函数分别调用，本文用此方法
@@ -2097,59 +2230,59 @@ void SendDdData(void)
 //2002版的电度召唤函数	  //付2005.8.30
 void SendDdData2002(void)
 {
-        u8 byMsgNum = 0;
-        u8 bySendReason;
-        u8 byFrameNo;
-	if (lpIEC101->byPSDdStep == 17 || lpIEC101->byPSDdStep == 0)
-	{
-		if (lpIEC101->byReason == ACT)
-			bySendReason = ACTCON;
-		else if (lpIEC101->byReason == DEACT)
-			bySendReason = DEACTCON;
-		byMsgNum = OrgnizeDdAckMsg(bySendReason);
-		lpIEC101->byPSDdStep=0;
-		lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-		lpIEC101->PSeAppLayer.LinkFunCode = 3;
-	}
-	else if ( (lpIEC101->byPSDdStep >= 1) && (lpIEC101->byPSDdStep <= 16) )
-	{
-		byFrameNo = lpIEC101->byPSDdStep - 1;
-		if ( (lpIEC101->byQCC & 0x3f) == 5)
-			bySendReason = REQCOGCN;		// 37响应帧的传送原因
-		else if ( ((lpIEC101->byQCC & 0x3f) >= 1) 
-			&& ((lpIEC101->byQCC & 0x3f) <= 4) )
-			bySendReason = (lpIEC101->byQCC & 0x3f) - 1 + REQCOGCN;
-		byMsgNum = OrgnizeDdMsg(bySendReason,byFrameNo);
-		lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-		lpIEC101->PSeAppLayer.LinkFunCode = 3;
-		if ( lpIEC101->byPSDdStep==lpIEC101->DdFN)
-		     lpIEC101->byPSDdStep=17;
-		if (!byMsgNum)	//没有实际电度信息体内容
-		{
-			if (bySendReason==REQCOGCN)
-			//响应计数量召唤时需要发送的电度已发完,直接跳到结束帧,但对于分组召唤命令,继续发送空信息响应帧
-			{
-				lpIEC101->byPSDdStep = 17;	
-				bySendReason = ACTTERM;
-                               // lpIEC101->byReason=ACTTERM;
-				byMsgNum = OrgnizeDdAckMsg(bySendReason);
-				lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-				lpIEC101->PSeAppLayer.LinkFunCode = 3;
-			}
-			else	//分组召唤
-				lpIEC101->PSeAppLayer.LinkFunCode = 9;	//无所请求数据的确认帧
-		}	
-	}       
-	else if(lpIEC101->byPSDdStep == 18)
-	{
-               // lpIEC101->byReason=ACTTERM;
-		bySendReason = ACTTERM;
-		byMsgNum = OrgnizeDdAckMsg(bySendReason);
-		lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-		lpIEC101->PSeAppLayer.LinkFunCode = 3;
-	}     
-	lpIEC101->byPSDdStep++;
-        
+  u8 byMsgNum = 0;
+  u8 bySendReason;
+  u8 byFrameNo;
+  if (lpIEC101->byPSDdStep == 17 || lpIEC101->byPSDdStep == 0)
+  {
+    if (lpIEC101->byReason == ACT)
+      bySendReason = ACTCON;
+    else if (lpIEC101->byReason == DEACT)
+      bySendReason = DEACTCON;
+    byMsgNum = OrgnizeDdAckMsg(bySendReason);
+    lpIEC101->byPSDdStep=0;
+    lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+    lpIEC101->PSeAppLayer.LinkFunCode = 3;
+  }
+  else if ( (lpIEC101->byPSDdStep >= 1) && (lpIEC101->byPSDdStep <= 16) )
+  {
+    byFrameNo = lpIEC101->byPSDdStep - 1;
+    if ( (lpIEC101->byQCC & 0x3f) == 5)
+      bySendReason = REQCOGCN;		// 37响应帧的传送原因
+    else if ( ((lpIEC101->byQCC & 0x3f) >= 1) 
+             && ((lpIEC101->byQCC & 0x3f) <= 4) )
+      bySendReason = (lpIEC101->byQCC & 0x3f) - 1 + REQCOGCN;
+    byMsgNum = OrgnizeDdMsg(bySendReason,byFrameNo);
+    lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+    lpIEC101->PSeAppLayer.LinkFunCode = 3;
+    if ( lpIEC101->byPSDdStep==lpIEC101->DdFN)
+      lpIEC101->byPSDdStep=17;
+    if (!byMsgNum)	//没有实际电度信息体内容
+    {
+      if (bySendReason==REQCOGCN)
+        //响应计数量召唤时需要发送的电度已发完,直接跳到结束帧,但对于分组召唤命令,继续发送空信息响应帧
+      {
+        lpIEC101->byPSDdStep = 17;	
+        bySendReason = ACTTERM;
+        // lpIEC101->byReason=ACTTERM;
+        byMsgNum = OrgnizeDdAckMsg(bySendReason);
+        lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+        lpIEC101->PSeAppLayer.LinkFunCode = 3;
+      }
+      else	//分组召唤
+        lpIEC101->PSeAppLayer.LinkFunCode = 9;	//无所请求数据的确认帧
+    }	
+  }       
+  else if(lpIEC101->byPSDdStep == 18)
+  {
+    // lpIEC101->byReason=ACTTERM;
+    bySendReason = ACTTERM;
+    byMsgNum = OrgnizeDdAckMsg(bySendReason);
+    lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
+    lpIEC101->PSeAppLayer.LinkFunCode = 3;
+  }     
+  lpIEC101->byPSDdStep++;
+  
 }
 
 //组读数据命令确认帧
@@ -3107,7 +3240,7 @@ void PLinkSendProcess(void)
 	lpIEC101->PSendFrame.byFunCode = lpIEC101->PSeAppLayer.LinkFunCode;
         
        if(lpIEC101->FlagPingH)       
-         byConField = 0x80 | (lpIEC101->Pacd << 5) | (lpIEC101->Pdfc << 4)
+         byConField = 0x80 | (lpIEC101->Pacd << 5) /*| (lpIEC101->Pdfc << 4)*/
 					| lpIEC101->PSendFrame.byFunCode;
        else
           byConField = (lpIEC101->Pacd << 5) | (lpIEC101->Pdfc << 4)
@@ -3400,7 +3533,7 @@ void InitIEC101Prot(void)
     lpIEC101->initstatus = notinit;
     lpIEC101->haveset = FALSE;
     lpIEC101->FlagPingH = 1;
-    lpIEC101->UnsolTimeInterval=3;
+    lpIEC101->UnsolTimeInterval=0;
     lpIEC101->firstData = nofirstdata;
    
     
@@ -3413,10 +3546,15 @@ void InitIEC101Prot(void)
     }
     lpIEC101->nStartYcOver=0;
     lpIEC101->SendYcN=MAX_CH_NUM*23;
-    lpIEC101->DdFN = MAX_CH_NUM*2;
+    lpIEC101->DdFN = MAX_CH_NUM;
     for(i=0;i<20;++i)
     {
       lpIEC101->DdNPF[i]=8;
+    }
+    lpIEC101->YxFN = 1;
+    for(i=0;i<20;++i)
+    {
+      lpIEC101->YxNPF[i]=4*MAX_CH_NUM;
     }
 #if 0 
 	ProtocolDisp[IEC101ProtNo].ProtocolType=IEC101ProtNo;	//规约类型

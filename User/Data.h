@@ -390,10 +390,8 @@ extern 	Demand_Reg  Demand_Class5;
 extern 	SRAM SM;
 extern  const unsigned short MP_Fcstab[256];
 extern const unsigned long crc_32_tab[256];
-extern PUSHSTATE PushSetup;					//推送事件40参数..
-//extern MDBUFF		MDBufPp;
-//extern MDBUFF		MDBufPn;
-//extern MDBUFF		MDBufP15;
+extern PUSHSTATE Push_state[MAX_CH_NUM];
+
 extern QUALITY_EVENT  quality_event;		//电能事件..
 extern  ECPULSE		ECP;
 extern  INTPULSE	ECInt;

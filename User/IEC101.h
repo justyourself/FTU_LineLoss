@@ -26,6 +26,7 @@ union IEC101_ADD
   u16 Word;
 };
 
+typedef u16 WORD;
 typedef union
 {
   u8 Byte[4];
@@ -33,6 +34,8 @@ typedef union
   u32 Dword;
   
 }FOUR_BYTE_TO_DWORD;
+
+
 union IEC101_DADD
 {
   u8 Byte[4];
@@ -107,8 +110,10 @@ struct IEC101_STRUCT
   u8 FlagPingH;
   u8 YcFN;
   u8 DdFN;
+  u8 YxFN;
   u8 YcNPF[32];
   u8 DdNPF[32];
+  u8 YxNPF[8];
   union IEC101_ADD wTester;
   union IEC101_DADD dwReadAd;
   union IEC101_DADD dwInfAdd;

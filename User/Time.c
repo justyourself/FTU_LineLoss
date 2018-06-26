@@ -1086,6 +1086,7 @@ unsigned char  Sample_Error(INT8U *err)
 	{
 		info[14] += info[i];
 	}
+
 	Prog_InfoData(&info[0]);
 
 	return TRUE;

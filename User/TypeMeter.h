@@ -1354,6 +1354,8 @@
 #define SegTabSWFreeze_No	9			//日时段表切换冻结记录号 				
 #define FeeSWFreeze_No		10			//费率电价切换冻结记录号 				
 #define StepSWFreeze_No		11			//阶梯切换冻结记录号 				
-#define StepSaveSWFreeze_No	12			//阶梯结算冻结记录号 				
+#define StepSaveSWFreeze_No	12			//阶梯结算冻结记录号 	
+
+#define LOAR_TYPE               1
 
 #define MAX_CH_NUM              1

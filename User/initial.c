@@ -146,6 +146,10 @@ void PwrOnInit(void)
     GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
     HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
     
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
+    HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
+    
     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_10|GPIO_Pin_9|GPIO_Pin_12;
@@ -253,7 +257,8 @@ void PwrOnInit(void)
 	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 	//禁用SysTick滴答定时器
 //	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-    HT_RTC_ToutSet(Tout1Hz);
+  //  HT_RTC_ToutSet(Tout2Hz);
+   // HT_RTC_ToutSet(RTC_RTCCON_TOUT_LF);
     HT_TBSConfig(TBS_TBSCON_VBATEn,ENABLE);
     HT_TBS_PeriodSet(VBATPRD,TBS_TBSPRD_VBATPRD_2S);
     HT_TBS_ITConfig(TBS_TBSIE_VBATIE,ENABLE);
@@ -262,6 +267,7 @@ void PwrOnInit(void)
     //NVIC_EnableIRQ(UART2_IRQn);                                  /*!< 使能UART中断*/
    // NVIC_EnableIRQ(UART3_IRQn);                                  /*!< 使能UART中断*/
     NVIC_EnableIRQ(TBS_IRQn);
+    HT_RTC_ToutSet(Tout1Hz);
     __enable_irq();
 }
 

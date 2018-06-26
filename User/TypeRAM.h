@@ -4182,13 +4182,10 @@ typedef struct
 //推送40类--告警事件..
 typedef struct
 {
-	//修改读取曲线出错增加(读取期间记录数正好在增加)..
-	unsigned long   PReadCurRecNo;	 // skyblue20141001..
-	unsigned short  SendNumber;
-	unsigned char   RepeatSendFlag;	 //块传输是否需要重发标志,0x22表示需要重发..
 	//判断..			
-	unsigned char Time; 					//间隔发送..
-	unsigned char Comm_Flag;			//通讯标识..
+	unsigned char Type; //推送的类型
+	unsigned char Ch;   //推送的通道
+        unsigned char valid;
 			
 }PUSHSTATE;
 /*

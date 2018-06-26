@@ -108,7 +108,7 @@ void SysTick_Handler()			//1/64√Î÷–∂œ
     if(( Clk.Sec_64 == 0 )||( Clk.Sec_64 == 32 )) 					//PWMD
     {																//PWMD
       Flag.Clk |= F_HalfSec;
-      //HT_GPIO_BitsToggle(HT_GPIOC,GPIO_Pin_10);		
+     // HT_GPIO_BitsToggle(HT_GPIOC,GPIO_Pin_8);		
     }																//PWMD	
     if(( Clk.Sec_64 == 0 )||( Clk.Sec_64 == 21 )||( Clk.Sec_64 == 42 )) 
     {

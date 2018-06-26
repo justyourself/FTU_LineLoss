@@ -107,6 +107,7 @@ short Save_Data(unsigned char *Time_buf)
   memcpy(tmp_buf,Time_buf,6);
   for(i=0;i<MAX_CH_NUM;++i)
   {
+    Insert_Push(LOAR_TYPE,i);
     memcpy(tmp_buf+6,&Energy_Data[i],ONE_RECORD_LEN-6);
     LoadRecord(LOAD0_USEADDR+i*30,tmp_buf);
   }
@@ -402,6 +403,7 @@ void Clear_E2R(int chan)
     ECRAds = ECRgTab[i].ECRAds;
     ECEAds = ECRgTab[i].ECEAds;
     EC_E2_W(ECEAds,tmpbuf,4);
+    *ECRAds = 0;
     ++i;
   }
 }
@@ -666,7 +668,7 @@ void ProcMin(void)
     {
       Save_Data(Time_buf);
     }
-    
+    Load_InfoData();
     Save_RandData(Time_buf);
 }	
 
@@ -745,13 +747,13 @@ void main(void)
         PwrOnInit();	
         InitPara();			
         InitPara5();
-        Serial_Open(0,9600,8,UartParity_Disable);
-        //Serial_Open(0,9600,8,UartParity_EVEN);
+        //Serial_Open(0,9600,8,UartParity_Disable);
+        Serial_Open(0,9600,8,UartParity_EVEN);
         Load_InfoData();
 	InitPara6();   
         InitIEC101Prot();
-        Read_FlashID(flash_id);
 #if 0        
+        Read_FlashID(flash_id);   
         memset(flash_id,0x51,16);
         E2P_WFM(0,flash_id,16);
         memset(flash_id,0,10);
@@ -814,7 +816,7 @@ void main(void)
 //      }
       if(Flag.Clk& F_HalfSec)
       {
-        E2P_RFM(flash_id,0,16);
+        //E2P_RFM(flash_id,0,16);
         ProcHalfSec();
       }
       if (Flag.Clk & F_Sec) 
