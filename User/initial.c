@@ -432,8 +432,23 @@ unsigned short DoCrc16(unsigned short RegInit, unsigned char *message, unsigned 
 
 void VarInit(void)
 {
-  int i;
+  int i,j;
+  unsigned char tmp[88];
   SM.TestDisCnt = TESTDISCNT;
+  for(i=0;i<MAX_CH_NUM;++i)
+  {
+    if(GetPt_Event_Record(i,0,tmp))
+    {
+      memcpy(&SM.PQNum[i][3],tmp+6,4);
+    }
+    for(j=0;j<3;++j)
+    {
+      if(GetPn_Event_Record(i,j,0,tmp))
+      {
+        memcpy(&SM.PQNum[i][j],tmp+6,4);
+      }
+    }
+  }
 #if 0  
   for(i=0;i<8;++i)
   {

@@ -26,6 +26,109 @@
 #define EC_E2_W E2P_WAdj
 #define EC_E2_R E2P_RAdj
 
+short Get_CEVENT(int ch,int No,unsigned char *buf)
+{
+  if(ReadRecord(CEVENT0_USEADDR+ch*6,buf,No)==0)
+    return ONE_RECORD_LEN;
+  else
+    return 0;
+}
+short Save_CEVENT(int ch)
+{
+  unsigned int i,year;
+  unsigned char tmp_buf[64];  //秒、分、时、日、月、年、记录 
+  
+  if(Get_CEVENT(ch,0,tmp_buf))
+    memcpy(&i,tmp_buf+6,4);
+  else
+  {
+    i=0;
+  }
+  ++i;
+  MoveCurrentTimeBCD_Hex();
+  tmp_buf[0]=Clk.SecH;
+  tmp_buf[1]=Clk.MinH;
+  tmp_buf[2]=Clk.HourH;
+  tmp_buf[3]=Clk.DayH;
+  tmp_buf[4]=Clk.Month;
+  year = Clk.YearH;
+  year = year*256 + Clk.YearL;
+  tmp_buf[5]=year-2000;
+  memcpy(tmp_buf+6,&i,4);
+  LoadRecord(CEVENT0_USEADDR+ch*6,tmp_buf);
+  return 0;
+}
+
+int CEVENT_Record_Num(ch)
+{
+  int Num;
+  Num = Get_Record_Num(CEVENT0_USEADDR+ch*6);
+  return Num;
+}
+
+
+short Get_JIAOSHI(int No,unsigned char *buf)
+{
+  if(ReadRecord(TIME_USEADDR,buf,No)==0)
+    return ONE_RECORD_LEN;
+  else
+    return 0;
+}
+short Save_JIAOSHI(unsigned char *Time_buf)
+{
+  unsigned int i;
+  unsigned char tmp_buf[64];  //秒、分、时、日、月、年、记录 
+  if(Get_JIAOSHI(0,tmp_buf))
+    memcpy(&i,tmp_buf+6,4);
+  else
+  {
+    i=0;
+  }
+  ++i;
+  memcpy(tmp_buf,Time_buf,6);
+  memcpy(tmp_buf+6,&i,4);
+  LoadRecord(TIME_USEADDR,tmp_buf);
+  return 0;
+}
+
+int JIAOSHI_Record_Num()
+{
+  int Num;
+  Num = Get_Record_Num(TIME_USEADDR);
+  return Num;
+}
+
+
+void Clear_Save(int ch)
+{
+  unsigned short m_e2_ptr,m_e2_buf,year;
+  unsigned char ptr_buf[4],tmp_buf[64];
+  MoveCurrentTimeBCD_Hex();
+  tmp_buf[0]=Clk.SecH;
+  tmp_buf[1]=Clk.MinH;
+  tmp_buf[2]=Clk.HourH;
+  tmp_buf[3]=Clk.DayH;
+  tmp_buf[4]=Clk.Month;
+  year = Clk.YearH;
+  year = year*256 + Clk.YearL;
+  tmp_buf[5]=year-2000;
+  memcpy(tmp_buf+10,&Energy_Data[ch],ONE_RECORD_LEN-6);
+  LoadRecord(CH0_CLR_USEADDR+ch*48,tmp_buf);
+}
+
+int GetClear_num(int ch)
+{
+  int Num;
+  Num = Get_Record_Num(CH0_CLR_USEADDR+ch*48);
+  return Num;
+}
+
+int GetClear_Record(int ch,int No,unsigned char *buf)
+{
+  if(ReadRecord(CH0_CLR_USEADDR+ch*48,buf,No))
+    return 0;
+  return 88;
+}
 //第一个字节指针
 //第二个字节数量
 void Pn_Event_Save(int ch,int phase,unsigned char flag)
@@ -64,7 +167,8 @@ int GetPn_Event_num(int ch,int phase)
 
 int GetPn_Event_Record(int ch,int phase,int No,unsigned char *buf)
 {
-  ReadRecord(CH0_PAP_USEADDR+ch*78+phase*3,buf,No);
+  if(ReadRecord(CH0_PAP_USEADDR+ch*78+phase*3,buf,No))
+    return 0;
   ReadRecord(CH0_PAN_USEADDR+ch*78+phase*3,buf+42,No);
   return 88;
 }
@@ -82,6 +186,7 @@ void Pt_Event_Save(int ch)
   year = Clk.YearH;
   year = year*256 + Clk.YearL;
   tmp_buf[5]=year-2000;
+  SM.PQNum[ch][3]++;
   memcpy(tmp_buf+6,&SM.PQNum[ch][3],4);
   memcpy(tmp_buf+10,&Energy_Data[ch],32);
   LoadRecord(CH0_PTD_USEADDR+ch*78,tmp_buf);
@@ -96,7 +201,8 @@ int GetPt_Event_num(int ch)
 
 int GetPt_Event_Record(int ch,int No,unsigned char *buf)
 {
-  ReadRecord(CH0_PTD_USEADDR+ch*78,buf,No);
+  if(ReadRecord(CH0_PTD_USEADDR+ch*78,buf,No))
+    return 0;
   return 42;
 }
 
@@ -391,10 +497,15 @@ void Clear_E2R(int chan)
   if(chan==0)
   {
     chan=ECUnitNum;
+    for(i=0;i<MAX_CH_NUM;++i)
+    {
+      Clear_Save(i);
+    }
     i = 0; 
   }
   else
   {
+    Clear_Save(chan-1);
     i = 8*(chan-1);
     chan = 8*chan;
   }
@@ -408,6 +519,28 @@ void Clear_E2R(int chan)
   }
 }
 
+void Clear_EVTC(int chan)
+{
+  int i;
+  unsigned char ptr_buf[4];
+  memset(ptr_buf,0,4);
+  if(chan==0)
+  {
+    chan=48*MAX_CH_NUM;
+    i = 0; 
+  }
+  else
+  {
+    i = 48*(chan-1);
+    chan = 48*chan;
+  }
+  while(i<chan)
+  {
+    EC_E2_W(CH0_PAP_USEADDR+3*i,ptr_buf,2);
+    ++i;
+  }
+}
+
 void Clear_EVT2R(int chan)
 {
   int i;
@@ -415,17 +548,23 @@ void Clear_EVT2R(int chan)
   memset(ptr_buf,0,4);
   if(chan==0)
   {
-    chan=26*MAX_CH_NUM;
+    chan=16*MAX_CH_NUM;
+    for(i=0;i<MAX_CH_NUM;++i)
+    {
+      Save_CEVENT(i);
+    }
     i = 0; 
   }
   else
   {
-    i = 26*(chan-1);
-    chan = 26*chan;
+    Save_CEVENT(chan-1);
+    i = 16*(chan-1);
+    chan = 16*chan;
   }
   while(i<chan)
   {
-    EC_E2_W(LOAD0_USEADDR+3*i,ptr_buf,2);
+    if((i+1)%8)
+      EC_E2_W(CH0_PAP_USEADDR+3*i,ptr_buf,2);
     ++i;
   }
 }
@@ -592,7 +731,10 @@ void ProcSec(void)
       Read_ATTValue(ATAngleB,(unsigned char *)&SM.Angle_Ib[i],i);
       Read_ATTValue(ATAngleC,(unsigned char *)&SM.Angle_Ic[i],i);
     }
-#if  1   
+#if  1  
+    //Pn_Event_Save(0,1,1);
+    Pt_Event_Save(0);
+#else    
     for(i=0;i<MAX_CH_NUM;++i)
     {
       flag_p = SM.PQFlag[i]^SM.PQFlag_b[i];
@@ -747,8 +889,8 @@ void main(void)
         PwrOnInit();	
         InitPara();			
         InitPara5();
-        //Serial_Open(0,9600,8,UartParity_Disable);
-        Serial_Open(0,9600,8,UartParity_EVEN);
+        Serial_Open(0,9600,8,UartParity_Disable);
+        //Serial_Open(0,9600,8,UartParity_EVEN);
         Load_InfoData();
 	InitPara6();   
         InitIEC101Prot();
@@ -795,12 +937,15 @@ void main(void)
 #endif
         //EC_ClearA();
         //Read_E2R1();
+        //Clear_EVTC(0);
         Read_E2R();
         for(i=0;i<MAX_CH_NUM;i++)
         {
           ATT7022Init(i);	//Test
         }
         compensate_day();
+        Clear_E2R(0);
+        Clear_EVT2R(0);
         break;
       }	
       if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))

@@ -87,12 +87,12 @@ void LoadRecord( unsigned short E2_Addr,unsigned char *Buff)
   unsigned long Value;
   Point = Buff;
   
-  for(ChannelNo=0;ChannelNo<13;++ChannelNo)
+  for(ChannelNo=0;ChannelNo<15;++ChannelNo)
   {
       if(E2_Addr == ProfileTab[ChannelNo].PtAddr)
         break;
   }
-  if(ChannelNo>12)
+  if(ChannelNo>14)
     return;
   CurvePara = (CURVEPARA*)LongBuff;
   HT_FreeDog();
@@ -111,12 +111,12 @@ int ReadRecord( unsigned short E2_Addr,unsigned char *Buff,long LoadRecNo)
   CURVEPARA* CurvePara;
   long LoadAddr;
   if( LoadRecNo < 0 ) return 1;					//·Ç·¨
-  for(ChannelNo=0;ChannelNo<14;++ChannelNo)
+  for(ChannelNo=0;ChannelNo<15;++ChannelNo)
   {
       if(E2_Addr == ProfileTab[ChannelNo].PtAddr)
         break;
   }
-  if(ChannelNo>13)
+  if(ChannelNo>14)
     return 1;
   CurvePara = (CURVEPARA*)LongBuff;
   HT_FreeDog();
@@ -138,12 +138,12 @@ int Get_Record_Num(unsigned short E2_Addr)
   unsigned long LongBuff[9];
   unsigned short ChannelNo;
   CURVEPARA* CurvePara;	
-  for(ChannelNo=0;ChannelNo<10;++ChannelNo)
+  for(ChannelNo=0;ChannelNo<15;++ChannelNo)
   {
       if(E2_Addr == ProfileTab[ChannelNo].PtAddr)
         break;
   }
-  if(ChannelNo>9)
+  if(ChannelNo>14)
     return 0;
   CurvePara = (CURVEPARA*)LongBuff;
   HT_FreeDog();

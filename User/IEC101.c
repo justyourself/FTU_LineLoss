@@ -37,6 +37,172 @@ static int Blk_ptr;
 static int Record_no;
 static int Record_num;
 static int m_Channel_no;
+int Assamble_TimeMsgFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0;
+  unsigned long ul_val;     
+  sprintf(Out,"07,%04d%02d%02d_%02d:%02d:%02d,",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len = strlen(Out);
+  memcpy(&ul_val,In+6,4);
+  sprintf(tmp,"%d\r\n",ul_val);
+  memcpy(Out+Len,tmp,strlen(tmp));
+  Len += strlen(tmp);
+  return Len;
+}
+
+int Assamble_TimeXmlFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0;
+  unsigned long ul_val;     
+  sprintf(Out,"<DI eventType=\"07\"");
+  Len = strlen(Out);       
+  sprintf(Out+Len,"tm=\"%04d%02d%02d_%02d:%02d:%02d_00\" txt=\"",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len += strlen(Out+Len);
+  memcpy(&ul_val,In+6,4);
+  sprintf(tmp,"%d\"/>\r\n",ul_val);
+  memcpy(Out+Len,tmp,strlen(tmp));
+  Len += strlen(tmp);
+  return Len;
+}
+
+int Assamble_CEVENTMsgFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0;
+  unsigned long ul_val;     
+  sprintf(Out,"06,%04d%02d%02d_%02d:%02d:%02d,",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len = strlen(Out);
+  memcpy(&ul_val,In+6,4);
+  sprintf(tmp,"%d\r\n",ul_val);
+  memcpy(Out+Len,tmp,strlen(tmp));
+  Len += strlen(tmp);
+  return Len;
+}
+
+int Assamble_CEVENTXmlFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0;
+  unsigned long ul_val;     
+  sprintf(Out,"<DI eventType=\"06\"");
+  Len = strlen(Out);       
+  sprintf(Out+Len,"tm=\"%04d%02d%02d_%02d:%02d:%02d_00\" txt=\"",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len += strlen(Out+Len);
+  memcpy(&ul_val,In+6,4);
+  sprintf(tmp,"%d\"/>\r\n",ul_val);
+  memcpy(Out+Len,tmp,strlen(tmp));
+  Len += strlen(tmp);
+  return Len;
+}
+
+int Assamble_CMsgFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0,i;
+  unsigned long ul_val;
+  float f_val;
+  sprintf(Out,"%02d,",5);
+  Len=3;
+  sprintf(Out+Len,"%04d-%02d-%02d %02d:%02d:%02d,",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len = strlen(Out);
+  //memcpy(&ul_val,In+6,4);
+  ul_val = 0;
+  sprintf(tmp,"%d,8",ul_val);
+  if(strlen(tmp)>=8)
+  {
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  else
+  {
+    memset(Out+Len,' ',8-strlen(tmp));
+    Len += 8-strlen(tmp);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = f_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  memcpy(Out+Len,"\r\n",2);
+  Len +=2;
+  return Len;
+}
+
+
+int Assamble_CXmlFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0,i;
+  unsigned long ul_val;
+  float f_val;
+  sprintf(Out,"<DI eventType=\"05\"");
+  Len = strlen(Out);
+  sprintf(Out+Len,"tm=\"%04d%02d%02d_%02d:%02d:%02d_00\" txt=\"",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len += strlen(Out+Len);
+  //memcpy(&ul_val,In+6,4);
+  ul_val = 1;
+  sprintf(tmp,"%d,8",ul_val);
+  if(strlen(tmp)>=8)
+  {
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  else
+  {
+    memset(Out+Len,' ',8-strlen(tmp));
+    Len += 8-strlen(tmp);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = f_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  memcpy(Out+Len,"\"/>\r\n",5);
+  Len +=5;
+   return Len;
+}
 //307
 int Assamble_XmlFormat(int sect,char *In,char *Out)
 {
@@ -51,7 +217,7 @@ int Assamble_XmlFormat(int sect,char *In,char *Out)
   {
     memcpy(&ul_val,In+6+i*4,4);
     f_val = ul_val;
-    f_val = ul_val/1000;
+    f_val = f_val/1000;
     sprintf(tmp,"\t\t<DI val=\"%.3f\"/>\r\n",f_val);
     memcpy(Out+Len,tmp,strlen(tmp));
     Len += strlen(tmp);
@@ -92,7 +258,7 @@ int Assamble_MsgFormat(int sect,char *In,char *Out)
     Len += strlen(tmp);
     memcpy(&ul_val,In+6+i*4,4);
     f_val = ul_val;
-    f_val = ul_val/1000;
+    f_val = f_val/1000;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -150,7 +316,7 @@ int Assamble_PnMsgFormat(int sect,char *In,char *Out)
   sprintf(Out+Len,"%04d-%02d-%02d %02d:%02d:%02d,",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
   Len = strlen(Out);
   memcpy(&ul_val,In+6,4);
-  sprintf(tmp,"%d",ul_val);
+  sprintf(tmp,"%d,8",ul_val);
   if(strlen(tmp)>=8)
   {
     memcpy(Out+Len,tmp,strlen(tmp));
@@ -163,7 +329,7 @@ int Assamble_PnMsgFormat(int sect,char *In,char *Out)
     memcpy(Out+Len,tmp,strlen(tmp));
     Len += strlen(tmp);
   }
-  Out[Len++]=0x38;
+//  Out[Len++]=0x38;
   for(i=0;i<8;++i)
   {
     sprintf(tmp,",%04X,",0x6401+i);
@@ -171,7 +337,7 @@ int Assamble_PnMsgFormat(int sect,char *In,char *Out)
     Len += strlen(tmp);
     memcpy(&ul_val,In+10+i*4,4);
     f_val = ul_val;
-    f_val = ul_val/1000;
+    f_val = f_val/1000;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -195,7 +361,7 @@ int Assamble_PnMsgFormat(int sect,char *In,char *Out)
     Len += strlen(tmp);
     memcpy(&ul_val,In+10+i*4,4);
     f_val = ul_val;
-    f_val = ul_val/1000;
+    f_val = f_val/1000;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -226,7 +392,7 @@ int Assamble_PtMsgFormat(char *In,char *Out)
   sprintf(Out+Len,"%04d-%02d-%02d %02d:%02d:%02d,",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
   Len = strlen(Out);
   memcpy(&ul_val,In+6,4);
-  sprintf(tmp,"%d",ul_val);
+  sprintf(tmp,"%d,8",ul_val);
   if(strlen(tmp)>=8)
   {
     memcpy(Out+Len,tmp,strlen(tmp));
@@ -239,7 +405,8 @@ int Assamble_PtMsgFormat(char *In,char *Out)
     memcpy(Out+Len,tmp,strlen(tmp));
     Len += strlen(tmp);
   }
-  Out[Len++]=0x38;
+//  Out[++Len]=',';
+//  Out[++Len]=0x38;
   for(i=0;i<8;++i)
   {
     sprintf(tmp,",%04X,",0x6401+i);
@@ -247,7 +414,7 @@ int Assamble_PtMsgFormat(char *In,char *Out)
     Len += strlen(tmp);
     memcpy(&ul_val,In+10+i*4,4);
     f_val = ul_val;
-    f_val = ul_val/1000;
+    f_val = f_val/1000;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -264,6 +431,133 @@ int Assamble_PtMsgFormat(char *In,char *Out)
   }
   memcpy(Out+Len,"\r\n",2);
   Len +=2;
+  return Len;
+}
+
+int Assamble_PtXmlFormat(char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0,i;
+  unsigned long ul_val;
+  float f_val;
+  sprintf(Out,"<DI eventType=\"04\"");
+  Len = strlen(Out);
+  sprintf(Out+Len,"tm=\"%04d%02d%02d_%02d:%02d:%02d_00\" txt=\"",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len += strlen(Out+Len);
+  memcpy(&ul_val,In+6,4);
+  sprintf(tmp,"%d,8",ul_val);
+  if(strlen(tmp)>=8)
+  {
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  else
+  {
+    memset(Out+Len,' ',8-strlen(tmp));
+    Len += 8-strlen(tmp);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+//  Out[Len++]=0x38;
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = f_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  memcpy(Out+Len,"\"/>\r\n",5);
+  Len +=5;
+   return Len;
+}
+
+int Assamble_PnXmlFormat(int ch,int phase,char *In,char *Out)
+{
+  char tmp[64];
+  int Len=0,i;
+  unsigned long ul_val;
+  float f_val;
+  sprintf(Out,"<DI eventType=\"%02d\"",phase+1);
+  Len = strlen(Out);       
+  sprintf(Out+Len,"tm=\"%04d%02d%02d_%02d:%02d:%02d_00\" txt=\"",2000+In[5],In[4],In[3],In[2],In[1],In[0]);
+  Len += strlen(Out+Len);
+  ul_val=GetPn_Event_num(ch,phase);
+  sprintf(tmp,"%d",ul_val);
+  if(strlen(tmp)>=8)
+  {
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  else
+  {
+    memset(Out+Len,' ',8-strlen(tmp));
+    Len += 8-strlen(tmp);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+  }
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = f_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  sprintf(Out+Len,",%04d-%02d-%02d %02d:%02d:%02d",2000+In[47],In[46],In[45],In[44],In[43],In[42]);
+  Len = strlen(Out);
+  for(i=0;i<8;++i)
+  {
+    sprintf(tmp,",%04X,",0x6401+i);
+    memcpy(Out+Len,tmp,strlen(tmp));
+    Len += strlen(tmp);
+    memcpy(&ul_val,In+10+i*4,4);
+    f_val = ul_val;
+    f_val = f_val/1000;
+    sprintf(tmp,"%.3f",f_val);
+    if(strlen(tmp)>=8)
+    {
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+    else
+    {
+      memset(Out+Len,' ',8-strlen(tmp));
+      Len += 8-strlen(tmp);
+      memcpy(Out+Len,tmp,strlen(tmp));
+      Len += strlen(tmp);
+    }
+  }
+  memcpy(Out+Len,"\"/>\r\n",5);
+  Len +=5;
   return Len;
 }
 
@@ -427,6 +721,20 @@ int Send_XmlDataType3(char * buf)
     \t\t<DI ioa=\"16395\" type=\"float\" unit=\"W\" />\r\n \
   \t</DataAttr>\r\n");
     return byMsgNum;
+}
+                         
+                         //160
+int Send_EventDXmlFile_Head(char *buf)
+{
+      int byMsgNum=0;
+      char tmp[64];
+      strcpy(buf + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"");
+      strcpy(buf + byMsgNum,"EVENTD");
+      byMsgNum += strlen("EVENTD");
+      strcpy(buf + byMsgNum,"\" fileVer=\"1.00\" devID=\"201709030019\" />\r\n");
+      byMsgNum += strlen("\" fileVer=\"1.00\" devID=\"201709030019\" />\r\n");
+      return byMsgNum;
 }
 #define YX_BIT   0x80
 u8 GetYx(u16 wYxTNo,u8 yx_bit)
@@ -1149,6 +1457,19 @@ void Iec101LinkRecvPro(void)
 //ÏòCANÍøÐ£Ê±
 void SettimeToCan(u8* pbyBuf)
 { 
+  unsigned char Time_buf[8];
+    unsigned short year;
+
+    MoveCurrentTimeBCD_Hex();
+    Time_buf[0]=Clk.SecH;
+    Time_buf[1]=Clk.MinH;
+    Time_buf[2]=Clk.HourH;
+    Time_buf[3]=Clk.DayH;
+    Time_buf[4]=Clk.Month;
+    year = Clk.YearH;
+    year = year*256 + Clk.YearL;
+    Time_buf[5]=year-2000;
+    Save_JIAOSHI(Time_buf);
 #if 0
         unsigned short wTotalMs;
 	wTotalMs = (unsigned short)pbyBuf[1];
@@ -2579,7 +2900,26 @@ u8 SendFileInfo(u8 bySendReason)
       }
       if(strstr(lpIEC101->Fname,"EVENTD"))
       {
-        Record_num=GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)+GetPn_Event_num(m_Channel_no,2);
+        lpIEC101->pa_num = GetPn_Event_num(m_Channel_no,0);
+        if(lpIEC101->pa_num>10)
+          lpIEC101->pa_num = 10;
+        lpIEC101->pb_num = GetPn_Event_num(m_Channel_no,1);
+        if(lpIEC101->pb_num>10)
+          lpIEC101->pb_num = 10;
+        lpIEC101->pc_num = GetPn_Event_num(m_Channel_no,2);
+        if(lpIEC101->pc_num>10)
+          lpIEC101->pc_num = 10;
+        lpIEC101->pt_num = GetPt_Event_num(m_Channel_no);
+        if(lpIEC101->pt_num>10)
+          lpIEC101->pt_num = 10;
+        lpIEC101->ptt_num= JIAOSHI_Record_Num();
+        if(lpIEC101->ptt_num>10)
+          lpIEC101->ptt_num = 10;
+        lpIEC101->pcc_num=GetClear_num(m_Channel_no);
+        if(lpIEC101->pcc_num>10)
+          lpIEC101->pcc_num = 10;
+        lpIEC101->pce_num = CEVENT_Record_Num(m_Channel_no);
+        Record_num=lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->ptt_num+lpIEC101->pcc_num+lpIEC101->pce_num;
       }
   }
 #endif  
@@ -2657,19 +2997,41 @@ u8 SendFileData(u8 bySendReason)
         }
         if(strstr(lpIEC101->Fname,"EVENTD"))
         {
-          if(Record_no<GetPn_Event_num(m_Channel_no,0))
+          if(Record_no<lpIEC101->pa_num)
           {
             GetPn_Event_Record(m_Channel_no,0,Record_no,tmpbuf);
+            Blk_size=Assamble_PnMsgFormat(1,tmpbuf,Block_buf);
           }
-          else if(Record_no<(GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)))
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num))
           {
-            GetPn_Event_Record(m_Channel_no,1,Record_no-GetPn_Event_num(m_Channel_no,0),tmpbuf);
+            GetPn_Event_Record(m_Channel_no,1,Record_no-lpIEC101->pa_num,tmpbuf);
+            Blk_size=Assamble_PnMsgFormat(2,tmpbuf,Block_buf);
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num))
+          {
+            GetPn_Event_Record(m_Channel_no,2,Record_no-lpIEC101->pa_num-lpIEC101->pb_num,tmpbuf);
+            Blk_size=Assamble_PnMsgFormat(3,tmpbuf,Block_buf);
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num)) 
+          {
+            GetPt_Event_Record(m_Channel_no,Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num,tmpbuf);
+            Blk_size=Assamble_PtMsgFormat(tmpbuf,Block_buf);
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pcc_num))
+          {
+            GetClear_Record(m_Channel_no,Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num-lpIEC101->pt_num,tmpbuf);
+            Blk_size=Assamble_CMsgFormat(tmpbuf,Block_buf);
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pcc_num+lpIEC101->pce_num))
+          {
+            Get_CEVENT(m_Channel_no,Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num-lpIEC101->pt_num-lpIEC101->pcc_num,tmpbuf);
+            Blk_size=Assamble_CEVENTMsgFormat(tmpbuf,Block_buf);
           }
           else
           {
-            GetPn_Event_Record(m_Channel_no,2,Record_no-GetPn_Event_num(m_Channel_no,0)-GetPn_Event_num(m_Channel_no,1),tmpbuf);
+            Get_JIAOSHI(Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num-lpIEC101->pt_num-lpIEC101->pcc_num-lpIEC101->pce_num,tmpbuf);
+            Blk_size=Assamble_TimeMsgFormat(tmpbuf,Block_buf);
           }
-          Blk_size=Assamble_PnMsgFormat(1,tmpbuf,Block_buf);
         }
         else
         {
@@ -2730,6 +3092,11 @@ u8 SendFileData(u8 bySendReason)
       else if(strstr(lpIEC101->Fname,"MONTHD"))
       {
         byMsgNum +=Send_MonthdXmlFile_Head(lpby + byMsgNum);
+      }
+      else if(strstr(lpIEC101->Fname,"EVENTD"))
+      {
+        byMsgNum +=Send_EventDXmlFile_Head(lpby + byMsgNum);
+        lpIEC101->byPSGenStep = 5;
       }
       //strcpy(lpby + byMsgNum,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
       //byMsgNum += strlen("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DataFile>\r\n\t<Header fileType=\"FIXD\" fileVer=\"1.00\" devName=\"201709030019\" />\r\n\t<DataAttr dataNum=\"12\" sectNum=\"96\" interval=\"15min\">\r\n");
@@ -2845,8 +3212,161 @@ u8 SendFileData(u8 bySendReason)
       {
         Get_MonthData(Record_no,m_Channel_no,tmpbuf);
       }
+      else if(strstr(lpIEC101->Fname,"EVENTD"))
+      {
+          if(Record_no<lpIEC101->pa_num)
+          {
+            GetPn_Event_Record(m_Channel_no,0,Record_no,tmpbuf);
+            if(Record_no==0)
+            {
+              sprintf(Block_buf,"<DataRec num=\"%02d\">\r\n",lpIEC101->pa_num);
+              Blk_size = Assamble_PnXmlFormat(m_Channel_no,0,tmpbuf,Block_buf+20);
+              Blk_size += 20;
+            }
+            else
+              Blk_size=Assamble_PnXmlFormat(m_Channel_no,0,tmpbuf,Block_buf);
+            if((Record_no>=(lpIEC101->pa_num-1)))
+            {
+              //Record_no = GetPn_Event_num(m_Channel_no,0)-1;
+              strcpy(Block_buf + Blk_size,"</DataRec>\r\n");
+              Blk_size += strlen("</DataRec>\r\n");
+            }
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num))
+          {
+            GetPn_Event_Record(m_Channel_no,1,Record_no-lpIEC101->pa_num,tmpbuf);
+            if(Record_no==lpIEC101->pa_num)
+            { 
+              sprintf(Block_buf,"<DataRec num=\"%02d\">\r\n",lpIEC101->pb_num);
+              Blk_size = Assamble_PnXmlFormat(m_Channel_no,1,tmpbuf,Block_buf+20);
+              Blk_size += 20;
+            }
+            else
+            {
+              Blk_size=Assamble_PnXmlFormat(m_Channel_no,1,tmpbuf,Block_buf);
+            }
+            if(Record_no>=(lpIEC101->pa_num+lpIEC101->pb_num-1))
+            {
+              //Record_no = GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)-1;
+              strcpy(Block_buf + Blk_size,"</DataRec>\r\n");
+              Blk_size += strlen("</DataRec>\r\n");
+            }
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num))
+          {
+            GetPn_Event_Record(m_Channel_no,2,Record_no-lpIEC101->pa_num-lpIEC101->pb_num,tmpbuf);
+            if(Record_no==(lpIEC101->pa_num+lpIEC101->pb_num))
+            { 
+
+              sprintf(Block_buf,"<DataRec num=\"%02d\">\r\n",lpIEC101->pc_num);
+              Blk_size = Assamble_PnXmlFormat(m_Channel_no,2,tmpbuf,Block_buf+20);
+              Blk_size += 20;
+            }
+            else
+            {
+              Blk_size=Assamble_PnXmlFormat(m_Channel_no,2,tmpbuf,Block_buf);
+            }
+            if(Record_no>=(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num-1))
+            {
+              //Record_no = GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)+GetPn_Event_num(m_Channel_no,2)-1;
+              strcpy(Block_buf + Blk_size,"</DataRec>\r\n");
+              Blk_size += strlen("</DataRec>\r\n");
+            }
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num))
+          {
+            GetPt_Event_Record(m_Channel_no,Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num,tmpbuf);
+            
+            if(Record_no==(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num))
+            { 
+
+              sprintf(Block_buf,"<DataRec num=\"%02d\">\r\n",lpIEC101->pt_num);
+              Blk_size = Assamble_PtXmlFormat(tmpbuf,Block_buf+20);
+              Blk_size += 20;
+            }
+            else
+            {
+              Blk_size=Assamble_PtXmlFormat(tmpbuf,Block_buf);
+            }
+            if(Record_no>=(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num-1))
+            {
+              //Record_no = GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)+GetPn_Event_num(m_Channel_no,2)-1;
+              strcpy(Block_buf + Blk_size,"</DataRec>\r\n");
+              Blk_size += strlen("</DataRec>\r\n");
+            }
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pcc_num))
+          {
+            GetClear_Record(m_Channel_no,Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num-lpIEC101->pt_num,tmpbuf);
+            if(Record_no==(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num))
+            { 
+
+              sprintf(Block_buf,"<DataRec num=\"%02d\">\r\n",lpIEC101->pcc_num);
+              Blk_size = Assamble_CXmlFormat(tmpbuf,Block_buf+20);
+              Blk_size += 20;
+            }
+            else
+            {
+              Blk_size=Assamble_CXmlFormat(tmpbuf,Block_buf);
+            }
+            if(Record_no>=(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pcc_num-1))
+            {
+              //Record_no = GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)+GetPn_Event_num(m_Channel_no,2)-1;
+              strcpy(Block_buf + Blk_size,"</DataRec>\r\n");
+              Blk_size += strlen("</DataRec>\r\n");
+            }
+          }
+          else if(Record_no<(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pcc_num+lpIEC101->pce_num))
+          {
+            Get_CEVENT(m_Channel_no,Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num-lpIEC101->pt_num-lpIEC101->pcc_num,tmpbuf);
+            if(Record_no==(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pcc_num))
+            {
+//              if(JIAOSHI_Record_Num()>10)
+//                i=10;
+//              else
+//                i=JIAOSHI_Record_Num();
+              sprintf(Block_buf,"<DataRec num=\"%02d\">\r\n",lpIEC101->pce_num);
+              Blk_size = Assamble_CEVENTXmlFormat(tmpbuf,Block_buf+20);
+              Blk_size += 20;
+            }
+            else
+            {
+              Blk_size=Assamble_CEVENTXmlFormat(tmpbuf,Block_buf);
+            }
+            if(Record_no>=(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pce_num+lpIEC101->pcc_num-1))
+            {
+              strcpy(Block_buf + Blk_size,"</DataRec>\r\n");
+              Blk_size += strlen("</DataRec>\r\n");
+            }
+          }
+          else
+          {
+            Get_JIAOSHI(Record_no-lpIEC101->pa_num-lpIEC101->pb_num-lpIEC101->pc_num-lpIEC101->pt_num-lpIEC101->pcc_num-lpIEC101->pce_num,tmpbuf);
+            if(Record_no==(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->pcc_num+lpIEC101->pce_num))
+            {
+//              if(JIAOSHI_Record_Num()>10)
+//                i=10;
+//              else
+//                i=JIAOSHI_Record_Num();
+              sprintf(Block_buf,"<DataRec num=\"%02d\">\r\n",lpIEC101->ptt_num);
+              Blk_size = Assamble_TimeXmlFormat(tmpbuf,Block_buf+20);
+              Blk_size += 20;
+            }
+            else
+            {
+              Blk_size=Assamble_TimeXmlFormat(tmpbuf,Block_buf);
+            }
+            if(Record_no>=(lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->ptt_num+lpIEC101->pcc_num+lpIEC101->pce_num-1))
+            {
+              //Record_no = GetPn_Event_num(m_Channel_no,0)+GetPn_Event_num(m_Channel_no,1)+GetPn_Event_num(m_Channel_no,2)+JIAOSHI_Record_Num()-1;
+              strcpy(Block_buf + Blk_size,"</DataRec>\r\n");
+              Blk_size += strlen("</DataRec>\r\n");
+            }   
+          }
+      }
           Record_no++;
-          Blk_size=Assamble_XmlFormat(Record_no,tmpbuf,Block_buf);
+          if(strstr(lpIEC101->Fname,"EVENTD")==0)
+            Blk_size=Assamble_XmlFormat(Record_no,tmpbuf,Block_buf);
           Blk_ptr=0;
         }
         if(Record_no>=Record_num)
@@ -3533,7 +4053,7 @@ void InitIEC101Prot(void)
     lpIEC101->initstatus = notinit;
     lpIEC101->haveset = FALSE;
     lpIEC101->FlagPingH = 1;
-    lpIEC101->UnsolTimeInterval=0;
+    lpIEC101->UnsolTimeInterval=3;
     lpIEC101->firstData = nofirstdata;
    
     

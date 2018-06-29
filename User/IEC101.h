@@ -128,6 +128,13 @@ struct IEC101_STRUCT
   u16 SendYcN;
   long byRange;
   long nLastYcVal[32];
+  u8 pa_num;
+  u8 pb_num;
+  u8 pc_num;
+  u8 pt_num;
+  u8 pce_num;
+  u8 pcc_num;
+  u8 ptt_num;
 };
 #ifndef INT
 #define INT signed int
