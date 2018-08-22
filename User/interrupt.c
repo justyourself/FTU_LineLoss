@@ -585,7 +585,7 @@ void TIMER_0_IRQHandler()
 
         HT_TMR_ClearITPendingBit(HT_TMR0, TMR_TMRIF_CMPIF);                    /*!< 清除中断标志       */         
     } 
-    SM.CalibCount++;
+    //SM.CalibCount++;
     Iec101WatchTime();
 }
 
@@ -791,7 +791,7 @@ void RTC_IRQHandler()
         SM.PowerUpTime++;
       }
     }       
-    
+#if 0    
     if(Flag_RTC & RTC_RTCIF_MINIF)                                     /*!< 分中断                */
     {
        
@@ -811,7 +811,7 @@ void RTC_IRQHandler()
     {
        
     }  
-
+#endif
                                    /*!< RTC定时器1中断        */
     if((Flag_RTC & RTC_RTCIF_RTC1IF)&&(HT_RTC->RTCIE&RTC_RTCIE_RTC1IE))                                    /*!< RTC定时器1中断        */
     {
@@ -821,7 +821,7 @@ void RTC_IRQHandler()
 	HT_WDT->WDTCLR = 0xAAFF;        //16s     //看门狗喂狗//					
       }	
     }
-
+#if 0
     if(Flag_RTC & RTC_RTCIF_RTC2IF)                                    /*!< RTC定时器2中断        */
     {
        
@@ -830,7 +830,8 @@ void RTC_IRQHandler()
     if(Flag_RTC & RTC_RTCIF_ALMIF)                                     /*!< 闹钟中断              */
     {
        
-    }      
+    }  
+#endif
 }
 
 /*

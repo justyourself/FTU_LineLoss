@@ -213,7 +213,10 @@ short Save_Data(unsigned char *Time_buf)
   memcpy(tmp_buf,Time_buf,6);
   for(i=0;i<MAX_CH_NUM;++i)
   {
-    Insert_Push(LOAR_TYPE,i);
+    if(SM.CalibCount != CALIBCOUNT1)
+    {
+      Insert_Push(LOAR_TYPE,i);
+    }
     memcpy(tmp_buf+6,&Energy_Data[i],ONE_RECORD_LEN-6);
     LoadRecord(LOAD0_USEADDR+i*30,tmp_buf);
   }
@@ -263,6 +266,9 @@ short Get_DayData(int No,int ch,unsigned char *buf)
   ReadRecord(FRZD0_USEADDR+30*ch,buf,No);
   return ONE_RECORD_LEN;
 }
+
+
+
 
 void compensate_day()
 {
@@ -378,6 +384,54 @@ short Get_MonthData(int No,int ch,unsigned char *buf)
   ReadRecord(MOND0_USEADDR+30*ch,buf,No);
   return E2ONE_RECORD_LEN;
 }
+
+
+void compensate_month()
+{
+ unsigned char tmp_buf[ONE_RECORD_SIZE]; 
+ unsigned char time_buf[8];
+ int year;
+ int i,j,k;
+ for(i=0;i<MAX_CH_NUM;++i)
+ {
+   ReadRecord(MOND0_USEADDR+30*i,tmp_buf,0);
+   memcpy(time_buf,tmp_buf,6); 
+   tmp_buf[3] = Clk.DayH;
+   tmp_buf[4] = Clk.Month;
+   year = Clk.YearH;
+   year = year*256 + Clk.YearL;
+   tmp_buf[5]=year-2000;
+   for(j=0;j<12;++j)
+   {
+     if((tmp_buf[4] == time_buf[4]) && (tmp_buf[5] == time_buf[5]))
+     {
+       break;
+     }
+     --tmp_buf[4];
+     if(tmp_buf[4]==0)
+     {
+       tmp_buf[4] = 12;
+       --tmp_buf[5];
+     }
+   }
+   memcpy(tmp_buf+6,&Energy_Data[i],E2ONE_RECORD_LEN-6);
+   for(j=0;j<12;++j)
+   {
+     if((tmp_buf[4] == Clk.Month) && (tmp_buf[5] == (year-2000)))
+     {
+       break;
+     }
+     ++tmp_buf[4];
+     if(tmp_buf[4]>12)
+     {
+       tmp_buf[4] = 1;
+       ++tmp_buf[5];
+     }	
+     LoadRecord(MOND0_USEADDR+i*30,tmp_buf);
+   }
+ }
+}
+
 
 int Month_Record_Num()
 {
@@ -595,15 +649,17 @@ void ProcHalfSec(void)
     ATT7022RdReg(ATPZ,(unsigned char*)&tmp_p,i);
     tmp_p &= 0xffffff;
     if(tmp_p)
-    if(SM.State[i]&0x1000)
     {
-      ECP.PL_CumPn[i] += tmp_p;
-      ECP.PL_ChkPn[i]=ChkNum((unsigned char*)&ECP.PL_CumPn[i],2);
-    }
-    else
-    {
-      ECP.PL_CumPp[i] += tmp_p;
-      ECP.PL_ChkPp[i]=ChkNum((unsigned char*)&ECP.PL_CumPp[i],2);
+      if(SM.State[i]&0x1000)
+      {
+        ECP.PL_CumPn[i] += tmp_p;
+        ECP.PL_ChkPn[i]=ChkNum((unsigned char*)&ECP.PL_CumPn[i],2);
+      }
+      else
+      {
+        ECP.PL_CumPp[i] += tmp_p;
+        ECP.PL_ChkPp[i]=ChkNum((unsigned char*)&ECP.PL_CumPp[i],2);
+      }
     }
     ATT7022RdReg(ATQZ,(unsigned char*)&tmp_p,i);
     tmp_p &= 0xffffff;
@@ -731,7 +787,7 @@ void ProcSec(void)
       Read_ATTValue(ATAngleB,(unsigned char *)&SM.Angle_Ib[i],i);
       Read_ATTValue(ATAngleC,(unsigned char *)&SM.Angle_Ic[i],i);
     }
-#if  1  
+#if  0  
     //Pn_Event_Save(0,1,1);
     Pt_Event_Save(0);
 #else    
@@ -812,6 +868,7 @@ void ProcMin(void)
     }
     Load_InfoData();
     Save_RandData(Time_buf);
+    ATT7022EStateCheckRun(Clk.MinH%MAX_CH_NUM);
 }	
 
 /***************************************************
@@ -883,6 +940,7 @@ void main(void)
     MoveCurrentTimeBCD_Hex();																									//10.11.22
     while (1)
     {
+      //GetTime();
       HT_FreeDog();						
       if(((Flag.Power & F_PwrUp) == 0) && ( PowerCheck() == 1 ))		
       {
@@ -935,6 +993,13 @@ void main(void)
         E2P_WData(ShrpdRecord_Time,flash_id,8);
         E2P_WData(MonthdRecord_Time,flash_id,8);
 #endif
+//        flash_id[0] = 0x20;
+//        flash_id[1] = 0x18;
+//        flash_id[2] = 0x07;
+//        flash_id[3] = 0x19;
+//        flash_id[4] = 0x00;
+//        flash_id[5] = 0x01;
+//        EC_E2_W(ID_ADDR,flash_id,6);
         //EC_ClearA();
         //Read_E2R1();
         //Clear_EVTC(0);
@@ -944,8 +1009,9 @@ void main(void)
           ATT7022Init(i);	//Test
         }
         compensate_day();
-        Clear_E2R(0);
-        Clear_EVT2R(0);
+        compensate_month();
+       // Clear_E2R(0);
+       // Clear_EVT2R(0);
         break;
       }	
       if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))
@@ -982,12 +1048,15 @@ void main(void)
       {	
         IEC101Process();
       }			
-      
+#if 0     
       if(((Flag.Power & F_PwrUp) == 0))
       { 
+        unsigned int wakeif;
         Flag.Run |= F_Hold;
-        EnterHold();						
-        if((HT_PMU->WAKEIF&0x001000f4))
+        EnterHold();
+        wakeif = HT_PMU->WAKEIF;
+        //if((HT_PMU->WAKEIF&0x001000f4))
+        if(wakeif&0x001000f4)
         {	
           if((Flag.Run & F_Hold)!=0)
           {
@@ -996,7 +1065,8 @@ void main(void)
             HT_FreeDog();						
           }
         }				
-      }		
+      }
+#endif      
     }
   }
 }	

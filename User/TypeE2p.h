@@ -73,6 +73,8 @@
 #define	CEVENT0_USEADDR                   TIME_USEADDR+3
 #define	CEVENT0_CURADDR                   CEVENT0_USEADDR+3
 
+#define	ID_ADDR                           CEVENT0_CURADDR+3
+
 #define ErrorRegAddr			  E2P_PGLEN-0x800
 
 #define E2P_PGLEN		          0x100

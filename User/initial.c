@@ -76,19 +76,20 @@ void fnTarget_Init(void)
   GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
   HT_GPIO_Init(HT_GPIOC, &GPIO_InitStructure);
 #endif  
-
+ // HT_RTC->RTCRSTSET = 0xAAAA;
+//  HT_RTC->RTCRSTSET = 0x5555;
   HT_RTC->RTCTMR1 = 0x00000000;		//(X+1)*1S
-  HT_RTC->RTCCON |= RTC_RTCCON_RTC1EN;
-  HT_RTC->RTCIE = RTC_RTCIE_RTC1IE + RTC_RTCIE_SECIE;
+  HT_RTC->RTCCON &= ~RTC_RTCCON_RTC1EN;
+  HT_RTC->RTCIE = RTC_RTCIE_SECIE;
   HT_RTC->RTCIF = 0x00000000;
   NVIC_EnableIRQ(RTC_IRQn);		//使能中断
   __enable_irq();
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
   GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
   GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
-  HT_GPIO_Init(HT_GPIOB, &GPIO_InitStructure);
-  HT_GPIOB->PTSET |=  GPIO_Pin_5;
+  HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure);
+  HT_GPIOA->PTSET |=  GPIO_Pin_4;
 }
 void PwrOnInit(void)
 {
@@ -483,16 +484,20 @@ void VarInit(void)
   //MSpec.RMeterConst = 100000;
   //MSpec.R7022E_HFConst = 4;
   //脉冲常数100000
+  //20000
+  MSpec.RMeterConst = 20000;
+  MSpec.R7022E_HFConst = 20;
   //1000
   /*
   MSpec.RMeterConst = 1000;
   MSpec.R7022E_HFConst = 400;
   */
   //10000
-  MSpec.RMeterConst = 10000;
-  MSpec.R7022E_HFConst = 40;
+ // MSpec.RMeterConst = 10000;
+//  MSpec.R7022E_HFConst = 40;
   MSpec.RBaseCurrent = 1000;
-  MSpec.RPW00002Ib = 4600;
+  MSpec.RPW00002Ib = 1000;
+  MSpec.R7022E_PStartup = 1;
 }
 
 void HW_ON( void )

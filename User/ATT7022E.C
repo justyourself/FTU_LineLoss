@@ -478,7 +478,7 @@ void ATT7022Init(unsigned short Devads)
   SM.CalibCount = 0;
   udelay(500); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
-  udelay(4500);
+  udelay(25000);
   //SetIDefault(Devads);//zzltest
   HFConstHL = MSpec.R7022E_HFConst;	//新国网		//13.08.30
   
@@ -727,6 +727,11 @@ unsigned char ComAdjWrite(unsigned char* ComBuf ,unsigned short Devads)
 //    *ComBuf = 0xFF;
 //    return RS_State_IVData;
 //  }
+  if(SM.CalibCount != CALIBCOUNT1)
+  {
+    *ComBuf = 0xFF;
+    return RS_State_IVData;
+  }
   if((( Temp >= PgainA )&&(Temp <= PgainC))||(( Temp >= PhsregA0 )&&(Temp <= PhsregC1))
 #if ( NEW7022E == YesCheck )
      ||(( Temp >= PhsregA2 )&&(Temp <= PhsregC2))||( Temp == Iregion1 )||( Temp == TPSoffset )
@@ -865,7 +870,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   }	
   
   A0001Ib = MSpec.RBaseCurrent / 1000;	//新国网		//13.08.30
-  A0002Ib = MSpec.RBaseCurrent / 500;		//新国网		//13.08.30
+  A0002Ib = MSpec.RBaseCurrent / 500;  //新国网		//13.08.30
   PS32 = MSpec.RMeterConst / 100;			//新国网		//13.08.30	
   HFConstHL = MSpec.R7022E_HFConst;		//新国网		//13.08.30	
   PW00002Ib = MSpec.RPW00002Ib;			//新国网		//13.08.30
@@ -905,12 +910,12 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
 //LValue = ( LValue * 6328125 ) / ( (unsigned long)HFConstHL * PS32 * 2048 );		//PS32大了10倍
 //#else
 ////LValue = ( LValue * 253125 * 10 ) / ( (unsigned long)HFConstHL * PS32 * 8192 );			//Lvalue = Lvalue*2.592*10^10/(HFconst*EC*2^23)
-    LValue = ( LValue * 1265625 ) / ( (unsigned long)HFConstHL * PS32 * 4096 );			//Lvalue = Lvalue*2.592*10^10/(HFconst*EC*2^23)
+    LValue = ( LValue * 1265625) / ( (unsigned long)HFConstHL * PS32 * 4096 );			//Lvalue = Lvalue*2.592*10^10/(HFconst*EC*2^23)
 //#endif		
     Value = LValue;		
 #if ( LinkMode == Phase3Wire4 )
 //				if( Value < (PW00002Ib/3) ) {Value = 0; i =0;}               //0.5W       
-    if( Value < (PW00002Ib) ) {Value = 0; i =0;}               //0.5W  	//新国网		//13.08.30          
+ //   if( Value < (PW00002Ib) ) {Value = 0; i =0;}               //0.5W  	//新国网		//13.08.30          
 #else
 //				if( Value < PW00002IbPh ) {Value = 0; i =0;}               //0.5W       
     //if( Value < PW00002Ib ) {Value = 0; i =0;}               //0.5W   	//新国网		//13.08.30    
@@ -928,7 +933,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
     LValue = ( LValue * 1265625 ) / ( (unsigned long)HFConstHL * PS32 * 2048 );			//Lvalue = Lvalue*2*2.592*10^10/(HFconst*EC*2^23)
 //#endif
     Value = LValue;		
-    if( Value < PW00002Ib ) {Value = 0; i =0;}               //0.5W       
+  //  if( Value < PW00002Ib ) {Value = 0; i =0;}               //0.5W       
     break;
 //		case ATYUaUb:
 //		case ATYUaUc:
@@ -1022,7 +1027,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   default: 
     break;
   }
-  if( Value < 50 ) Value = 0;
+  //if( Value < 5 ) Value = 0;
 	//Long_BCD4( Point, (unsigned long)Value );
 	//Temp = *Point;
 	//RAM_Write( Point, Point+1, 3 );

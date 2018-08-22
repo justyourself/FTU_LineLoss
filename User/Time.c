@@ -765,7 +765,7 @@ void Delay_mSec(INT8U mSec)
 
 static const INT16U TAB_DFx_waibu[10] = 
 {
-	0x0000, 0x0000,
+	0x007F, 0xFBF4,
 	0x007F, 0xD64c,
 	0x007E, 0xD708,
 	0x0000, 0x546E,
@@ -853,7 +853,8 @@ void Load_InfoData(void)
   				||((*(unsigned char*)0x40188 == 0xA0)&&(*(unsigned char*)0x4018C == 0x5F)))         //18.04.28
 //  			if((*(unsigned char*)0x40188 == 0xA0)&&(*(unsigned char*)0x4018C == 0x5F))         	//18.04.28
 			{                                                                       				//18.04.28
-				if (HT_RTC->DFAH	!= TAB_DFx_waibu[0])	HT_RTC->DFAH	= TAB_DFx_waibu[0];
+#if 1				
+                                if (HT_RTC->DFAH	!= TAB_DFx_waibu[0])	HT_RTC->DFAH	= TAB_DFx_waibu[0];
 				if (HT_RTC->DFAL	!= TAB_DFx_waibu[1])	HT_RTC->DFAL	= TAB_DFx_waibu[1];
 				if (HT_RTC->DFBH	!= TAB_DFx_waibu[2])	HT_RTC->DFBH	= TAB_DFx_waibu[2];
 				if (HT_RTC->DFBL	!= TAB_DFx_waibu[3])	HT_RTC->DFBL	= TAB_DFx_waibu[3];
@@ -863,6 +864,22 @@ void Load_InfoData(void)
 				if (HT_RTC->DFDL	!= TAB_DFx_waibu[7])	HT_RTC->DFDL	= TAB_DFx_waibu[7];
 				if (HT_RTC->DFEH	!= TAB_DFx_waibu[8])	HT_RTC->DFEH	= TAB_DFx_waibu[8];
 				if (HT_RTC->DFEL	!= TAB_DFx_waibu[9])	HT_RTC->DFEL	= TAB_DFx_waibu[9];
+#else
+                                  HT_RTC->DFAH	= 0;
+                                  HT_RTC->DFAL	= 0;
+                                  HT_RTC->DFBH	= 0;
+                                  HT_RTC->DFBL	= 0;
+                                  HT_RTC->DFCH	= 0;
+                                  HT_RTC->DFCL	= 0;
+                                  HT_RTC->DFDH	= 0;
+                                  HT_RTC->DFDL	= 0;
+                                  HT_RTC->DFEH	= 0;
+                                  HT_RTC->DFEL	= 0;
+                             
+                                  
+#endif                            
+                                  
+                                  
 			}																								//18.04.28		
 			else                                                                                            //18.04.28
 			{                                                                                               //18.04.28
@@ -1124,7 +1141,7 @@ void Prog_InfoData(INT32U *info)
 	HT_CMU->FLASHCON  = 0x01;												//word write
 	for (i=0; i<64; i++)
 	{
-//		*((INT32U *)(HT_INFO_BASE+i*4)) = data[i];							//program word
+		//*((INT32U *)(HT_INFO_BASE+i*4)) = data[i];							//program word
 		*((INT32U *)(HT_INFO_BASE+0x100+i*4)) = data[i];					//program word		//17.11.03
 		while (HT_CMU->FLASHCON  & 0x04)									//FLASH_BSY
 			;

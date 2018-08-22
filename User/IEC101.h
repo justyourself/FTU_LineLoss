@@ -25,7 +25,6 @@ union IEC101_ADD
   }Byte;
   u16 Word;
 };
-
 typedef u16 WORD;
 typedef union
 {
@@ -34,15 +33,7 @@ typedef union
   u32 Dword;
   
 }FOUR_BYTE_TO_DWORD;
-
-
 union IEC101_DADD
-{
-  u8 Byte[4];
-  u16 Word[2];
-  u32 Dword;
-};
-union FOUR_BYTE_TO_DWORD
 {
   u8 Byte[4];
   u16 Word[2];
@@ -76,12 +67,14 @@ struct IEC101_STRUCT
   u32 FtuSccReset;
   u32 byFrameIntval;
   u32 wPSendNum;
+  u32 pfile_ptr;
   u32 PWindow;
   u32 PWinTimer;
   u32 OrgnizeFrame;
   u8  byRecvBuf[256];
   u32 wRecvLen;
   u8 PReMsgType;
+  u8 PReMsgType_bak;
   u8 byReason;
   u32 byPSGenStep;
   u8 frameno;
@@ -124,10 +117,6 @@ struct IEC101_STRUCT
   struct APP_STRUCT PSendFrame;
   struct APP_STRUCT PRecvFrame;
   struct REAPP_STRUCT PReAppLayer; 
-  u16 nStartYcOver;
-  u16 SendYcN;
-  long byRange;
-  long nLastYcVal[32];
   u8 pa_num;
   u8 pb_num;
   u8 pc_num;
@@ -136,12 +125,7 @@ struct IEC101_STRUCT
   u8 pcc_num;
   u8 ptt_num;
 };
-#ifndef INT
-#define INT signed int
-#endif
-#ifndef LONG
-#define LONG signed long
-#endif
+
 /***************************************************************************
 					IEC-870-5-101预定义头文件
 ***************************************************************************/
@@ -149,6 +133,7 @@ struct IEC101_STRUCT
 //启动方向 链路层功能码定义
 #define RESET_LINK		0		// 复位远方链路
 #define RESET_SESSION		1     		// 复位远动终端的用户进程
+#define CALL_LINK_2		2
 #define TRAN_CONFIRM_DATA       3  
 #define TRAN_DATA		4	      // 传送数据/无回答帧
 #define CALL_ACD		8	      		// 响应帧应说明访问要求
