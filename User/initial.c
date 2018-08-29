@@ -481,12 +481,12 @@ void VarInit(void)
   }
 #endif  
   //脉冲常数100000
-  //MSpec.RMeterConst = 100000;
-  //MSpec.R7022E_HFConst = 4;
+  MSpec.RMeterConst = 100000;
+  MSpec.R7022E_HFConst = 4;
   //脉冲常数100000
   //20000
-  MSpec.RMeterConst = 20000;
-  MSpec.R7022E_HFConst = 20;
+  //MSpec.RMeterConst = 20000;
+  //MSpec.R7022E_HFConst = 20;
   //1000
   /*
   MSpec.RMeterConst = 1000;
@@ -497,7 +497,8 @@ void VarInit(void)
 //  MSpec.R7022E_HFConst = 40;
   MSpec.RBaseCurrent = 1000;
   MSpec.RPW00002Ib = 1000;
-  MSpec.R7022E_PStartup = 1;
+  MSpec.R7022E_PStartup = 5;
+  MSpec.R7022E_IStart =  1;
 }
 
 void HW_ON( void )

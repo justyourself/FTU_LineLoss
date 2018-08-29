@@ -478,7 +478,7 @@ void ATT7022Init(unsigned short Devads)
   SM.CalibCount = 0;
   udelay(500); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
-  udelay(25000);
+  udelay(3000);
   //SetIDefault(Devads);//zzltest
   HFConstHL = MSpec.R7022E_HFConst;	//ÐÂ¹úÍø		//13.08.30
   
@@ -1027,7 +1027,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   default: 
     break;
   }
-  //if( Value < 5 ) Value = 0;
+  if( Value < 9 ) Value = 0;
 	//Long_BCD4( Point, (unsigned long)Value );
 	//Temp = *Point;
 	//RAM_Write( Point, Point+1, 3 );

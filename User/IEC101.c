@@ -574,21 +574,21 @@ typedef struct {
   unsigned char *info_data;
 }S_SNINFO;
 #if MAX_CH_NUM==1
-unsigned char s_Devtype[]="FTU";
+unsigned char s_Devtype[5]="FTU-0";
 #else
-unsigned char s_Devtype[]="DTU";
+unsigned char s_Devtype[5]="DTU-0";
 #endif
 unsigned char s_Operation[]="N/A";
 unsigned char s_Manufacture[]="炬华";
 unsigned char s_Hardwarever[]="B";
-unsigned char s_Firmwarever[]="01.02";
+unsigned char s_Firmwarever[]="01.03";
 unsigned char s_FirmwareCrc[]="0x7777";
 unsigned char s_Protocolver[]="V1.000";
 unsigned char s_Model[]="JH4000";
 unsigned char s_Id[]="201710280001";
 S_SNINFO s_sninfo[]=
 {
-  0x8001,3,s_Devtype,
+  0x8001,5,s_Devtype,
   0x8002,3,s_Operation,
   0x8003,4,s_Manufacture,
   0x8004,1,s_Hardwarever,
@@ -833,20 +833,18 @@ void Read_Para(unsigned char *buf)
   yc_no = Len;
   switch(buf[1])
   {
-  case 0x73:
-    memcpy(buf+2,&MSpec.RMeterConst,4);
-    yc_no = Len + 4;
-    break;
   case 0x74:
     yc_no = buf[3];
     yc_no = (yc_no<<8)|buf[2];
-    GetDd(yc_no,buf+4);
+    Energy_Data[yc_no/8];
+    memcpy(buf+4,&Energy_Data[yc_no/8]+(yc_no%4)*4,4);
     yc_no = Len+4;
-    buf[0] = yc_no;
     break;
   case 0x75:
-    memcpy(buf+2,s_Firmwarever,5);
-    yc_no = Len + 5;
+    memcpy(buf+2,s_Devtype,5);
+    memcpy(buf+7,s_Firmwarever,5);
+    memcpy(buf+12,s_FirmwareCrc,6);
+    yc_no = Len + 16;
     break;
   case 0x76:
     HT_RTC_Read(buf+2);//周年月日时分秒
@@ -1248,7 +1246,7 @@ void PLinkRecvProcessF(u8 byConField)
     }
     if (lpIEC101->PRecvFrame.byFunCode == CALL_ACD)
       lpIEC101->PSeAppLayer.LinkFunCode = 0x0B;
-		
+    	
     lpIEC101->PSeAppLayer.byMsgNum = 0;
     lpIEC101->PSeAppLayer.byFull = 1;
   }
@@ -2909,7 +2907,9 @@ void Dir_Send(void)
         if(lpIEC101->pcc_num>10)
           lpIEC101->pcc_num = 10;
         lpIEC101->pce_num = CEVENT_Record_Num(lpIEC101->byPSGenStep/3);
-      Record_num = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+lpIEC101->pt_num*145+(lpIEC101->ptt_num+lpIEC101->pcc_num)*31;
+        if(lpIEC101->pce_num>10)
+          lpIEC101->pce_num = 10;
+      Record_num = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+lpIEC101->pt_num*145+(lpIEC101->ptt_num+lpIEC101->pcc_num+lpIEC101->pce_num)*31;
       //Record_num = Record_num*424;
       Record_num += 2;
     }
@@ -3077,7 +3077,9 @@ u8 SendFileGenAck(u8 bySendReason)
         if(lpIEC101->pcc_num>10)
           lpIEC101->pcc_num = 10;
         lpIEC101->pce_num = CEVENT_Record_Num(lpIEC101->byPSGenStep/3);
-      m_filelen = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+lpIEC101->pt_num*145+(lpIEC101->ptt_num+lpIEC101->pcc_num)*31;
+        if(lpIEC101->pce_num>10)
+          lpIEC101->pce_num = 10;
+      m_filelen = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+lpIEC101->pt_num*145+(lpIEC101->ptt_num+lpIEC101->pcc_num+lpIEC101->pce_num)*31;
       m_filelen +=2;
     }
   }
@@ -3266,6 +3268,8 @@ u8 SendFileInfo(u8 bySendReason)
         if(lpIEC101->pcc_num>10)
           lpIEC101->pcc_num = 10;
         lpIEC101->pce_num = CEVENT_Record_Num(m_Channel_no);
+        if(lpIEC101->pce_num>10)
+          lpIEC101->pce_num = 10;
         Record_num=lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num+lpIEC101->pt_num+lpIEC101->ptt_num+lpIEC101->pcc_num+lpIEC101->pce_num;
       }
   }
@@ -4457,6 +4461,9 @@ void InitIEC101Prot(void)
     {
       lpIEC101->YxNPF[i]=4;//*MAX_CH_NUM;
     }
+    sprintf(buf,"0x%04X",crc16_ccitt(0x4000,0xf000));
+    memcpy(s_FirmwareCrc,buf,6);
+    s_Devtype[4] = '0'+MAX_CH_NUM;
 #if 0 
 	ProtocolDisp[IEC101ProtNo].ProtocolType=IEC101ProtNo;	//规约类型
 	ProtocolDisp[IEC101ProtNo].RecvBuffLen=RECEBUFSIZE; 	//接收缓冲区长度

@@ -648,6 +648,8 @@ void ProcHalfSec(void)
     ATT7022RdReg(ATVoltFlag,(unsigned char*)&(SM.State[i]),i);
     ATT7022RdReg(ATPZ,(unsigned char*)&tmp_p,i);
     tmp_p &= 0xffffff;
+    if(tmp_p>100)
+      tmp_p =0;
     if(tmp_p)
     {
       if(SM.State[i]&0x1000)
@@ -663,6 +665,8 @@ void ProcHalfSec(void)
     }
     ATT7022RdReg(ATQZ,(unsigned char*)&tmp_p,i);
     tmp_p &= 0xffffff;
+    if(tmp_p>100)
+      tmp_p =0;
     if(tmp_p)
     {
       if(SM.State[i]&0x2000)
@@ -935,7 +939,7 @@ void main(void)
       HT_FreeDog();
       __NOP();
     }
-    VarInit();
+
     GetTime();
     MoveCurrentTimeBCD_Hex();																									//10.11.22
     while (1)
@@ -944,7 +948,8 @@ void main(void)
       HT_FreeDog();						
       if(((Flag.Power & F_PwrUp) == 0) && ( PowerCheck() == 1 ))		
       {
-        PwrOnInit();	
+        PwrOnInit();
+        VarInit();
         InitPara();			
         InitPara5();
         Serial_Open(0,9600,8,UartParity_Disable);

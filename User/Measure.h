@@ -586,7 +586,7 @@ void MDOverEventEnd( void );
 void ATT7022AmperInit(unsigned short Devads);
 void GetAmper( void );
 #endif
-#define DELEY2		0x01
-#define DELEY4		0x04
-#define DELEY5		0x05
+#define DELEY2		0x00
+#define DELEY4		0x00
+#define DELEY5		0x01
 #endif
