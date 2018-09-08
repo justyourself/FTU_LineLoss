@@ -516,15 +516,21 @@ void ATT7022Init(unsigned short Devads)
 	*(Point+1) = 0x00;					//12..01.18  ADC1倍
 	ATT7022WtReg( PGACtrl+128, Point ,Devads);	//ADC增益配置寄存器
 
-#if( LinkMode == Phase3Wire4 )			//ATChk
+//#if( LinkMode == Phase3Wire4 )			//ATChk
+        if(Para.PW==0x34)
+        {
 #if ( DLT645_2007_14 ==	YesCheck )			//新国网	//14.04.25
-	*Point = 0xCC;						//代数和、能量寄存器读后清0	//视在采用RMS		//14.09.04
+          *Point = 0xCC;						//代数和、能量寄存器读后清0	//视在采用RMS		//14.09.04
 #else
-	*Point = 0xC4;						//代数和、能量寄存器读后清0
-#endif	
-#else
-	*Point = 0x84;						//代数和、能量寄存器读后清0	
+          *Point = 0xC4;						//代数和、能量寄存器读后清0
 #endif
+        }
+        else
+        {
+          //#else
+          *Point = 0x84;						//代数和、能量寄存器读后清0	
+          //#endif
+        }
 	*(Point+1) = 0xF8;			//选择功率作为潜动起动判断依据
 	ATT7022WtReg( EMUCfg+128, Point ,Devads);	//EMU单元配置
 
@@ -620,10 +626,10 @@ void ATT7022Init(unsigned short Devads)
     Value += Value2;
 	
 	RAM_Write( Point, (unsigned char*)&Value, 3 );			//ATChk		
-	if(( Data_Comp(Point, Para.RAT7022ChkSum, 3) != 0 )&&( FaultFlag == 0 ))		//ATChk		//10.11.02
+	if(( Data_Comp(Point, Para.RAT7022ChkSum[Devads], 3) != 0 )&&( FaultFlag == 0 ))		//ATChk		//10.11.02
 	{														//ATChk	
-		RAM_Write( Para.RAT7022ChkSum, Point, 3 );			//ATChk		
-		E2P_WData( AT7022ChkSum, Point, 3 );				//ATChk
+		RAM_Write( Para.RAT7022ChkSum[Devads], Point, 3 );			//ATChk		
+		//E2P_WData( AT7022ChkSum, Point, 3 );				//ATChk
 	}														//ATChk	
 
 #if ( NEW7022E == YesCheck )
@@ -684,14 +690,19 @@ void ATT7022Init(unsigned short Devads)
 	*Point = 0x01;
 	ATT7022WtReg( 0xC9, Point ,Devads);
 
-	RAM_Write( Point, (unsigned char*)&Value, 3 );			//ATChk		
-	if(( Data_Comp(Point, Para.RAT7022ChkSum2, 3) != 0 )&&( FaultFlag == 0 ))		//ATChk		//10.11.02
+	ATT7022RdReg( ATChkSum1, Point ,Devads);
+        if(( Data_Comp(Point, Para.RAT7022ChkSum[Devads], 3) != 0 )&&( FaultFlag == 0 ))		//ATChk		//10.11.02
 	{														//ATChk	
-		RAM_Write( Para.RAT7022ChkSum2, Point, 3 );			//ATChk		
-		E2P_WData( AT7022ChkSum2, Point, 3 );				//ATChk
+		RAM_Write( Para.RAT7022ChkSum[Devads], Point, 3 );
+	}
+        
+	//RAM_Write( Point, (unsigned char*)&Value, 3 );			//ATChk		
+	ATT7022RdReg( ATChkSum2, Point ,Devads);
+        if(( Data_Comp(Point, Para.RAT7022ChkSum2[Devads], 3) != 0 )&&( FaultFlag == 0 ))		//ATChk		//10.11.02
+	{														//ATChk	
+		RAM_Write( Para.RAT7022ChkSum2[Devads], Point, 3 );			//ATChk		
+		//E2P_WData( AT7022ChkSum2, Point, 3 );				//ATChk
 	}														//ATChk		   	
-
-
 #endif
 
 	SM.AT7022ChkSumCnt = 2;									//ATChk
@@ -1223,13 +1234,13 @@ void ATT7022EStateCheckRun( unsigned short Devads )
         if( IsAllData( Point, 3, 0x00 ) == 0 ) ;
         else
         {																				
-          if( Data_Comp(Point, Para.RAT7022ChkSum, 3) != 0 ) 
+          if( Data_Comp(Point, Para.RAT7022ChkSum[Devads], 3) != 0 ) 
           {
             ATT7022RdReg( ATChkSum1, Point+3 ,Devads);										
             if( IsAllData( Point+3, 3, 0x00 ) == 0 ) ;
             else
             {
-              if( Data_Comp(Point+3, Para.RAT7022ChkSum, 3) != 0 ) Temp = 0x55;	
+              if( Data_Comp(Point+3, Para.RAT7022ChkSum[Devads], 3) != 0 ) Temp = 0x55;	
             }	
           }
           else Temp = 0;  
@@ -1245,13 +1256,13 @@ void ATT7022EStateCheckRun( unsigned short Devads )
         if( IsAllData( Point, 3, 0x00 ) == 0 ) ;
         else
         {																				
-          if( Data_Comp(Point, Para.RAT7022ChkSum2, 3) != 0 ) 
+          if( Data_Comp(Point, Para.RAT7022ChkSum2[Devads], 3) != 0 ) 
           {
             ATT7022RdReg( ATChkSum2, Point+3 ,Devads);										
             if( IsAllData( Point+3, 3, 0x00 ) == 0 ) ;
             else
             {
-              if( Data_Comp(Point+3, Para.RAT7022ChkSum2, 3) != 0 ) Temp = 0x55;	
+              if( Data_Comp(Point+3, Para.RAT7022ChkSum2[Devads], 3) != 0 ) Temp = 0x55;	
             }	
           }
           else Temp = 0;  

@@ -1,6 +1,6 @@
 #include "TypeRAM.h"
 #include "data.h"
-
+#include "ht6xxx_lib.h"
 #define SOH  0x01
 #define STX  0x02
 #define EOT  0x04
@@ -166,6 +166,10 @@ int xmodemReceive()
           port_outbyte(ACK);
           DataFlash_Write(0x100000,&len,4);
           DataFlash_Write(0x100004,&Crc32_check,4);
+          memcpy(xbuff,&len,4);
+          memcpy(xbuff+4,&Crc32_check,4);
+          Crc32_check=GenerateCRC32(0xffffFFff, &xbuff[0],8);
+          DataFlash_Write(0x100008,&Crc32_check,4);
           Flag.Power &= ~F_IrmsCheck;
           return len; /* normal end */
         case CAN:
@@ -235,5 +239,199 @@ int xmodemReceive()
   reject:
     flushinput();
     port_outbyte(NAK);
+  }
+}
+
+
+#define Buff_Len 512
+
+
+void EraseCode(void)
+{
+  unsigned int i;    
+  for(i=0;i<16;i++)
+  {
+       HT_Flash_PageErase(0x0400*i);
+       HT_FreeDog();
+  }          
+}
+
+unsigned long Flash_GenerateCRC32(unsigned long Addr,unsigned long len )
+{
+  unsigned long lenth;
+  unsigned char Buff[520];
+  unsigned char *Ptr;
+  unsigned short i;
+  unsigned long Crc32_check=0;
+  
+  i = 0;
+  while( len > 0)
+  {
+    Ptr = Buff;		
+    lenth = len/512;
+    if(lenth==0){
+      lenth = len;
+    }else{
+      lenth = 512;
+    }
+    HT_FreeDog();
+    HT_Flash_ByteRead( Ptr,(unsigned long)Addr+(unsigned long)i*512, lenth );
+    Crc32_check = GenerateCRC32(Crc32_check, Ptr,lenth); 
+    i++;
+    len -=lenth;		
+  }
+  return Crc32_check; 
+}
+
+unsigned char CRC_NewProgram(void)
+{	
+  unsigned long Crc32_Temp,Crc32_Data;
+  unsigned char buff[4];
+  unsigned char Error_Byte;
+  unsigned char* Ptr;
+  int long_temp;
+  Ptr = buff;
+  Error_Byte = 0;
+  Read_Flash((unsigned char*)&long_temp,0x100000 ,4 );
+  Crc32_Data = Flash_GenerateCRC32( 0,long_temp);
+  Read_Flash((unsigned char*)&Crc32_Temp,0x100004,4 );
+  if(Crc32_Temp==Crc32_Data)
+    Error_Byte = 0;
+  else
+    Error_Byte = 1;
+  return Error_Byte;
+}
+unsigned char DownloadNewProgram(void)
+{//ÏÂÔØÐÂ³ÌÐò
+  unsigned long dst_addr;
+  unsigned long src_addr;	
+  int long_temp;	
+  unsigned short	i,Num;
+  unsigned char Error_Byte;	
+  unsigned char buff[4];
+  unsigned char* Ptr;
+  unsigned char CheckBuf1[512] ;
+  unsigned char CheckBuf2[512] ;
+  Ptr = buff;
+  dst_addr = 0;
+  src_addr = 0x100000+4096;
+  EraseCode();//²Á³ýÆ¬ÉÏ³ÌÐò
+  Read_Flash((unsigned char*)&long_temp,0x100000,4);
+  Num = long_temp/Buff_Len;
+  if(long_temp%Buff_Len>0)
+    Num+=1;
+  for(i=0;i<Num;i++)
+  {
+    HT_FreeDog();
+    Read_Flash(CheckBuf2,src_addr,Buff_Len);
+    HT_Flash_ByteWrite(CheckBuf2,dst_addr,Buff_Len);
+    
+    HT_Flash_ByteRead(CheckBuf1,dst_addr,Buff_Len);
+    if(Data_CompHL(CheckBuf1,CheckBuf2,Buff_Len)==0)
+    {
+      src_addr+=Buff_Len;
+      dst_addr+=Buff_Len;
+    }
+    else
+    {
+      dst_addr = 0;
+      src_addr = 0x100000+4096;
+      EraseCode();//²Á³ýÆ¬ÉÏ³ÌÐò
+      i=0;				
+    }
+  }
+  Error_Byte = CRC_NewProgram();
+  return Error_Byte;
+}
+
+
+unsigned char CopyOldProgram(void)
+{//±£´æ¾É³ÌÐò
+  unsigned long dst_addr;
+  unsigned long src_addr;
+  unsigned short  i;	
+  unsigned char Copy_Flag;
+  unsigned char CheckBuf1[512] ;
+unsigned char CheckBuf2[512] ;
+  src_addr = 0;
+  dst_addr = 0x180000;
+  
+  Read_Flash((unsigned char *)&Copy_Flag,0x10000C,1);
+  if(Copy_Flag==1) return 1;
+  for(i=0;i<20;i++)
+  {
+    HT_Flash_ByteRead(CheckBuf1,src_addr,Buff_Len);
+    DataFlash_Write(dst_addr,CheckBuf1,Buff_Len);
+    Read_Flash(CheckBuf2,dst_addr,Buff_Len);
+    if(Data_CompHL(CheckBuf1,CheckBuf2,Buff_Len)==0)
+    {
+      src_addr+=Buff_Len;
+      dst_addr+=Buff_Len;
+    }
+    else
+    {
+      src_addr = 0;
+      dst_addr = 0x180000;
+      i=0;
+    }
+  }
+  Copy_Flag = 1;
+  DataFlash_Write(0x10000C,&Copy_Flag,1);
+  return 0;
+}
+
+unsigned char DownloadOldProgram(void)
+{//»Ö¸´¾É³ÌÐò
+  unsigned long dst_addr;
+  unsigned long src_addr;
+  unsigned short  i;	
+  unsigned char CheckBuf1[512] ;
+unsigned char CheckBuf2[512] ;
+  dst_addr = 0;
+  src_addr = 0x180000;
+  for(i=0;i<20;i++)
+  {
+    Read_Flash(CheckBuf2,src_addr,Buff_Len);
+    HT_Flash_ByteWrite(CheckBuf2,dst_addr,Buff_Len);
+    
+    HT_Flash_ByteRead(CheckBuf1,dst_addr,Buff_Len);
+    if(Data_CompHL(CheckBuf1,CheckBuf2,Buff_Len)==0)
+    {
+      src_addr+=Buff_Len;
+      dst_addr+=Buff_Len;
+    }
+    else
+    {
+      dst_addr = 0;
+      src_addr = 0x180000;
+      i=0;
+    }
+  }
+  return 0;
+}
+void Progarm_Update(void)
+{
+  unsigned char buff[16];
+  int Len;
+  unsigned int Crc32_check,Crc32_check_s;
+  
+  Read_Flash(buff, 0x100000,12);
+  Crc32_check = GenerateCRC32(0xffffffff, buff,8); 
+  memcpy(&Crc32_check_s,buff+8,4);
+  memcpy(&Len,buff,4);
+  if((Crc32_check_s!=Crc32_check) || (Len<0x1000) || (Len>0x4000))
+  {	
+    return;
+  }
+  __disable_irq();
+  CopyOldProgram();
+  while(1)
+  {        
+    if(DownloadNewProgram())
+    {
+      DownloadOldProgram();
+    }
+    BlockErase(0x100000);
+    NVIC_SystemReset();
   }
 }

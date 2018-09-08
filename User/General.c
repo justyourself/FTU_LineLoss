@@ -426,11 +426,36 @@ void InitPara(void)
 {
   short i;
   unsigned char *p_buf;
- 
+  unsigned char buf[8];
   for(i=0;i<MAX_CH_NUM;++i)
   {  
     p_buf =(unsigned char*)&(m_ecpara[i].cmon_day);
     E2P_RData(p_buf,CMon_DAY0+i*25,24);
+  }
+  E2P_RData(buf,PW_ADDR,1);
+  Para.PW = buf[0];
+  if(Para.PW!=0x33)
+    Para.PW = 0x34;
+  
+  E2P_RData(buf,CONST_H,4);
+  memcpy(&MSpec.RMeterConst,buf,4);
+  if((MSpec.RMeterConst<2000) || (MSpec.RMeterConst>400000))
+  {
+    MSpec.RMeterConst = 20000;
+  }
+  MSpec.R7022E_HFConst = 400000/MSpec.RMeterConst;
+  E2P_RData(buf,BASE_CURRENT,4);
+  memcpy(&MSpec.RBaseCurrent,buf,4);
+  if((MSpec.RBaseCurrent<1000) || (MSpec.RBaseCurrent>10000))
+  {
+    MSpec.RBaseCurrent = 5000;
+  }
+  
+  E2P_RData(buf,PW_IB,2);
+  memcpy(&MSpec.RPW00002Ib,buf,2);
+  if((MSpec.RPW00002Ib<1000) || (MSpec.RPW00002Ib>10000))
+  {
+    MSpec.RPW00002Ib = 288;
   }
   InitPara7();		
 }

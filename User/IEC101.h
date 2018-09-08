@@ -1,5 +1,6 @@
 #ifndef __IEC101_H__
 #define __IEC101_H__
+#include "TypeMeter.h"
 typedef unsigned char 	u8;
 typedef unsigned int  	u16;
 typedef unsigned long  	u32;
@@ -124,6 +125,10 @@ struct IEC101_STRUCT
   u8 pce_num;
   u8 pcc_num;
   u8 ptt_num;
+  long nLastYcVal[MAX_CH_NUM*23];
+  int nStartYcOver;
+  int SendYcN;
+  int byRange;
 };
 
 /***************************************************************************

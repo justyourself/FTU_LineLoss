@@ -484,6 +484,42 @@ int Get_LoadFile_Xml_Len(void)
   return Len; 
 }
 
+void Save_ECRamBufAds()
+{
+  int i;
+  unsigned short* ECRamBufAdsPtr;
+  unsigned char* ECRamBufChkAdsPtr;
+  unsigned short ECEAds;
+  
+  for( i=0;i<ECUnitNum;++i)
+  {
+    ECRamBufAdsPtr = ECRgTab[i].ECRamBufAds;
+    ECRamBufChkAdsPtr = ECRgTab[i].ECRamBufChkAds;
+    ECEAds = ECRgTab[i].ECFAds;
+    if( *ECRamBufChkAdsPtr == ChkNum( (unsigned char*)ECRamBufAdsPtr, 2 ) )
+    {
+      EC_E2_W(ECEAds,(unsigned char*)ECRamBufAdsPtr,2);
+    }
+  }
+}
+
+void ReLoad_ECRamBufAds()
+{
+  int i;
+  unsigned short* ECRamBufAdsPtr;
+  unsigned char* ECRamBufChkAdsPtr;
+  unsigned short ECEAds;
+  
+  for( i=0;i<ECUnitNum;++i)
+  {
+    ECRamBufAdsPtr = ECRgTab[i].ECRamBufAds;
+    ECRamBufChkAdsPtr = ECRgTab[i].ECRamBufChkAds;
+    ECEAds = ECRgTab[i].ECFAds;
+    EC_E2_R((unsigned char*)ECRamBufAdsPtr,ECEAds,2);
+    *ECRamBufChkAdsPtr = ChkNum( (unsigned char*)ECRamBufAdsPtr, 2 );
+  }
+}
+
 void EC_MeasA(void)
 {
   int i;
@@ -700,7 +736,7 @@ void ProcSec(void)
   char* Point;
   int i,j,flag_p;
   signed long *si_val;
-
+  unsigned int i_val;
   Flag.Clk &= ~F_Sec;
   Point = Buff;
   
@@ -797,6 +833,17 @@ void ProcSec(void)
 #else    
     for(i=0;i<MAX_CH_NUM;++i)
     {
+      i_val = 0;
+      for(j=0;j<3;++j)
+      {
+        if(*((&Real_Data[i].Ia)+j)==0)
+        {
+          *((&Real_Data[i].Pfa)+j)=100000;
+        }
+        i_val += *((&Real_Data[i].Ia)+j);
+      }
+      if(i_val==0)
+        Real_Data[i].Pft = 100000;
       flag_p = SM.PQFlag[i]^SM.PQFlag_b[i];
       SM.PQFlag_b[i]=SM.PQFlag[i];
       if((flag_p&0xf))
@@ -1009,6 +1056,7 @@ void main(void)
         //Read_E2R1();
         //Clear_EVTC(0);
         Read_E2R();
+        ReLoad_ECRamBufAds();
         for(i=0;i<MAX_CH_NUM;i++)
         {
           ATT7022Init(i);	//Test
@@ -1021,6 +1069,7 @@ void main(void)
       }	
       if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))
       {
+        Save_ECRamBufAds();
 //       // Flag.BatState=1;
 //        //PwrDnInit();
       }	
@@ -1045,8 +1094,11 @@ void main(void)
       
       if(Flag.Power & F_IrmsCheck)
       {
+        Flag.Power &= ~F_IrmsCheck;
+        udelay(10000);
         Serial_Open(0,115200,8,UartParity_Disable);
         xmodemReceive();
+        udelay(10000);
         Serial_Open(0,9600,8,UartParity_Disable);
       }
       else
