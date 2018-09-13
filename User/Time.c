@@ -765,11 +765,16 @@ void Delay_mSec(INT8U mSec)
 
 static const INT16U TAB_DFx_waibu[10] = 
 {
-	0x007F, 0xFBF4,
+	/*0x007F, 0xFBF4,
 	0x007F, 0xD64c,
 	0x007E, 0xD708,
 	0x0000, 0x546E,
-	0x0000, 0x04B0,  
+	0x0000, 0x04B0, */
+        0x007F, 0xEB45,
+	0x007F, 0xD64c,
+	0x007E, 0xD708,
+	0x0000, 0x546E,
+	0x0000, 0x04B0,
 };
 
 static const INT16U TAB_DFx_waibu_New[10] = 		//18.04.28
@@ -980,7 +985,7 @@ unsigned char  Sample_Error(INT8U *err)
 	//	return FALSE;
 	//}
 //	readep(buff,ID_TpsCode,6,eplxsj);
-	E2P_RData( buff, ID_TpsCode, 6 );										//17.11.03
+	E2P_RAdj( buff, ID_TpsCode, 6 );										//17.11.03
 	for (i=0; i<3; i++)
 	{
 		if (i != j)															//不同点
@@ -999,7 +1004,7 @@ unsigned char  Sample_Error(INT8U *err)
 		}
 	}
 //	wrep(buff,ID_TpsCode,6,eplxsj);
-	E2P_WData( ID_TpsCode, buff, 6 );										//17.11.03
+	E2P_WAdj( ID_TpsCode, buff, 6 );										//17.11.03
 
 //	if (TRUE != Write_ParaData(ID_TpsCode, &buff[0]))						//更新温度采样数据
 //	{

@@ -1056,7 +1056,7 @@ void main(void)
         //Read_E2R1();
         //Clear_EVTC(0);
         Read_E2R();
-        ReLoad_ECRamBufAds();
+        //ReLoad_ECRamBufAds();
         for(i=0;i<MAX_CH_NUM;i++)
         {
           ATT7022Init(i);	//Test
@@ -1069,7 +1069,7 @@ void main(void)
       }	
       if(((Flag.Power & F_PwrUp) != 0) && ( PowerCheck() == 0 ))
       {
-        Save_ECRamBufAds();
+       // Save_ECRamBufAds();
 //       // Flag.BatState=1;
 //        //PwrDnInit();
       }	
