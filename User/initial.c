@@ -58,10 +58,10 @@ void fnTarget_Init(void)
   Flag.Power &= ~F_PwrUp;
   //HT_CMU_Prefetch_Set( DISABLE ); 	//关闭指令预取功能，降低功耗		//17.02.07
   CMU_InitStruct.SysClkSel = SysPLL;//SysHRCDiv1;//SysPLL;
-  CMU_InitStruct.CPUDiv = CPUDiv1;
+  CMU_InitStruct.CPUDiv = CMU_CPUCLKDIV_2;
   HT_CMU_Init(&CMU_InitStruct);	
   SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-  if(SysTick_Config(0x5400))		// 15.6ms	//T=ticks*(1/f)
+  if(SysTick_Config(0x2A00))		// 15.6ms	//T=ticks*(1/f)
   {
     while(1);
   }		
@@ -99,7 +99,7 @@ void PwrOnInit(void)
  
     /***** 以下代码用于配置CMU时钟及分频 *****/
   CMU_InitStructure.SysClkSel = SysPLL;//SysHRCDiv1;//SysPLL;
-  CMU_InitStructure.CPUDiv = CPUDiv1;
+  CMU_InitStructure.CPUDiv = CPUDiv2;
   HT_CMU_Init(&CMU_InitStructure);//配置时钟为PLL输出22.020096Mhz
 
     /*!< GPIOA配置信息*/	
@@ -209,7 +209,7 @@ void PwrOnInit(void)
 #endif    
         
         HT_CMU_ClkCtrl1Config(CMU_CLKCTRL1_TMR0EN, ENABLE); 
-	HT_TMR0->TMRDIV = 0x0004;                            /*!< 设置定时器预分频器     4分频 */
+	HT_TMR0->TMRDIV = 0x0002;                            /*!< 设置定时器预分频器     4分频 */
         HT_TMR0->TMRPRD = 0x157C;                             /*!< 设置定时器周期寄存器  1000us */   
         HT_TMR0->TMRCON = 0x0307;                            /*!< 设置定时器工作模式          */    
         HT_TMR0->TMRIE = 0x0001;               			     /*!< 使能TIMER中断               */
@@ -249,7 +249,7 @@ void PwrOnInit(void)
 #endif
 
 	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;	
-	if(SysTick_Config(0x54000))		// 15.6ms	//T=ticks*(1/f)
+	if(SysTick_Config(0x2A000))		// 15.6ms	//T=ticks*(1/f)
 	{
 		while(1);
 	}	
@@ -301,7 +301,7 @@ void PwrDnInit(void)
 #endif
   
   SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;		
-  if(SysTick_Config(0x54000))		// 15.6ms	//T=ticks*(1/f)
+  if(SysTick_Config(0x2A000))		// 15.6ms	//T=ticks*(1/f)
   {
     while(1);
   }		

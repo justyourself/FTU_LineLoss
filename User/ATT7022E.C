@@ -881,7 +881,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   }	
   
   A0001Ib = MSpec.RBaseCurrent / 1000;	//新国网		//13.08.30
-  A0002Ib = MSpec.RBaseCurrent / 500;  //新国网		//13.08.30
+  A0002Ib = MSpec.RBaseCurrent;  //新国网		//13.08.30
   PS32 = MSpec.RMeterConst / 100;			//新国网		//13.08.30	
   HFConstHL = MSpec.R7022E_HFConst;		//新国网		//13.08.30	
   PW00002Ib = MSpec.RPW00002Ib;			//新国网		//13.08.30
@@ -923,7 +923,11 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
 ////LValue = ( LValue * 253125 * 10 ) / ( (unsigned long)HFConstHL * PS32 * 8192 );			//Lvalue = Lvalue*2.592*10^10/(HFconst*EC*2^23)
     LValue = ( LValue * 1265625) / ( (unsigned long)HFConstHL * PS32 * 4096 );			//Lvalue = Lvalue*2.592*10^10/(HFconst*EC*2^23)
 //#endif		
-    Value = LValue;		
+    Value = LValue;
+    if(Value < PW00002Ib)
+    {
+      Value = 0;
+    }
 #if ( LinkMode == Phase3Wire4 )
 //				if( Value < (PW00002Ib/3) ) {Value = 0; i =0;}               //0.5W       
  //   if( Value < (PW00002Ib) ) {Value = 0; i =0;}               //0.5W  	//新国网		//13.08.30          
@@ -931,7 +935,9 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
 //				if( Value < PW00002IbPh ) {Value = 0; i =0;}               //0.5W       
     //if( Value < PW00002Ib ) {Value = 0; i =0;}               //0.5W   	//新国网		//13.08.30    
 #endif
-    break;	
+    RAM_Write( Data, (char*)&Value, 4 );
+    return i;
+    //break;	
   case ATPWPZ:	
   case ATPWQZ:		
   case ATPWSZ:	 
@@ -943,8 +949,8 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
 ////				LValue = ( LValue * 253125 * 10 ) / ( (unsigned long)HFConstHL * PS32 * 4096 );			//Lvalue = Lvalue*2*2.592*10^10/(HFconst*EC*2^23)
     LValue = ( LValue * 1265625 ) / ( (unsigned long)HFConstHL * PS32 * 2048 );			//Lvalue = Lvalue*2*2.592*10^10/(HFconst*EC*2^23)
 //#endif
-    Value = LValue;		
-  //  if( Value < PW00002Ib ) {Value = 0; i =0;}               //0.5W       
+    Value = LValue;
+    if( Value < PW00002Ib ) {Value = 0; i =0;}               //0.5W       
     break;
 //		case ATYUaUb:
 //		case ATYUaUc:
@@ -955,6 +961,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
     //LValue = ( LValue * 10 ) / 8192;
     LValue = ( LValue*10) / 65536;
     Value = LValue;
+    if( Value < 30 ) Value = 0;
     break;
   case ATIrmsZ:	
   //Value = ( Value * 1000 ) / 4096;
@@ -1008,9 +1015,9 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
 //Temp = *Point;
 //RAM_Write( Point, Point+1, 3 );
 //if( Temp >= 0x50 ) _BCD3INC( Point );
-    //RAM_Write( Data, Point, 4 );
-    //return i;
-    break;
+    RAM_Write( Data, (char*)&Value, 4 );
+    return i;
+    //break;
   case ATFreq:	
     // LValue = ( LValue * 100 ) / 8192;
     LValue = ( LValue * 10 ) / 8192;

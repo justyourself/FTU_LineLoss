@@ -838,12 +838,12 @@ void ProcSec(void)
       {
         if(*((&Real_Data[i].Ia)+j)==0)
         {
-          *((&Real_Data[i].Pfa)+j)=100000;
+          *((&Real_Data[i].Pfa)+j)=0;
         }
         i_val += *((&Real_Data[i].Ia)+j);
       }
       if(i_val==0)
-        Real_Data[i].Pft = 100000;
+        Real_Data[i].Pft = 0;
       flag_p = SM.PQFlag[i]^SM.PQFlag_b[i];
       SM.PQFlag_b[i]=SM.PQFlag[i];
       if((flag_p&0xf))
@@ -1081,7 +1081,6 @@ void main(void)
 //      }
       if(Flag.Clk& F_HalfSec)
       {
-        //E2P_RFM(flash_id,0,16);
         ProcHalfSec();
       }
       if (Flag.Clk & F_Sec) 
