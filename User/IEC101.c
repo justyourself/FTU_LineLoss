@@ -1062,6 +1062,7 @@ void Write_Para(unsigned char *buf)
     Clear_E2R(0);
     Clear_EVT2R(0);
     Read_E2R1();
+    Clear_All_Record();
     break;
   case 0x78:
     SM.CalibCount = buf[2];
@@ -4805,8 +4806,8 @@ void InitIEC101Prot(void)
     lpIEC101->wLinkAdd.Word=1;
   lpIEC101->initstatus = notinit;
   lpIEC101->haveset = FALSE;
-  lpIEC101->FlagPingH = 1;
-  lpIEC101->UnsolTimeInterval=3;
+  lpIEC101->FlagPingH = 0;
+  lpIEC101->UnsolTimeInterval=0;
   lpIEC101->firstData = nofirstdata;
   
   
