@@ -1357,5 +1357,6 @@
 #define StepSaveSWFreeze_No	12			//½×ÌÝ½áËã¶³½á¼ÇÂ¼ºÅ 	
 
 #define LOAR_TYPE               1
+#define TREND_TYPE              2
 
 #define MAX_CH_NUM              1

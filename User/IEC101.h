@@ -129,6 +129,7 @@ struct IEC101_STRUCT
   int nStartYcOver;
   int SendYcN;
   int byRange;
+  int sendflag;
 };
 
 /***************************************************************************

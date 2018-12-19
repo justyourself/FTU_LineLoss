@@ -151,3 +151,28 @@ int Get_Record_Num(unsigned short E2_Addr)
   GetCurvePara( CurvePara );
   return CurvePara->AvailRecs;
 }
+
+void Clear_Record(unsigned short E2_Addr)
+{
+  unsigned char LongBuff[9];
+  unsigned short ChannelNo;
+  for(ChannelNo=0;ChannelNo<15;++ChannelNo)
+  {
+      if(E2_Addr == ProfileTab[ChannelNo].PtAddr)
+        break;
+  }
+  if(ChannelNo>14)
+    return;
+  memset(LongBuff,0,8);
+  _W_PROFILE_RECORD( ProfileTab[ChannelNo].EntriesUseAddr, LongBuff, 2 );
+  _W_PROFILE_RECORD( ProfileTab[ChannelNo].ECurRecNoAddr, LongBuff, 2 );
+}
+
+void Clear_All_Record(void)
+{
+  int i;
+  for(i=0;i<15;++i)
+  {
+    Clear_Record(ProfileTab[i].PtAddr);
+  }
+}

@@ -478,7 +478,7 @@ void ATT7022Init(unsigned short Devads)
   SM.CalibCount = 0;
   udelay(500); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
-  udelay(3000);
+  udelay(30000);
   //SetIDefault(Devads);//zzltest
   HFConstHL = MSpec.R7022E_HFConst;	//ÐÂ¹úÍø		//13.08.30
   

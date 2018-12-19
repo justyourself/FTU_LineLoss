@@ -844,6 +844,14 @@ void ProcSec(void)
       }
       if(i_val==0)
         Real_Data[i].Pft = 0;
+      i_val = 0;
+      for(j=0;j<3;++j)
+      {
+        i_val += *((&Real_Data[i].Ua)+j);
+      }
+      if(i_val==0)
+        Real_Data[i].AFreq = 50000;
+      
       flag_p = SM.PQFlag[i]^SM.PQFlag_b[i];
       SM.PQFlag_b[i]=SM.PQFlag[i];
       if((flag_p&0xf))
@@ -918,7 +926,7 @@ void ProcMin(void)
       Save_Data(Time_buf);
     }
     Load_InfoData();
-    Save_RandData(Time_buf);
+    //Save_RandData(Time_buf);
     ATT7022EStateCheckRun(Clk.MinH%MAX_CH_NUM);
 }	
 
@@ -967,7 +975,8 @@ void ProcDay(void)
     Save_MonthData(Time_buf);
   }
 }	
-
+#define COM_PARITY   UartParity_Disable  
+//#define COM_PARITY   UartParity_EVEN
 void main(void)
 {
   unsigned int i;
@@ -999,7 +1008,7 @@ void main(void)
         VarInit();
         InitPara();			
         InitPara5();
-        Serial_Open(0,9600,8,UartParity_Disable);
+        Serial_Open(0,9600,8,COM_PARITY);
         //Serial_Open(0,9600,8,UartParity_EVEN);
         Load_InfoData();
 	InitPara6();   
@@ -1098,7 +1107,7 @@ void main(void)
         Serial_Open(0,115200,8,UartParity_Disable);
         xmodemReceive();
         udelay(10000);
-        Serial_Open(0,9600,8,UartParity_Disable);
+        Serial_Open(0,9600,8,COM_PARITY);
       }
       else
       {	
