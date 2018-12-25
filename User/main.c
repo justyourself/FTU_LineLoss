@@ -756,6 +756,10 @@ void ProcSec(void)
     if(SM.TestDisCnt != 0)
     {
        SM.TestDisCnt--;
+       if(SM.TestDisCnt==0 && SM.rebootflag)
+      {
+          NVIC_SystemReset();
+      }
     }
     
     for(i=0;i<MAX_CH_NUM;++i)

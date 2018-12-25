@@ -1052,7 +1052,11 @@ void Write_Para(unsigned char *buf)
     if((buf[2]==0xaa) && (buf[3]==0x55))
       Flag.Power |=F_IrmsCheck;
     else if((buf[2]==0x55) && (buf[3]==0xaa))
-      NVIC_SystemReset();
+    {
+      SM.TestDisCnt=2;
+      SM.rebootflag =1;
+      //NVIC_SystemReset();
+    }
     else if((buf[2]==0xaa) && (buf[3]==0xaa))
     {
       Progarm_Update();

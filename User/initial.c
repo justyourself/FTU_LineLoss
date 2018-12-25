@@ -436,6 +436,7 @@ void VarInit(void)
   int i,j;
   unsigned char tmp[88];
   SM.TestDisCnt = TESTDISCNT;
+  SM.rebootflag = 0;
   for(i=0;i<MAX_CH_NUM;++i)
   {
     if(GetPt_Event_Record(i,0,tmp))
