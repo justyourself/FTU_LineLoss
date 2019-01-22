@@ -762,7 +762,7 @@ void Delay_mSec(INT8U mSec)
 		}
 	}
 }
-
+#if 1
 static const INT16U TAB_DFx_waibu[10] = 
 {
 	/*0x007F, 0xFBF4,
@@ -776,6 +776,37 @@ static const INT16U TAB_DFx_waibu[10] =
 	0x0000, 0x546E,
 	0x0000, 0x04B0,
 };
+#else 
+#if 0
+static const INT16U TAB_DFx_waibu[10] =   //5s
+{
+	/*0x007F, 0xFBF4,
+	0x007F, 0xD64c,
+	0x007E, 0xD708,
+	0x0000, 0x546E,
+	0x0000, 0x04B0, */
+        0x007F, 0xFC9A,
+	0x007F, 0xD64C,
+	0x007E, 0xD708,
+	0x0000, 0x546E,
+	0x0000, 0x04B0,
+};
+#endif
+static const INT16U TAB_DFx_waibu[10] =   //5s
+{
+	/*0x007F, 0xFBF4,
+	0x007F, 0xD64c,
+	0x007E, 0xD708,
+	0x0000, 0x546E,
+	0x0000, 0x04B0, */
+        0x007F, 0xEA3A,
+	0x007F, 0xD64C,
+	0x007E, 0xD708,
+	0x0000, 0x546E,
+	0x0000, 0x04B0,
+};
+#endif
+
 
 static const INT16U TAB_DFx_waibu_New[10] = 		//18.04.28
 {
@@ -815,10 +846,11 @@ void Load_InfoData(void)
 	INT32U	chksum = 0;
 	INT32U	toff;
 	INT16S	temp, code;
-	
+	INT32U value[16];
 	for (i=0; i<14; i++)
 	{
 		chksum += HT_INFO->DataArry[i];
+                value[i] = HT_INFO->DataArry[i];
 	}
 	if (chksum == HT_INFO->DataArry[14])		//已设置
 	{
@@ -1121,7 +1153,7 @@ void Prog_InfoData(INT32U *info)
 	
 	for (i=0; i<64; i++)
 	{
-//		data[i] = *((INT32U*)(HT_INFO_BASE+i*4));							//整页读取
+		//data[i] = *((INT32U*)(HT_INFO_BASE+i*4));							//整页读取
 		data[i] = *((INT32U*)(HT_INFO_BASE+0x100+i*4));						//整页读取		//17.11.03
 	}
 	for (i=0; i<15; i++)
@@ -1129,9 +1161,11 @@ void Prog_InfoData(INT32U *info)
 		data[i+1] = info[i];												//更新RTC参数
 	}
 	//擦除InfoData--------------------------------------------------------------
+      //  HT_Flash_PageErase(HT_INFO_BASE+0x100);
+      //  HT_Flash_WordWrite(data,HT_INFO_BASE+0x100,64);       
 //关闭预读取指令模式//
 //	HT_CMU->PREFETCH=0X00000;
-
+__disable_irq();
 	EnWr_WPREG();
 	HT_CMU->FLASHLOCK = 0x7A68;												//unlock flash memory
 	HT_CMU->INFOLOCK  = 0xF998;												//unlock information flash memory
@@ -1141,9 +1175,10 @@ void Prog_InfoData(INT32U *info)
 		;
 	HT_CMU->FLASHCON  = 0x00;												//read only
 	
-	Delay_mSec(2);
+	Delay_mSec(6);
 	//更新InfoData--------------------------------------------------------------
-	HT_CMU->FLASHCON  = 0x01;												//word write
+	HT_CMU->FLASHCON  = 0x01;
+        //word write
 	for (i=0; i<64; i++)
 	{
 		//*((INT32U *)(HT_INFO_BASE+i*4)) = data[i];							//program word
@@ -1155,9 +1190,9 @@ void Prog_InfoData(INT32U *info)
 	HT_CMU->INFOLOCK  = ~0xF998;											//lock information flash memory
 	HT_CMU->FLASHCON  = 0x00;												//read only
 	DisWr_WPREG();
-
+__enable_irq();
 //主频太高开启预读取指令模式//
-//	HT_CMU->PREFETCH=0X00001;
+//	HT_CMU->PREFETCH=0X00001;        
 }
 
 unsigned char NCom_WriteCPU_RTC(unsigned char* ComBuf )
