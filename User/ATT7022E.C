@@ -1028,7 +1028,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   case ATFactorC:	
   case ATFactorZ:	//Value = ((Value/4) * 1000 ) / 2097152;          //先除4防溢出
     LValue = ( LValue * 250 ) / 2097152;          //先除4防溢出
-    Value = LValue/100;
+    Value = LValue;///100;
     //if( Value == 999 ) Value = 1000;
     break;
   case ATAngleA:	

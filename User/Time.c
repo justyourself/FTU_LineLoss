@@ -765,16 +765,16 @@ void Delay_mSec(INT8U mSec)
 #if 1
 static const INT16U TAB_DFx_waibu[10] = 
 {
-	/*0x007F, 0xFBF4,
-	0x007F, 0xD64c,
-	0x007E, 0xD708,
-	0x0000, 0x546E,
-	0x0000, 0x04B0, */
-        0x007F, 0xEB45,
+	0x007F, 0xFD79,
 	0x007F, 0xD64c,
 	0x007E, 0xD708,
 	0x0000, 0x546E,
 	0x0000, 0x04B0,
+        /*0x007F, 0xEB45,
+	0x007F, 0xD64c,
+	0x007E, 0xD708,
+	0x0000, 0x546E,
+	0x0000, 0x04B0,*/
 };
 #else 
 #if 0
@@ -1165,16 +1165,25 @@ void Prog_InfoData(INT32U *info)
       //  HT_Flash_WordWrite(data,HT_INFO_BASE+0x100,64);       
 //关闭预读取指令模式//
 //	HT_CMU->PREFETCH=0X00000;
-__disable_irq();
+        __disable_irq();
 	EnWr_WPREG();
-	HT_CMU->FLASHLOCK = 0x7A68;												//unlock flash memory
-	HT_CMU->INFOLOCK  = 0xF998;												//unlock information flash memory
-	HT_CMU->FLASHCON  = 0x02;												//page erase
-	*((INT32U*)HT_INFO_BASE) = 0xFFFFFFFF;									//data
-	while (HT_CMU->FLASHCON & 0x04)											//FLASH_BSY
+	HT_CMU->FLASHLOCK = 0x7A68;							//unlock flash memory
+	HT_CMU->INFOLOCK  = 0xF998;							//unlock information flash memory
+	HT_CMU->FLASHCON  = 0x02;						        //page erase
+	*((INT32U*)(HT_INFO_BASE+0x100)) = 0xFFFFFFFF;					//data
+        while (HT_CMU->FLASHCON & 0x04)							//FLASH_BSY
 		;
-	HT_CMU->FLASHCON  = 0x00;												//read only
+     // *((INT32U *)(HT_INFO_BASE+0x100)) = 0xFFFFFFFF;
+     //  while (HT_CMU->FLASHCON & 0x04)							//FLASH_BSY
+		;
+      /*  for (i=0; i<1; i++)
+	{
+		*((INT32U *)(HT_INFO_BASE+0x100+i*4)) = 0xFFFFFFFF;
+		while (HT_CMU->FLASHCON  & 0x04)									
+			;
+	}*/
 	
+        HT_CMU->FLASHCON  = 0x00;//read only	
 	Delay_mSec(6);
 	//更新InfoData--------------------------------------------------------------
 	HT_CMU->FLASHCON  = 0x01;
