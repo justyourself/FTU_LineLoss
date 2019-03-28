@@ -1396,7 +1396,8 @@ void PLinkRecvProcessF(u8 byConField)
   if(lpIEC101->PfcvC)
     //if ((lpIEC101->PRecvFrame.byFunCode == CALL_DATA1)||(lpIEC101->PRecvFrame.byFunCode == CALL_DATA2))
   {
-    if(lpIEC101->PRecvFrame.byFunCode == CALL_DATA2)
+    //if(lpIEC101->PRecvFrame.byFunCode == CALL_DATA2)
+    if ((lpIEC101->PRecvFrame.byFunCode == CALL_DATA1)||(lpIEC101->PRecvFrame.byFunCode == CALL_DATA2))
       lpIEC101->PReMsgType = lpIEC101->PReMsgType_bak;
     lpIEC101->PReFrameType = lpIEC101->PRecvFrame.byFunCode;
     lpIEC101->PfcbC = byConField & 0x20 ? 1 : 0;	// FCV位有效,则保存FCB位
@@ -1431,6 +1432,7 @@ void PLinkRecvProcessV(u8 byConField)
   {
     if(3==lpIEC101->UnsolTimeInterval)    //先发链路确认再等待召唤二级数据
     {
+      lpIEC101->Pacd = 1;
       lpIEC101->PReFrameType = 3;
       lpIEC101->PSeAppLayer.LinkFunCode = 0x00;
       lpIEC101->PSeAppLayer.byMsgNum = 0;
@@ -1467,7 +1469,8 @@ void PLinkRecvProcessV(u8 byConField)
       lpIEC101->PSeAppLayer.LinkFunCode = LINK_GOOD;
       break;
     }
-    if(lpIEC101->FlagPingH==0)
+    //if(lpIEC101->FlagPingH==0)
+    if(lpIEC101->PSeAppLayer.byFull==0)
     {
       lpIEC101->PSeAppLayer.byFull = 0;
       lpIEC101->PSendFrame.byFull = 0;
@@ -1718,6 +1721,7 @@ void Iec101LinkRecvPro(void)
       }
       else
       {
+        
         if( (lpIEC101->wRecvCmmAdd.Byte.l == lpIEC101->wLinkAdd.Byte.l)||(lpIEC101->wRecvCmmAdd.Byte.l ==0xFF))
         {
           byConField = lpIEC101->PRecvFrame.byLinkBuf[4];
@@ -2021,8 +2025,10 @@ void SearchFirstData(void)
   {
     lpIEC101->Pacd = 1;			// ACD置位
   }
+#if  0
   else
-    lpIEC101->Pacd=0;        
+    lpIEC101->Pacd=0;      
+#endif  
 }
                                     //组遥信变位信息体
 u8 OrgnizeYxbwMsg(u8 *lpby)
@@ -2235,7 +2241,7 @@ void SendData1(void)
     lpIEC101->PSeAppLayer.byMsgNum = 0;
     lpIEC101->PSeAppLayer.LinkFunCode = 0;
 #if 1                        
-    if(lpIEC101->initstatus!=initend)
+    if(lpIEC101->initstatus!=initend && lpIEC101->FlagPingH)
     {
       lpIEC101->firstData = substinit;
       lpIEC101->PSeAppLayer.LinkFunCode = 9;
@@ -2636,7 +2642,16 @@ void SendGeneralData(void)
       bySendReason = DEACTCON;
     byMsgNum = OrgnizeGenAck(bySendReason);
     lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-    lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+    if(lpIEC101->FlagPingH)
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+    }
+    else
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 8;
+    }
+    
+       
     lpIEC101->byPSGenStep++;
   }
   else if ( (lpIEC101->byPSGenStep >= 1) && (lpIEC101->byPSGenStep <= MAX_CH_NUM) )
@@ -2651,7 +2666,14 @@ void SendGeneralData(void)
     lpIEC101->frameno = lpIEC101->frameno ? 0 : 1;
     byMsgNum = OrgnizeYxMsg(lpby,bySendReason,byFrameNo);
     lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-    lpIEC101->PSeAppLayer.LinkFunCode = 3;
+    if(lpIEC101->FlagPingH)
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+    }
+    else
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 8;
+    }    
     if (!byMsgNum)	//没有实际信息体内容
     {
       if (lpIEC101->byQOI==INTROGEN)
@@ -2670,7 +2692,14 @@ void SendGeneralData(void)
         lpIEC101->frameno = lpIEC101->frameno ? 0 : 1;
         byMsgNum = OrgnizeYcMsg(lpby,bySendReason,byFrameNo);
         lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-        lpIEC101->PSeAppLayer.LinkFunCode = 3;
+        if(lpIEC101->FlagPingH)
+        {
+          lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+        }
+        else
+        {
+          lpIEC101->PSeAppLayer.LinkFunCode = 8;
+        }        
         if (!byMsgNum)	//没有实际信息体内容
         {
           if (lpIEC101->byQOI==INTROGEN)	
@@ -2680,7 +2709,15 @@ void SendGeneralData(void)
             bySendReason = ACTTERM;
             byMsgNum = OrgnizeGenAck(bySendReason);
             lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-            lpIEC101->PSeAppLayer.LinkFunCode = 3;	//总召唤结束帧功能码为8
+            if(lpIEC101->FlagPingH)
+            {
+              lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+            }
+            else
+            {
+              lpIEC101->PSeAppLayer.LinkFunCode = 8;
+            }
+            lpIEC101->Pacd = 0;
           }
           else	//分组召唤
             lpIEC101->PSeAppLayer.LinkFunCode = 9;	//无所请求数据的确认帧
@@ -2743,7 +2780,14 @@ void SendGeneralData(void)
       lpIEC101->frameno = lpIEC101->frameno ? 0 : 1;
       byMsgNum = OrgnizeYcMsg(lpby,bySendReason,byFrameNo);
       lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-      lpIEC101->PSeAppLayer.LinkFunCode = 3;
+      if(lpIEC101->FlagPingH)
+      {
+        lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+      }
+      else
+      {
+        lpIEC101->PSeAppLayer.LinkFunCode = 8;
+      }      
       if(lpIEC101->byReason==1)
         lpIEC101->PSeAppLayer.LinkFunCode = 4;
       if (!byMsgNum)	//没有实际信息体内容
@@ -2950,7 +2994,14 @@ void SendDdData2002(void)
     byMsgNum = OrgnizeDdAckMsg(bySendReason);
     lpIEC101->byPSDdStep=0;
     lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-    lpIEC101->PSeAppLayer.LinkFunCode = 3;
+    if(lpIEC101->FlagPingH)
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+    }
+    else
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 8;
+    }    
   }
   else if ( (lpIEC101->byPSDdStep >= 1) && (lpIEC101->byPSDdStep <= 16) )
   {
@@ -2962,7 +3013,14 @@ void SendDdData2002(void)
       bySendReason = (lpIEC101->byQCC & 0x3f) - 1 + REQCOGCN;
     byMsgNum = OrgnizeDdMsg(bySendReason,byFrameNo);
     lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-    lpIEC101->PSeAppLayer.LinkFunCode = 3;
+    if(lpIEC101->FlagPingH)
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+    }
+    else
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 8;
+    }
     if ( lpIEC101->byPSDdStep==lpIEC101->DdFN)
       lpIEC101->byPSDdStep=17;
     if (!byMsgNum)	//没有实际电度信息体内容
@@ -2976,6 +3034,7 @@ void SendDdData2002(void)
         byMsgNum = OrgnizeDdAckMsg(bySendReason);
         lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
         lpIEC101->PSeAppLayer.LinkFunCode = 3;
+        lpIEC101->Pacd = 0;
       }
       else	//分组召唤
         lpIEC101->PSeAppLayer.LinkFunCode = 9;	//无所请求数据的确认帧
@@ -2988,6 +3047,7 @@ void SendDdData2002(void)
     byMsgNum = OrgnizeDdAckMsg(bySendReason);
     lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
     lpIEC101->PSeAppLayer.LinkFunCode = 3;
+    lpIEC101->Pacd = 0;
   }     
   lpIEC101->byPSDdStep++;
   
@@ -4268,6 +4328,8 @@ void AppVFrame(void)
       lpIEC101->PReMsgType_bak = 0;
     if(lpIEC101->PReMsgType_bak==0)
       lpIEC101->byPSGenStep=0;
+    else
+      lpIEC101->Pacd = 1;
     break;
   case C_CS_NA_1:				//校时确认
     SendTimeAck();
@@ -4292,6 +4354,8 @@ void AppVFrame(void)
       lpIEC101->PReMsgType_bak = 0;
     if(lpIEC101->PReMsgType_bak==0)
       lpIEC101->byPSDdStep=0;
+    else
+      lpIEC101->Pacd = 1;
     break;
   case C_RD_NA_1:				//读命令确认
     SendReadDataAck();
@@ -4373,6 +4437,16 @@ void PAppSendProcess(void)
   if (lpIEC101->PReFrameType == CALL_DATA1)
   {
     SendData1();
+    if(lpIEC101->PSeAppLayer.byMsgNum==0)
+    { 
+      lpIEC101->PReFrameType=0x3;
+      AppVFrame();
+      if(lpIEC101->PSeAppLayer.byFull==0 && lpIEC101->PReMsgType)
+      {
+        lpIEC101->PReMsgType_bak = 0;
+      }
+      lpIEC101->PReFrameType = 0xff;
+    }
     lpIEC101->PSeAppLayer.byFull = 1;
     lpIEC101->PReFrameType = 0xff;
   }
@@ -4504,8 +4578,12 @@ void PLinkSendProcess(void)
       | lpIEC101->PSendFrame.byFunCode;
   }
   else
+  {
+    //if(lpIEC101->PSendFrame.byFunCode==8)
+     //  lpIEC101->Pacd = 1;
     byConField = (lpIEC101->Pacd << 5) | (lpIEC101->Pdfc << 4)
       | lpIEC101->PSendFrame.byFunCode;
+  }
   if (lpIEC101->PSeAppLayer.byMsgNum)
   {
     lpIEC101->PSendFrame.wFrameLen = 
@@ -4563,6 +4641,8 @@ void Iec101LinkSend(void)
         lpIEC101->OrgnizeFrame = 0 ;
       }
 #else
+      if(lpIEC101->FlagPingH==0)
+        lpIEC101->OrgnizeFrame = 0 ;
       if((lpIEC101->PReFrameType == 0xff))
       {
         lpIEC101->OrgnizeFrame = 0 ;
@@ -4811,7 +4891,7 @@ void InitIEC101Prot(void)
   lpIEC101->initstatus = notinit;
   lpIEC101->haveset = FALSE;
   lpIEC101->FlagPingH = 0;
-  lpIEC101->UnsolTimeInterval=0;
+  lpIEC101->UnsolTimeInterval=3;
   lpIEC101->firstData = nofirstdata;
   
   
