@@ -476,9 +476,9 @@ void ATT7022Init(unsigned short Devads)
 //  HT_GPIOC->PTCLR |= GPIOG_EMU_DIN;
   HT_GPIOC->PTDIR &= ~GPIOG_EMU_DOUT;
   SM.CalibCount = 0;
-  udelay(500); 
+  udelay(50000); 
   *SPIPara->AD_RST_PTSET |= SPIPara->AD_RST;	
-  udelay(30000);
+  udelay(50000);
   //SetIDefault(Devads);//zzltest
   HFConstHL = MSpec.R7022E_HFConst;	//新国网		//13.08.30
   
@@ -512,11 +512,12 @@ void ATT7022Init(unsigned short Devads)
 	ATT7022WtReg( ModeCfg+128, Point ,Devads);	//模式配置寄存器
 
 	*Point = 0x00;						//电压通道2倍增益、电流通道1倍增益
+       // *Point = 0xa8;  //8倍电流
 //	*(Point+1) = 0x01;
 	*(Point+1) = 0x00;					//12..01.18  ADC1倍
 	ATT7022WtReg( PGACtrl+128, Point ,Devads);	//ADC增益配置寄存器
 
-//#if( LinkMode == Phase3Wire4 )			//ATChk
+//#if( LinkMode == Phase3Wire4 )		 	//ATChk
         if(Para.PW==0x34)
         {
 #if ( DLT645_2007_14 ==	YesCheck )			//新国网	//14.04.25
@@ -870,6 +871,7 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   unsigned char Buff[4];
   unsigned char* Point;
   unsigned char Temp2=0;				//11.08.03
+  unsigned char flag;
   
   Point = Buff;
   if( (Flag.Power & F_PwrUp) == 0)	//停电以后返回值为零。
@@ -888,12 +890,14 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   LValue = 0;
 
   Temp2 = ATT7022RdReg( Cmd, Data ,Devads);		//11.08.03
+  flag = 0;
   if(( *(Data +2) & 0x80 ) == 0) i = 0;
   else
   {
     *(Data+2) ^= 0xff;
     *(Data+1) ^= 0xff;
     *Data ^= 0xff;
+    flag = 1;
   }
   Temp = *(Data + 1) * 256 + *Data;
   Value = (unsigned long)*(Data + 2) * 65536;
@@ -1028,8 +1032,8 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   case ATFactorC:	
   case ATFactorZ:	//Value = ((Value/4) * 1000 ) / 2097152;          //先除4防溢出
     LValue = ( LValue * 250 ) / 2097152;          //先除4防溢出
-    Value = LValue;///100;
-    //if( Value == 999 ) Value = 1000;
+    Value = LValue/100;
+    if( Value == 999 ) Value = 1000;
     break;
   case ATAngleA:	
   case ATAngleB:	
@@ -1038,8 +1042,20 @@ short Read_ATTValue( unsigned char Cmd, unsigned char* Data ,unsigned short Deva
   case ATYUaUb:
   case ATYUaUc:
   case ATYUbUc:
+    LValue = LValue/100;
+    
+    /*if(LValue&0x200000)
+    {
+      LValue ^=0x1FFFFF;
+      LValue &=0x1FFFFF;
+      LValue |=0x200000;
+    }*/
     Value = (Value * 10 * 180 ) / 1048576;           
     LValue = (LValue * 225 ) / 131072;
+    if(flag)
+    {
+      LValue = 3600-LValue;
+    }
     Value = LValue;
     break;
   default: 

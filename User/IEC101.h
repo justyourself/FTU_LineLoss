@@ -126,10 +126,12 @@ struct IEC101_STRUCT
   u8 pcc_num;
   u8 ptt_num;
   long nLastYcVal[MAX_CH_NUM*23];
+  u8    YcValnum[MAX_CH_NUM*23];
   int nStartYcOver;
   int SendYcN;
   int byRange;
   int sendflag;
+  int byYKWaitTimes;
 };
 
 /***************************************************************************
@@ -352,7 +354,7 @@ struct IEC101_STRUCT
 #define STOPCODE		0x16		// 停止字节
 
 //遥控所用常量
-#define YK_WAIT_TIMES 100	//遥控返校等待次数
+#define YK_WAIT_TIMES 5	//遥控返校等待次数
 
 //发送数量定义
 //每帧长度最大为255个，去掉控制字，链路地址，类型标识，限定词，传送原因，公共地址。这些最大为

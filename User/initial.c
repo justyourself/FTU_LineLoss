@@ -107,7 +107,7 @@ void PwrOnInit(void)
   // NET RX TX Ö¸Ê¾µÆ
    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IOOUT;
    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10;
-   GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_OD;
+   GPIO_InitStructure.GPIO_OutputStruct = GPIO_Output_PP;
    GPIO_InitStructure.GPIO_InputStruct = GPIO_Input_Floating;
    HT_GPIO_Init(HT_GPIOA, &GPIO_InitStructure); 
    HT_GPIO_BitsSet(HT_GPIOA,GPIO_Pin_4|GPIO_Pin_9|GPIO_Pin_10);

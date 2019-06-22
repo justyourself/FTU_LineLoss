@@ -1426,6 +1426,9 @@ typedef struct
   unsigned long        Angle_Ua[MAX_CH_NUM]; 			//A相电流角度
   unsigned long        Angle_Ub[MAX_CH_NUM]; 			//B相电流角度
   unsigned long        Angle_Uc[MAX_CH_NUM]; 			//C相电流角度
+  unsigned long        test_val;
+  unsigned long   pplus;
+  unsigned long   qplus;
   unsigned char P_Time[MAX_CH_NUM][4];
   unsigned char Delay30Min;
   unsigned char Delay60Sec;

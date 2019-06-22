@@ -437,6 +437,15 @@ void InitPara(void)
   if(Para.PW!=0x33)
     Para.PW = 0x34;
   
+  if(Para.PW==0x34)
+  {
+    HT_GPIO_BitsSet(HT_GPIOA,GPIO_Pin_7);
+  }
+  else
+  {
+    HT_GPIO_BitsReset(HT_GPIOA,GPIO_Pin_7);
+  }
+  
   E2P_RAdj(buf,CONST_H,4);
   memcpy(&MSpec.RMeterConst,buf,4);
   if((MSpec.RMeterConst<2000) || (MSpec.RMeterConst>400000))
@@ -444,6 +453,7 @@ void InitPara(void)
     MSpec.RMeterConst = 20000;
   }
   MSpec.R7022E_HFConst = 400000/MSpec.RMeterConst;
+  //MSpec.R7022E_HFConst = 21000000/MSpec.RMeterConst;
   E2P_RAdj(buf,BASE_CURRENT,4);
   memcpy(&MSpec.RBaseCurrent,buf,4);
   if((MSpec.RBaseCurrent<1000) || (MSpec.RBaseCurrent>10000))
