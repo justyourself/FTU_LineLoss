@@ -6,7 +6,8 @@
 #include "TypeE2p.h"
 #include "data.h"
 #define justinit 1
-#define initend 2
+#define reset_link  2
+#define initend 3
 #define notinit 0
 #define EC_E2_W E2P_WAdj
 #define EC_E2_R E2P_RAdj
@@ -1281,7 +1282,10 @@ void Iec101LinkRecv(void)
     else
       break;
     if(lpIEC101->PRecvFrame.byFull)
+    {
+      lpIEC101->sendflag = 0;
       break;
+    }
   }while(1);
 }
 //从动链路层接收处理函
@@ -1298,7 +1302,8 @@ void PLinkRecvProcessF(u8 byConField)
     switch(lpIEC101->PRecvFrame.byFunCode)
     {
     case RESET_LINK:
-      if (lpIEC101->initstatus == justinit)
+      //if (lpIEC101->initstatus == justinit)
+      if(lpIEC101->initstatus != initend)
       {
         lpIEC101->PReFrameType = CALL_DATA1;
         lpIEC101->PReMsgType  = 0;
@@ -1965,21 +1970,35 @@ void SearchFirstData(void)
   {
     if(lpIEC101->PSeAppLayer.byFull == 1)
       return;
-    if((lpIEC101->PRecvFrame.byFunCode == RESET_LINK || lpIEC101->PRecvFrame.byFunCode == TRAN_CONFIRM_DATA) && (lpIEC101->PWinTimer>100) /*&& (lpIEC101->initstatus == justinit)*/)
+    
+    if(lpIEC101->initstatus==justinit)
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 9;
+      lpIEC101->PSeAppLayer.byFull = 1;
+      lpIEC101->Pacd |= 2;
+      lpIEC101->initstatus=reset_link;
+      return;
+    }
+    //if(((lpIEC101->PRecvFrame.byFunCode == RESET_LINK) || (lpIEC101->PRecvFrame.byFunCode == TRAN_CONFIRM_DATA)) /*&& (lpIEC101->PWinTimer>800)*/ /*&& (lpIEC101->initstatus == justinit)*/)
+    if((lpIEC101->initstatus==reset_link) || (lpIEC101->PRecvFrame.byFunCode == TRAN_CONFIRM_DATA))
     {
       //  lpIEC101->PWinTimer = 0;
-      //            lpIEC101->PSeAppLayer.byFull = 1;
-      //            lpIEC101->PSeAppLayer.LinkFunCode = CALL_LINK;
-      //            lpIEC101->Pacd = 2;
+      //  lpIEC101->PSeAppLayer.byFull = 1;
+      //  lpIEC101->PSeAppLayer.LinkFunCode = CALL_LINK;
+      //  lpIEC101->Pacd = 2;
       SendData1();
     }
-    if(lpIEC101->PRecvFrame.byFunCode == LINK_GOOD)
+    if((lpIEC101->PRecvFrame.byFunCode == LINK_GOOD) || (lpIEC101->initstatus==reset_link))
     {
       lpIEC101->PSeAppLayer.byFull = 1;
       lpIEC101->PSeAppLayer.LinkFunCode = RESET_LINK;
       lpIEC101->PRecvFrame.byFunCode = 0;
-      lpIEC101->Pacd = 2;
+      lpIEC101->initstatus = reset_link;
+      //lpIEC101->firstData = substinit;
+      lpIEC101->Pacd |= 2;
+      lpIEC101->firstData = substinit;		// 子站初始化
     }
+    
     /*  if(lpIEC101->wTester.Byte.l && lpIEC101->PWinTimer>200)
     {
     lpIEC101->PWinTimer = 0;
@@ -2803,7 +2822,14 @@ void SendGeneralData(void)
           bySendReason = ACTTERM;
           byMsgNum = OrgnizeGenAck(bySendReason);
           lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-          lpIEC101->PSeAppLayer.LinkFunCode = 8;	//总召唤结束帧功能码为8
+          if(lpIEC101->FlagPingH)
+          {
+            lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+          }
+          else
+          {
+            lpIEC101->PSeAppLayer.LinkFunCode = 8;
+          }	//总召唤结束帧功能码为8
         }
         else	//分组召唤
           lpIEC101->PSeAppLayer.LinkFunCode = 9;	//无所请求数据的确认帧
@@ -2858,7 +2884,14 @@ void SendGeneralData(void)
     bySendReason = ACTTERM;
     byMsgNum = OrgnizeGenAck(bySendReason);
     lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-    lpIEC101->PSeAppLayer.LinkFunCode = 8;	//总召唤结束帧功能码为8
+    if(lpIEC101->FlagPingH)
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+    }
+    else
+    {
+      lpIEC101->PSeAppLayer.LinkFunCode = 8;
+    }
     lpIEC101->byPSGenStep++;
     lpIEC101->Pacd = 0;
   }       
@@ -3395,7 +3428,7 @@ void Dir_Send(void)
           Record_num +=224;//340;
         }
         else
-          Record_num = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+lpIEC101->pt_num*145+(lpIEC101->ptt_num+lpIEC101->pcc_num+lpIEC101->pce_num)*31;
+          Record_num = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+(lpIEC101->pcc_num+lpIEC101->pt_num)*145+(lpIEC101->ptt_num+lpIEC101->pce_num)*31;
         //Record_num = Record_num*424;
         Record_num += 2;
       }
@@ -3438,8 +3471,7 @@ void File_Recv(void)
                                     //文件召唤确认信息体
 u8 SendFileGenAck(u8 bySendReason)
 {
-  
-  char* lpby = (char *)lpIEC101->PSeAppLayer.lpByBuf;
+ char* lpby = (char *)lpIEC101->PSeAppLayer.lpByBuf;
   u8 i,byMsgNum = 0;
   u32 m_filelen;
   u8 flag;
@@ -3569,7 +3601,7 @@ u8 SendFileGenAck(u8 bySendReason)
         lpIEC101->pcc_num=GetClear_num(m_Channel_no);
         if(lpIEC101->pcc_num>10)
           lpIEC101->pcc_num = 10;
-        lpIEC101->pce_num = CEVENT_Record_Num(CEVENT_Record_Num);//lpIEC101->byPSGenStep/3);
+        lpIEC101->pce_num = CEVENT_Record_Num(lpIEC101->byPSGenStep/3);
         if(lpIEC101->pce_num>10)
           lpIEC101->pce_num = 10;
         if(flag)
@@ -3579,7 +3611,7 @@ u8 SendFileGenAck(u8 bySendReason)
           m_filelen +=224;//340;
         }
         else
-          m_filelen = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+lpIEC101->pt_num*145+(lpIEC101->ptt_num+lpIEC101->pcc_num+lpIEC101->pce_num)*31;
+          m_filelen = (lpIEC101->pa_num+lpIEC101->pb_num+lpIEC101->pc_num)*278+(lpIEC101->pcc_num+lpIEC101->pt_num)*145+(lpIEC101->ptt_num+lpIEC101->pce_num)*31;
         m_filelen +=2;
       }
     }
@@ -3597,7 +3629,7 @@ u8 SendFileInfo(u8 bySendReason)
   u8 i,byMsgNum = 0,pos,bySum=0,j;
   char *p_filename;
   int flag;
-  u32 m_filelen;
+ // u32 m_filelen;
   p_filename=strstr(lpIEC101->Fname,".");
   if(p_filename)
   {
@@ -3619,14 +3651,16 @@ u8 SendFileInfo(u8 bySendReason)
     *(lpby + byMsgNum ++) = 0x5;
     memcpy(lpby + byMsgNum,&(lpIEC101->FId),4);
     byMsgNum += 4;
-    m_filelen = 0;
-    memcpy(lpby + byMsgNum,&(m_filelen),4);
+    //m_filelen = 0;
     flag = 0;
+    memcpy(lpby + byMsgNum,&(flag),4);
+    
     {
       if(strstr(lpIEC101->Fname,".xml"))
       {
         flag = 1;
       }
+#if 0     
       if(strstr(lpIEC101->Fname,"FIXD"))
       {
         m_filelen=Load_Record_Num();
@@ -3703,6 +3737,7 @@ u8 SendFileInfo(u8 bySendReason)
         m_filelen = m_filelen*424;
         //m_filelen += 
       }
+#endif      
     }
     //memcpy(lpby + byMsgNum,&(m_filelen),4);
     byMsgNum += 4;
@@ -4444,6 +4479,7 @@ void AppVFrame(void)
     lpIEC101->PSeAppLayer.byFull = 1;
     lpIEC101->PReMsgType = 0;
     lpIEC101->PReMsgType_bak = 0;
+    lpIEC101->Pacd = 0;
     break;
   case C_CI_NA_1:				//召唤电度
     if ( lpIEC101->TypeProtocol)//2002版的101规约//付2005.8.30
@@ -4699,22 +4735,28 @@ void PLinkSendProcess(void)
     {
       lpIEC101->Pdfc |=1;
       lpIEC101->Pacd |=2;
-    }
-    if(lpIEC101->PSendFrame.byFunCode==TRAN_DATA)
-    {
-      lpIEC101->Pdfc |=0;
-      //lpIEC101->Pacd |=2;
-    }
-    byConField = 0x80 | (lpIEC101->Pacd << 5) | (lpIEC101->Pdfc << 4)
+      byConField = 0x80 | (lpIEC101->Pacd << 5) | (lpIEC101->Pdfc << 4)
       | lpIEC101->PSendFrame.byFunCode;
+    }
+    else
+    {
+      byConField = 0x80 | (lpIEC101->Pacd << 5) | (lpIEC101->Pdfc << 4)
+      | lpIEC101->PSendFrame.byFunCode;
+      byConField &= 0xcf;
+    }
+
+    if(lpIEC101->PSendFrame.byFunCode==TRAN_CONFIRM_DATA)
+    {
+      lpIEC101->Pacd ^=1;
+    }
+    else
+    {
+      lpIEC101->Pacd &= 1;
+    }
   }
   else
-  {
-    //if(lpIEC101->PSendFrame.byFunCode==8)
-     //  lpIEC101->Pacd = 1;
     byConField = (lpIEC101->Pacd << 5) | (lpIEC101->Pdfc << 4)
       | lpIEC101->PSendFrame.byFunCode;
-  }
   if (lpIEC101->PSeAppLayer.byMsgNum)
   {
     lpIEC101->PSendFrame.wFrameLen = 
@@ -4772,7 +4814,7 @@ void Iec101LinkSend(void)
         lpIEC101->OrgnizeFrame = 0 ;
       }
 #else
-      if(lpIEC101->FlagPingH==0)
+      if((lpIEC101->FlagPingH==0) || (lpIEC101->PSendFrame.byFunCode==TRAN_CONFIRM_DATA))
         lpIEC101->OrgnizeFrame = 0 ;
       if((lpIEC101->PReFrameType == 0xff))
       {
@@ -5021,7 +5063,7 @@ void InitIEC101Prot(void)
     lpIEC101->wLinkAdd.Word=1;
   lpIEC101->initstatus = notinit;
   lpIEC101->haveset = FALSE;
-  lpIEC101->FlagPingH = 0;
+  lpIEC101->FlagPingH = 1;
   lpIEC101->UnsolTimeInterval=3;
   lpIEC101->firstData = nofirstdata;
   

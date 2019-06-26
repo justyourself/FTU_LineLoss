@@ -557,7 +557,8 @@ void compensate_day()
  for(i=0;i<MAX_CH_NUM;++i)
 
  {
-
+  if(Day_Record_Num()==0)
+     break;
    ReadRecord(FRZD0_USEADDR+30*i,tmp_buf,0);
 
    memcpy(time_buf,tmp_buf,6); 
@@ -789,7 +790,8 @@ void compensate_month()
  for(i=0;i<MAX_CH_NUM;++i)
 
  {
-
+  if(Month_Record_Num()==0)
+     break;
    ReadRecord(MOND0_USEADDR+30*i,tmp_buf,0);
 
    memcpy(time_buf,tmp_buf,6); 
@@ -2079,9 +2081,9 @@ void ProcDay(void)
 
 }	
 
-//#define COM_PARITY   UartParity_Disable  
+#define COM_PARITY   UartParity_Disable  
 
-#define COM_PARITY   UartParity_EVEN
+//#define COM_PARITY   UartParity_EVEN
 
 void main(void)
 
