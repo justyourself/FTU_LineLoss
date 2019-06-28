@@ -562,7 +562,9 @@ void compensate_day()
    ReadRecord(FRZD0_USEADDR+30*i,tmp_buf,0);
 
    memcpy(time_buf,tmp_buf,6); 
-
+   tmp_buf[0] = 0;
+   tmp_buf[1] = 0;
+   tmp_buf[2] = 0;
    tmp_buf[3] = Clk.DayH;
 
    tmp_buf[4] = Clk.Month;
@@ -796,7 +798,10 @@ void compensate_month()
 
    memcpy(time_buf,tmp_buf,6); 
 
-   tmp_buf[3] = Clk.DayH;
+   tmp_buf[0] = 0;
+   tmp_buf[1] = 0;
+   tmp_buf[2] = 0;
+   tmp_buf[3] = 1;//Clk.DayH;
 
    tmp_buf[4] = Clk.Month;
 
@@ -1452,9 +1457,8 @@ void ProcHalfSec(void)
     tmp_p &= 0xffffff;
 
     if(tmp_p>100)
-
       tmp_p =0;
-
+    
     if(tmp_p)
 
     {
@@ -1741,13 +1745,13 @@ void ProcSec(void)
         if((Real_Data[0].Uc>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Ua<80))
         {
           f1 = SM.Angle_Ic[i];
-          if(SM.Angle_Ic[i]>300)
+          if(SM.Angle_Ic[i]>=3300)
           {
-            f1 = SM.Angle_Ic[i]-300;
+            f1 = SM.Angle_Ic[i]-3300;
           }
           else
           {
-            f1 = 300-SM.Angle_Ic[i];
+            f1 = 300+SM.Angle_Ic[i];
           }
           f2 = cos(f1*3.1415926/1800);
           if(f2<0)
