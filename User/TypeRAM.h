@@ -1429,10 +1429,13 @@ typedef struct
   unsigned long        test_val;
   unsigned long   pplus;
   unsigned long   qplus;
+  unsigned long   pcout;
+  unsigned long   qcout;
   unsigned char P_Time[MAX_CH_NUM][4];
   unsigned char Delay30Min;
   unsigned char Delay60Sec;
   unsigned char rebootflag;
+  unsigned char sigle_pt;
 } SRAM;
 
 //总及分相电压检测记录结构

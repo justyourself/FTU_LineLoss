@@ -349,17 +349,11 @@ int GetPn_Event_Record(int ch,int phase,int No,unsigned char *buf)
 
 
 void Pt_Event_Save(int ch)
-
 {
-
   unsigned short m_e2_ptr,m_e2_buf,year;
-
   unsigned char ptr_buf[4],tmp_buf[48];
-
   MoveCurrentTimeBCD_Hex();
-
   tmp_buf[0]=Clk.SecH;
-
   tmp_buf[1]=Clk.MinH;
 
   tmp_buf[2]=Clk.HourH;
@@ -381,6 +375,10 @@ void Pt_Event_Save(int ch)
   memcpy(tmp_buf+10,&Energy_Data[ch],32);
 
   LoadRecord(CH0_PTD_USEADDR+ch*78,tmp_buf);
+  if(SM.CalibCount != CALIBCOUNT1)
+  {
+    Insert_Push(TREND_TYPE,ch);
+  }
 
 }
 
@@ -533,14 +531,6 @@ short Get_DayData(int No,int ch,unsigned char *buf)
   return ONE_RECORD_LEN;
 
 }
-
-
-
-
-
-
-
-
 
 void compensate_day()
 
@@ -1065,7 +1055,7 @@ void EC_MeasA(void)
 
   unsigned int Ps2;
 
-  Ps2 = MSpec.RMeterConst/1000;
+  Ps2 = MSpec.RMeterConst/EN_DOTS;
 
   for( i=0;i<ECUnitNum;++i)
 
@@ -1347,75 +1337,197 @@ void Read_E2R1()
 
 }
 
-
+void ProcThirdSec(void)
+{
+  unsigned int tmp_p;
+  short Quad;
+  unsigned long Ps2;
+  Flag.Clk &= ~F_ThirdSec;
+  if((Flag.Power & F_PwrUp) == 0)
+      return;
+  if(SM.sigle_pt)
+  {
+      //Ps2 = MSpec.RMeterConst/10000;
+      //Ps2=230400000000/MSpec.RMeterConst;  //1/64s
+       Ps2=MSpec.RMeterConst/1000;
+       Ps2=3600000000/Ps2;   //1ms
+      if(Real_Data[0].Pt>20)
+      {
+        //tmp_p = 7200000/Real_Data[0].Pt;
+        //tmp_p = 360000000/Real_Data[0].Pt;
+        //tmp_p = 5625000/Real_Data[0].Pt;
+        //tmp_p = 16875000/Real_Data[0].Pt;
+        //tmp_p = 56250*MSpec.RMeterConst/Real_Data[0].Pt;
+        tmp_p=Ps2/Real_Data[0].Pt;
+        //SM.pplus++;
+        if(SM.pplus>=tmp_p)
+        {
+          NVIC_DisableIRQ(TIMER_0_IRQn);
+          SM.pplus -= tmp_p;
+          NVIC_EnableIRQ(TIMER_0_IRQn);
+          //SM.pplus = 0;
+          ECP.PL_CumPp[0] += 1;
+          ECP.PL_ChkPp[0]=ChkNum((unsigned char*)&ECP.PL_CumPp[0],2);
+        }
+      }
+      if(Real_Data[0].Pt<-20)
+      {
+        //tmp_p = 7200000/(Real_Data[0].Pt*-1);
+        //tmp_p = 16875000/(Real_Data[0].Pt*-1);
+        tmp_p=Ps2/(Real_Data[0].Pt*-1);
+        //SM.pplus++;
+        if(SM.pplus>=tmp_p)
+        {
+          NVIC_DisableIRQ(TIMER_0_IRQn);
+          SM.pplus -= tmp_p;
+          NVIC_EnableIRQ(TIMER_0_IRQn);
+          //SM.pplus = 0;
+          ECP.PL_CumPn[0] += 1;
+          ECP.PL_ChkPn[0]=ChkNum((unsigned char*)&ECP.PL_CumPn[0],2);
+        }
+      }
+      if(Real_Data[0].Qt>20)
+      {
+        //tmp_p = 7200000/Real_Data[0].Qt;
+       tmp_p=Ps2/(Real_Data[0].Qt);
+        //SM.qplus++;
+        if(SM.qplus>=tmp_p)
+        {
+          //SM.qplus = 0;
+          NVIC_DisableIRQ(TIMER_0_IRQn);
+          SM.qplus -= tmp_p;
+          NVIC_EnableIRQ(TIMER_0_IRQn);
+          ECP.PL_CumQp[0] += 1;
+          ECP.PL_ChkQp[0]=ChkNum((unsigned char*)&ECP.PL_CumQp[0],2);
+          if(Real_Data[0].Pt>0)
+          {
+            ECP.PL_CumQ[0][0] += 1;
+            ECP.PL_ChkQ[0][0]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][0],2);
+          }
+          else
+          {
+            ECP.PL_CumQ[0][1] += 1;
+            ECP.PL_ChkQ[0][1]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][1],2);
+          }
+        }
+      }
+      if(Real_Data[0].Qt<-20)
+      {
+        //tmp_p = 7200000/(Real_Data[0].Qt*-1);
+        tmp_p=Ps2/(Real_Data[0].Qt*-1);
+        //SM.qplus++;
+        if(SM.qplus>=tmp_p)
+        {
+         // SM.qplus = 0;
+          NVIC_DisableIRQ(TIMER_0_IRQn);
+          SM.qplus -= tmp_p;
+          NVIC_EnableIRQ(TIMER_0_IRQn);
+          ECP.PL_CumQn[0] += 1;
+          ECP.PL_ChkQn[0]=ChkNum((unsigned char*)&ECP.PL_CumQn[0],2);
+          if(Real_Data[0].Pt>0)
+          {
+            ECP.PL_CumQ[0][3] += 1;
+            ECP.PL_ChkQ[0][3]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][3],2);
+          }
+          else
+          {
+            ECP.PL_CumQ[0][2] += 1;
+            ECP.PL_ChkQ[0][2]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][2],2);
+          }
+        }
+      }
+  }
+}
 
 void ProcHalfSec(void)
-
 {
-
   int i;
-
   unsigned int tmp_p;
-
   short Quad;
   unsigned int Ps2;
-  
   Flag.Clk &= ~F_HalfSec;
-
   if((Flag.Power & F_PwrUp) == 0)
-
       return;
 
   HT_GPIO_BitsToggle(HT_GPIOA,GPIO_Pin_4);
   
-  if(((Real_Data[0].Ua>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Uc<80)) || ((Real_Data[0].Uc>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Ua<80)))
+  //if(((Real_Data[0].Ua>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Uc<80)) || ((Real_Data[0].Uc>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Ua<80)))
+  if(SM.sigle_pt)
   {
-      Ps2 = MSpec.RMeterConst/1000;
-      if(Real_Data[0].Pt>30)
+#if 0   
+      Ps2 = MSpec.RMeterConst/10000;
+      if(Real_Data[0].Pt>20)
       {
-        tmp_p = 7200000/Real_Data[0].Pt;
-        //tmp_p = 7200/Real_Data[0].Pt;
-        SM.pplus++;
+        //tmp_p = 7200000/Real_Data[0].Pt;
+        //tmp_p = 360000000/Real_Data[0].Pt;
+        tmp_p = 5625000/Real_Data[0].Pt;
+        //SM.pplus++;
         if(SM.pplus>=tmp_p)
         {
-          SM.pplus = 0;
+          SM.pplus -= tmp_p;
           ECP.PL_CumPp[0] += Ps2;
           ECP.PL_ChkPp[0]=ChkNum((unsigned char*)&ECP.PL_CumPp[0],2);
         }
       }
-      if(Real_Data[0].Pt<-30)
+      if(Real_Data[0].Pt<-20)
       {
-        tmp_p = 7200000/(Real_Data[0].Pt*-1);
-        SM.pplus++;
+        //tmp_p = 7200000/(Real_Data[0].Pt*-1);
+        tmp_p = 5625000/(Real_Data[0].Pt*-1);
+        //SM.pplus++;
         if(SM.pplus>=tmp_p)
         {
-          SM.pplus = 0;
+          SM.pplus -= tmp_p;
           ECP.PL_CumPn[0] += Ps2;
           ECP.PL_ChkPn[0]=ChkNum((unsigned char*)&ECP.PL_CumPn[0],2);
         }
       }
-      if(Real_Data[0].Qt>30)
+      if(Real_Data[0].Qt>20)
       {
-        tmp_p = 7200000/Real_Data[0].Qt;
-        SM.qplus++;
+        //tmp_p = 7200000/Real_Data[0].Qt;
+        tmp_p = 5625000/Real_Data[0].Qt;
+        //SM.qplus++;
         if(SM.qplus>=tmp_p)
         {
-          SM.qplus = 0;
+          //SM.qplus = 0;
+          SM.qplus -= tmp_p;
           ECP.PL_CumQp[0] += Ps2;
           ECP.PL_ChkQp[0]=ChkNum((unsigned char*)&ECP.PL_CumQp[0],2);
+          if(Real_Data[0].Pt>0)
+          {
+            ECP.PL_CumQ[0][0] += Ps2;
+            ECP.PL_ChkQ[0][0]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][0],2);
+          }
+          else
+          {
+            ECP.PL_CumQ[0][1] += Ps2;
+            ECP.PL_ChkQ[0][1]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][1],2);
+          }
         }
       }
-      if(Real_Data[0].Qt<-30)
+      if(Real_Data[0].Qt<-20)
       {
-        tmp_p = 7200000/(Real_Data[0].Qt*-1);
-        SM.qplus++;
+        //tmp_p = 7200000/(Real_Data[0].Qt*-1);
+        tmp_p = 5625000/(Real_Data[0].Qt*-1);;
+        //SM.qplus++;
         if(SM.qplus>=tmp_p)
         {
-          SM.qplus = 0;
+          //SM.qplus = 0;
+          SM.qplus -= tmp_p;
           ECP.PL_CumQn[0] += Ps2;
           ECP.PL_ChkQn[0]=ChkNum((unsigned char*)&ECP.PL_CumQn[0],2);
+          if(Real_Data[0].Pt>0)
+          {
+            ECP.PL_CumQ[0][3] += Ps2;
+            ECP.PL_ChkQ[0][3]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][3],2);
+          }
+          else
+          {
+            ECP.PL_CumQ[0][2] += Ps2;
+            ECP.PL_ChkQ[0][2]=ChkNum((unsigned char*)&ECP.PL_CumQ[0][2],2);
+          }
         }
       }
+#endif      
   }
   else
   for(i=0;i<MAX_CH_NUM;++i)
@@ -1590,50 +1702,27 @@ void ProcSec(void)
       Read_ATTValue(ATPWPC,(unsigned char *)&Energy_Data[i].Pc,i);
 
       Read_ATTValue(ATPWPZ,(unsigned char *)&Energy_Data[i].Pt,i);
-
       if(SM.PQFlag[i]&0x1)
-
       {
-
         Energy_Data[i].Pa *=-1;
-
       }
-
       if(SM.PQFlag[i]&0x2)
-
       {
-
         Energy_Data[i].Pb *=-1;
-
       }
-
       if(SM.PQFlag[i]&0x4)
-
       {
-
         Energy_Data[i].Pc *=-1;
-
       }
-
       if(SM.PQFlag[i]&0x8)
-
       {
-
         Energy_Data[i].Pt *=-1;
-
       }
-
-      
-
       Real_Data[i].Pa = Energy_Data[i].Pa;
 
       Real_Data[i].Pb = Energy_Data[i].Pb;
 
       Real_Data[i].Pc = Energy_Data[i].Pc;
-
-      Real_Data[i].Pt = Energy_Data[i].Pt;
-
-
 
       Read_ATTValue(ATPWQA,(unsigned char *)&Real_Data[i].Qa,i);
 
@@ -1641,7 +1730,7 @@ void ProcSec(void)
 
       Read_ATTValue(ATPWQC,(unsigned char *)&Real_Data[i].Qc,i);
 
-      Read_ATTValue(ATPWQZ,(unsigned char *)&Real_Data[i].Qt,i);
+      
 
       if(SM.PQFlag[i]&0x10)
 
@@ -1658,24 +1747,10 @@ void ProcSec(void)
         Real_Data[i].Qb *=-1;
 
       }
-
       if(SM.PQFlag[i]&0x40)
-
       {
-
         Real_Data[i].Qc *=-1;
-
       }
-
-      if(SM.PQFlag[i]&0x80)
-
-      {
-
-        Real_Data[i].Qt *=-1;
-
-      }
-
-    
 
       Read_ATTValue(ATPWSA,(unsigned char *)&Real_Data[i].Sa,i);
 
@@ -1712,9 +1787,15 @@ void ProcSec(void)
       Read_ATTValue(ATAngleB,(unsigned char *)&SM.Angle_Ib[i],i);
 
       Read_ATTValue(ATAngleC,(unsigned char *)&SM.Angle_Ic[i],i);
+      Read_ATTValue(ATPWQZ,(unsigned char *)&Real_Data[i].Qt,i);
+      if(SM.PQFlag[i]&0x80)
+      {
+        Real_Data[i].Qt *=-1;
+      }
+      Real_Data[i].Pt = Energy_Data[i].Pt;
       
       if(((Real_Data[0].Ua>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Uc<80)) || ((Real_Data[0].Uc>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Ua<80)))
-      {
+      { 
         if((Real_Data[0].Ua>8000) && (Real_Data[0].Ub<80) && (Real_Data[0].Uc<80))
         {
           f1 = SM.Angle_Ia[i];
@@ -1768,8 +1849,14 @@ void ProcSec(void)
             Real_Data[i].Qt = f2;
           }
         }
+        SM.sigle_pt  = 1;
       }
-
+      else
+      {
+        SM.sigle_pt  = 0;
+       // Real_Data[0].Pt = 1000000;
+      //  Real_Data[0].Qt = 1000000;
+      }
     }
 
 #if  0  
@@ -1827,31 +1914,18 @@ void ProcSec(void)
       SM.PQFlag_b[i]=SM.PQFlag[i];
 
       if((flag_p&0xf))
-
       {
-
         si_val = &Real_Data[i].Pa;
-
         for(j=0;j<4;++j)
-
         {
-
           if(flag_p&(1<<j))
-
           {
-
             if(abs(si_val[j])>40)
-
             {
-
               SM.P_Time[i][j]=60;
-
             }
-
           }
-
         }
-
       }
 
       for(j=0;j<3;++j) //功率方向
@@ -1875,19 +1949,18 @@ void ProcSec(void)
         }
 
       }
+//      if(SM.P_Time[i][3]==0)
+//        SM.P_Time[i][3]=30;
 
       if(SM.P_Time[i][3]) //潮流
       {
         --SM.P_Time[i][3];
         if(SM.P_Time[i][3]==0)
         {
-
             Pt_Event_Save(i);
 
         }
-
       }
-
     }
 
 #endif
@@ -2189,8 +2262,6 @@ void main(void)
 
         E2P_RFM(flash_id,0,16);
 
-       
-
         BlockErase(0);
 
         Read_Flash(flash_id,0,10);
@@ -2210,8 +2281,6 @@ void main(void)
         memset(flash_id,0,10);
 
         Read_Flash(flash_id,0,10);
-
- 
 
         memset(flash_id,0x55,16);
 
@@ -2282,7 +2351,8 @@ void main(void)
        // Clear_E2R(0);
 
        // Clear_EVT2R(0);
-
+        SM.qplus=0;
+        SM.pplus=0;
         break;
 
       }	
@@ -2303,20 +2373,15 @@ void main(void)
 
       
 
-//      if(( Flag.Clk & F_ThirdSec )) 	
-
-//      {		
-
-//        Flag.Clk &= ~F_ThirdSec;								
-
-//      }
+      if(( Flag.Clk & F_ThirdSec )) 	
+      {		
+        //Flag.Clk &= ~F_ThirdSec;
+        ProcThirdSec();
+      }
 
       if(Flag.Clk& F_HalfSec)
-
       {
-
         ProcHalfSec();
-
       }
 
       if (Flag.Clk & F_Sec) 

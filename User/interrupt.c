@@ -110,11 +110,25 @@ void SysTick_Handler()			//1/64秒中断
       Flag.Clk |= F_HalfSec;
      // HT_GPIO_BitsToggle(HT_GPIOC,GPIO_Pin_8);		
     }																//PWMD	
-    if(( Clk.Sec_64 == 0 )||( Clk.Sec_64 == 21 )||( Clk.Sec_64 == 42 )) 
+   // if(( Clk.Sec_64 == 0 )||( Clk.Sec_64 == 21 )||( Clk.Sec_64 == 42 )) 
+    if((Clk.Sec_64%4)==0) 
     {
       Flag.Clk |= F_ThirdSec;
     }
   }
+#if 0 
+  if(SM.sigle_pt)
+  {
+    if(abs(Real_Data[0].Pt)>20)
+    {
+      SM.pplus++;
+    }
+    if(abs(Real_Data[0].Qt)>20)
+    {
+      SM.qplus++;
+    }
+  }
+ #endif
   return;	
 }
 
@@ -586,6 +600,19 @@ void TIMER_0_IRQHandler()
         HT_TMR_ClearITPendingBit(HT_TMR0, TMR_TMRIF_CMPIF);                    /*!< 清除中断标志       */         
     } 
     //SM.CalibCount++;
+   
+    if(SM.sigle_pt)
+    {
+      if(abs(Real_Data[0].Pt)>20)
+      {
+        SM.pplus++;
+      }
+      if(abs(Real_Data[0].Qt)>20)
+      {
+        SM.qplus++;
+      }
+    }
+    
     Iec101WatchTime();
 }
 

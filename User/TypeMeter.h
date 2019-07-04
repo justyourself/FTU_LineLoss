@@ -1360,3 +1360,4 @@
 #define TREND_TYPE              2
 
 #define MAX_CH_NUM              1
+#define EN_DOTS                 10000

@@ -217,7 +217,7 @@ int Assamble_MsgFormat(int sect,char *In,char *Out)
     memcpy(&ul_val,In+6+i*4,4);
     ul_val %= 100000000;
     f_val = ul_val;
-    f_val = f_val/1000;
+    f_val = f_val/EN_DOTS;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -298,7 +298,7 @@ int Assamble_PnMsgFormat(int sect,char *In,char *Out)
     Len += strlen(tmp);
     memcpy(&ul_val,In+10+i*4,4);
     f_val = ul_val;
-    f_val = f_val/1000;
+    f_val = f_val/EN_DOTS;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -376,7 +376,7 @@ int Assamble_PtMsgFormat(char *In,char *Out)
     Len += strlen(tmp);
     memcpy(&ul_val,In+10+i*4,4);
     f_val = ul_val;
-    f_val = f_val/1000;
+    f_val = f_val/EN_DOTS;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -483,7 +483,7 @@ int Assamble_CMsgFormat(char *In,char *Out)
     Len += strlen(tmp);
     memcpy(&ul_val,In+10+i*4,4);
     f_val = ul_val;
-    f_val = f_val/1000;
+    f_val = f_val/EN_DOTS;
     sprintf(tmp,"%.3f",f_val);
     if(strlen(tmp)>=8)
     {
@@ -874,7 +874,7 @@ short GetDd(unsigned short kwhno,unsigned char *buf)
     //memcpy(buf,&Ptr[ptr_v],4);
     Ptr=(unsigned long*)&Energy_Data[m_ch];
     f_val = Ptr[ptr_v]; 
-    f_val = f_val/1000;
+    f_val = f_val/EN_DOTS;
     memcpy(buf,(unsigned char *)&f_val,4);
     //*(buf) = tmp_buf[0];//(u8)nVal;	// 遥测值
     //		*(lpby + byMsgNum ++) = tmp_buf[1];//(u8)(nVal >> 8);
@@ -1892,7 +1892,7 @@ u8  OrgnizeTDdMsg(u8 bySendReason,u8 byFrameNo)
       memset(lpby + byMsgNum,0,12);
       memcpy(&dwDdVal,tmp_buf+6+4*i,4);
       f_val = dwDdVal;
-      f_val = f_val/1000;
+      f_val = f_val/EN_DOTS;
       memcpy(lpby + byMsgNum,(unsigned char *)&f_val,4);
       memcpy(lpby + byMsgNum+6,tmp_buf,6);
       byMsgNum +=12;  
@@ -1943,7 +1943,7 @@ u8  OrgnizeTrendMsg(u8 bySendReason,u8 byFrameNo)
       memset(lpby + byMsgNum,0,12);
       memcpy(&dwDdVal,tmp_buf+10+4*i,4);
       f_val = dwDdVal;
-      f_val = f_val/1000;
+      f_val = f_val/EN_DOTS;
       memcpy(lpby + byMsgNum,(unsigned char *)&f_val,4);
       memcpy(lpby + byMsgNum+6,tmp_buf,6);
       i_val = tmp_buf[0];
@@ -2810,7 +2810,14 @@ void SendGeneralData(void)
       lpIEC101->frameno = lpIEC101->frameno ? 0 : 1;
       byMsgNum = OrgnizeYcMsg(lpby,bySendReason,byFrameNo);
       lpIEC101->PSeAppLayer.byMsgNum = byMsgNum;
-      lpIEC101->PSeAppLayer.LinkFunCode = 8;
+      if(lpIEC101->FlagPingH)
+      {
+        lpIEC101->PSeAppLayer.LinkFunCode = 3;//8;
+      }
+      else
+      {
+        lpIEC101->PSeAppLayer.LinkFunCode = 8;
+      }
       if(lpIEC101->byReason==1)
         lpIEC101->PSeAppLayer.LinkFunCode = 4;
       if (!byMsgNum)	//没有实际信息体内容
@@ -3601,7 +3608,7 @@ u8 SendFileGenAck(u8 bySendReason)
         lpIEC101->pcc_num=GetClear_num(m_Channel_no);
         if(lpIEC101->pcc_num>10)
           lpIEC101->pcc_num = 10;
-        lpIEC101->pce_num = CEVENT_Record_Num(lpIEC101->byPSGenStep/3);
+        lpIEC101->pce_num = CEVENT_Record_Num(m_Channel_no);
         if(lpIEC101->pce_num>10)
           lpIEC101->pce_num = 10;
         if(flag)
@@ -4815,7 +4822,10 @@ void Iec101LinkSend(void)
       }
 #else
       if((lpIEC101->FlagPingH==0) || (lpIEC101->PSendFrame.byFunCode==TRAN_CONFIRM_DATA))
+      {
         lpIEC101->OrgnizeFrame = 0 ;
+        lpIEC101->sendflag = 3000;
+      }
       if((lpIEC101->PReFrameType == 0xff))
       {
         lpIEC101->OrgnizeFrame = 0 ;
