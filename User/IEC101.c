@@ -645,7 +645,7 @@ unsigned char s_Devtype[5]="DTU-0";
 unsigned char s_Operation[]="N/A";
 unsigned char s_Manufacture[]="¾æ»ª";
 unsigned char s_Hardwarever[]="B";
-unsigned char s_Firmwarever[]="01.18";
+unsigned char s_Firmwarever[]="01.20";
 unsigned char s_FirmwareCrc[]="0x7777";
 unsigned char s_Protocolver[]="V1.000";
 unsigned char s_Model[]="JH4000";
@@ -5073,7 +5073,7 @@ void InitIEC101Prot(void)
     lpIEC101->wLinkAdd.Word=1;
   lpIEC101->initstatus = notinit;
   lpIEC101->haveset = FALSE;
-  lpIEC101->FlagPingH = 1;
+  lpIEC101->FlagPingH = 0;
   lpIEC101->UnsolTimeInterval=3;
   lpIEC101->firstData = nofirstdata;
   

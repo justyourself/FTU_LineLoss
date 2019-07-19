@@ -2045,7 +2045,7 @@ void ProcMin(void)
       if(Para.PW==0x34)
       {
         Para.PW=0x33;
-        HT_GPIO_BitsReset(HT_GPIOC,GPIO_Pin_4);
+        HT_GPIO_BitsReset(HT_GPIOA,GPIO_Pin_7);
         for(i=0;i<MAX_CH_NUM;i++)
         {
           ATT7022Init(i);	
@@ -2057,7 +2057,7 @@ void ProcMin(void)
       if(Para.PW==0x33)
       {
         Para.PW=0x34;
-        HT_GPIO_BitsSet(HT_GPIOC,GPIO_Pin_4);
+        HT_GPIO_BitsSet(HT_GPIOA,GPIO_Pin_7);
         for(i=0;i<MAX_CH_NUM;i++)
         {
           ATT7022Init(i);
@@ -2158,9 +2158,9 @@ void ProcDay(void)
 
 }	
 
-#define COM_PARITY   UartParity_Disable  
+//#define COM_PARITY   UartParity_Disable  
 
-//#define COM_PARITY   UartParity_EVEN
+#define COM_PARITY   UartParity_EVEN
 
 void main(void)
 
